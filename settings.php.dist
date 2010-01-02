@@ -1,0 +1,13 @@
+<?PHP
+	$db_host	= 	''; //MySQL host
+	$db_port	=	''; //MySQL port
+	$db_user	=	''; //MySQL user
+	$db_pass	=	''; //MySQL pass
+	$db_db		=	''; //MySQL schema
+	$mysql->settings();
+	unset($db_host);
+	unset($db_port);
+	unset($db_user);
+	unset($db_pass);
+	unset($db_db);
+?>
