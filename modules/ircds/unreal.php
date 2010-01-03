@@ -134,8 +134,14 @@
 					$this->smo('o', "\002(\002Burst\002)\002 [".$mysql->getsetting('server')."] End of Incomming NetBurst.");
 					event('eos', substr($d_a[0],1));
 				}
-			}  elseif (@strtolower($d_a[1]) == "kick") {
+			} elseif (@strtolower($d_a[1]) == "kick") {
+				//:source KICK #channel user :reason
+				// Emit event: kick, $src $pwntUser $channel $reason
 				event('kick', substr($d_a[0],1), $d_a[3], $d_a[2], substr(implode(' ', array_slice($d_a,4)),1));
+			} elseif (@strtolower($d_a[1]) == "topic") {
+				//:source TOPIC #channel nick timestamp :topic
+				// Emit event: topic, $nick $chan $newtopic
+				event('topic',substr($d_a[0],1), $d_a[2], substr(implode(' ', array_slice($d_a,5)),1));
 			}
 		}
 
