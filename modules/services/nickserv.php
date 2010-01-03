@@ -75,13 +75,11 @@
 						$p = explode(':',$d[1]);
 						
 						if (isset($p[1])) {
-							if (isset($p[2])) {
-								event('msg',$from,'PHPServ','IDENTIFY '.$p[1].' '.$p[2]);
-							} else {
-								event('msg',$from,'PHPServ','IDENTIFY '.$p[1].' '.$p[0]);
-							}
-							return 0;
+							event('msg',$from,'PHPServ','IDENTIFY '.$p[1].' '.$p[0]);
+						} else {
+							event('msg',$from,'PHPServ','IDENTIFY '.$from.' '.$p[0]);
 						}
+						return 0;
 					} else {
 						$ircd->notice('NickServ',$from,'You aren\'t identified to your PHPServ account!');
 						return 0;
