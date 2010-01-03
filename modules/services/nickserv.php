@@ -33,7 +33,26 @@
 					return 1;
 				}
 
+				if ($uid == -1) {
+				// They aren't identified. The only command they can have is identify.
+					if (strtolower($d[0]) == 'identify' || strtolower($d[0]) == 'id') {
+						$p = explode(':',$d[1]);
+
+						if (isset($p[1])) {
+							event('msg',$from,'PHPServ','IDENTIFY '.$p[1].' '.$p[0]);
+						} else {
+							event('msg',$from,'PHPServ','IDENTIFY '.$from.' '.$p[0]);
+						}
+						return 0;
+					} else {
+						// And it wasn't that, so ignore them
+						$ircd->notice('NickServ',$from,'You aren\'t identified to your PHPServ account!');
+						return 0;
+					}
+				}
+
 				if ($uid != -1) {
+				// They're identified. Have fun.
 					if (strtolower($d[0]) == 'register') {
 						if ($mysql->get($mysql->sql('SELECT * FROM `nickserv` WHERE `nick` = '.$mysql->escape($from)))) {
 							$ircd->notice($to,$from,'Your nick is already owned by someone else.');
@@ -70,21 +89,13 @@
 							return 0;
 						}
 					}
-				} else {
-					if (strtolower($d[0]) == 'identify' || strtolower($d[0]) == 'id') {
-						$p = explode(':',$d[1]);
-						
-						if (isset($p[1])) {
-							event('msg',$from,'PHPServ','IDENTIFY '.$p[1].' '.$p[0]);
-						} else {
-							event('msg',$from,'PHPServ','IDENTIFY '.$from.' '.$p[0]);
-						}
-						return 0;
-					} else {
-						$ircd->notice('NickServ',$from,'You aren\'t identified to your PHPServ account!');
-						return 0;
-					}
 				}
+				if (strtolower($d[0]) == 'identify' || strtolower($d[0]) == 'id') {
+				// Already did the non-identification check above, so they're identified if they're here
+					$ircd->notice('NickServ',$from,'You\'re already identified.');
+					return 0;
+				}
+				// Didn't catch a command or we failed to return, claim unknown command
 				$ircd->notice('NickServ',$from,'Unknown command "'.$d[0].'". Try "/msg NickServ HELP" instead.');
 			}
 		}
