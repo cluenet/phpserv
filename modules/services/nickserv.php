@@ -25,7 +25,7 @@
 					$ircd->notice($to,$from,'Hi, I\'m NickServ! I will keep other users from stealing your nickname.');
 					$ircd->notice($to,$from,'Below is a list of supported commands:');
 					$ircd->notice($to,$from,'REGISTER                    - Link your nick to your PHPserv account.');
-					$ircd->notice($to,$from,'IDENTIFY [user] <password>  - Identify to your PHPserv account.');
+					$ircd->notice($to,$from,'IDENTIFY <password>[:user]  - Identify to your PHPserv account.');
 					$ircd->notice($to,$from,'GHOST <user>                - Kill a user on your nickname.');
 					$ircd->notice($to,$from,'DROP                        - Unlink your nick from your PHPserv account.');
 					$ircd->notice($to,$from,' ');
