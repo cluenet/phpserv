@@ -189,6 +189,42 @@
 			}
 		}
 
+		function event_topic ($nick,$chan,$newtopic) {
+			global $mysql;
+			$ircd = &ircd();
+			$cmd = '__e_topic_';
+			foreach ($this->bots as $bot) {
+				if (strtolower($bot['channel']) == strtolower($to)) {
+					$botid = $mysql->get($mysql->sql('SELECT `id` FROM `botserv_bots` WHERE `nick` = '.$mysql->escape($bot['nick'])));
+					$botid = $botid['id'];
+					if ($x = $mysql->get($mysql->sql('SELECT * FROM `botserv_cmds` WHERE `botid` = '.$mysql->escape($botid).' AND `cmd` = '.$mysql->escape($cmd)))) {
+						$nickd = $mysql->get($mysql->sql('SELECT * FROM `users` WHERE `nick` = '.$mysql->escape($from)));
+						$uid = $nickd['loggedin'];
+						$user = $mysql->get($mysql->sql('SELECT * FROM `access` WHERE `id` = '.$mysql->escape($uid)));
+						$level = $user['level'];
+						$user = $user['user'];
+						$blvl = $mysql->get($mysql->sql('SELECT * FROM `botserv_acc` WHERE `uid` = '.$mysql->escape($uid).' AND `botid` = '.$mysql->escape($botid)));
+						$blvl = $blvl['level'];
+						if ($mysql->get($mysql->sql('SELECT * FROM `botserv_cos` WHERE `uid` = '.$mysql->escape($uid).' AND `botid` = '.$mysql->escape($botid)))) { $coowner = 1; } else { $coowner = 0; }
+						if ($bot['owner'] == $uid) { $owner = 1; } else { $owner = 0; }
+						$vars = array
+						(
+							'user'	=> $user,
+							'uid'	=> $uid,
+							'nickd'	=> $nickd,
+							'level'	=> $level,
+							'topic'	=> $newtopic,
+							'owner'	=> $owner,
+							'coowner'=>$coowner,
+							'blvl'	=> $blvl,
+							'trig'	=> $bot['trig']
+						);
+						$this->sboteval($from,$cmd,$mode,$to,$bot['nick'],$x['data'],$vars);
+					}
+				}
+			}
+		}
+
 		function event_msg ($from,$to,$message) {
 			$d = explode(' ', $message);
 
@@ -199,14 +235,47 @@
 				if ($mysql->getaccess($from) > 100) {
 					if (strtolower($d[0]) == 'bot') {	
 						if (strtolower($d[1]) == 'add') {
+							// We're adding a bot. Let's make sure we're not adding a bot over a nickserv user
+							global $modules
+							if (isset($modules['nickserv'])) {
+								// NickServ is loaded, let's do the checks
+								if ($mysql->get($mysql->sql('SELECT * FROM `nickserv` WHERE `nick` = '.$mysql->escape($d[2])))) {
+									// Found something
+									$ircd->notice('BotController',$from,'"'.$d[2].'" is registered with NickServ!');
+									return 0;
+								}
+							// NickServ isn't loaded. Nothing to do here.
+							}
+							// nick!user@host validity checks here
+
+							// 0Bot 1Add 2<nick> 3<ident> 4<host> 5<owner> 6<channel>
+							if (preg_match('/^[-a-z\d.]/i',$d[4]) == 1) {
+								$ircd->notice('BotController',$from,'Illegal characters in the ident. Please try again.');
+								return 0;
+							}
+							if (preg_match('/^[-a-z\d.]/i',$d[5]) == 1) {
+								$ircd->notice('BotController',$from,'Illegal characters in the hostname. Please try again.');
+								return 0;
+							}
+							if (isValidNick($d[2]) != 1) {
+								$ircd->notice('BotController',$from,'Illegal nickname. I\'m calling the cops.');
+								return 0;
+							}
+							if (isValidNick($d[5]) != 1) {
+								$ircd->notice('BotController',$from,'Illegal owner nickname. Try using their current nick instead? :D');
+								return 0;
+							}
+
+							// Everything is sane. Add the bot.
 							$this->addbot($d[2],$d[3],$d[4],$d[5],$d[6]);
+							$ircd->notice('BotController',$from,$d[2].' ('.$d[3].'@'.$d[4].') created for '.$d[5].' on '.$d[6]);
 	
 						} elseif (strtolower($d[1]) == 'del') {
 							if ($this->bots[strtolower($d[2])]) {
 								$this->delbot($d[2]);
 
 							} else {
-								$ircd->notice('BotController', $from, $d[2].' is not a botcontroller bot!');
+								$ircd->notice('BotController', $from, $d[2].' is not a BotController bot!');
 
 							}
 						}

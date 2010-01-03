@@ -422,6 +422,8 @@
 		}
 	}
 
+	function isValidNick($nick) { return preg_match('#^[a-zA-Z\\\\[\]{}][a-zA-Z0-9\x2d\x5b-\x5e\x60\x7b\7d]*$#',$nick); }
+
 	function registerm () {
 		$class = new unreal;
 		register($class, __FILE__, 'UnrealIRCd Server Module', 'ircd');

@@ -71,7 +71,7 @@
 					} elseif (strtolower($d[0]) == 'ghost') {
 						$data = $mysql->get($mysql->sql('SELECT * FROM `nickserv` WHERE `nick` = '.$mysql->escape($d[1])));
 						if ($uid == $data['userid']) {
-							$ircd->svskill($d[1],'Connection reset by Ghost. This user has been Ghostified by '.$from);
+							$ircd->svskill($d[1],'Connection reset by Ghost. This user has been ghostified by '.$from);
 							$ircd->notice($to,$from,'Ghost busted. :D');
 							return 1;
 						} else {
