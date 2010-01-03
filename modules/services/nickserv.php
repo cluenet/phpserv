@@ -21,7 +21,7 @@
 				$nickd = $mysql->get($mysql->sql('SELECT * FROM `users` WHERE `nick` = '.$mysql->escape($from)));
 				$uid = $nickd['loggedin'];
 				
-				if ($strtolower($d[0]) == 'help') {
+				if (strtolower($d[0]) == 'help') {
 					$ircd->notice($to,$from,'Hi, I\'m NickServ! I will keep other users from stealing your nickname.');
 					$ircd->notice($to,$from,'Below is a list of supported commands:');
 					$ircd->notice($to,$from,'REGISTER                    - Link your nick to your PHPserv account.');
@@ -52,7 +52,7 @@
 					} elseif (strtolower($d[0]) == 'ghost') {
 						$data = $mysql->get($mysql->sql('SELECT * FROM `nickserv` WHERE `nick` = '.$mysql->escape($d[1])));
 						if ($uid == $data['userid']) {
-							$ircd->svskill($d[1],'Connection reset by NickServ. This user has been Ghostified by '.$from);
+							$ircd->svskill($d[1],'Connection reset by Ghost. This user has been Ghostified by '.$from);
 							$ircd->notice($to,$from,'Ghost busted. :D');
 							return 1;
 						} else {
