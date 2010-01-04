@@ -249,11 +249,12 @@
 							// nick!user@host validity checks here
 
 							// 0Bot 1Add 2<nick> 3<ident> 4<host> 5<owner> 6<channel>
-							if (preg_match('/^[-a-z\d.]/i',$d[4]) == 1) {
+							if (preg_match('/[^-a-z\d.]/i',$d[3]) == 1) {
+								// There are probably a few valid characters that this matches, but those would be rather unclueful
 								$ircd->notice('BotController',$from,'Illegal characters in the ident. Please try again.');
 								return 0;
 							}
-							if (preg_match('/^[-a-z\d.]/i',$d[5]) == 1) {
+							if (preg_match('/[^-a-z\d.]/i',$d[4]) == 1) {
 								$ircd->notice('BotController',$from,'Illegal characters in the hostname. Please try again.');
 								return 0;
 							}
