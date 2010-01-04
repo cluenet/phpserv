@@ -192,7 +192,7 @@
 		function event_topic ($nick,$chan,$newtopic) {
 			global $mysql;
 			$ircd = &ircd();
-			$cmd = '__e_topic_';
+			$cmd = '__e_topic';
 			foreach ($this->bots as $bot) {
 				if (strtolower($bot['channel']) == strtolower($to)) {
 					$botid = $mysql->get($mysql->sql('SELECT `id` FROM `botserv_bots` WHERE `nick` = '.$mysql->escape($bot['nick'])));
@@ -236,7 +236,7 @@
 					if (strtolower($d[0]) == 'bot') {	
 						if (strtolower($d[1]) == 'add') {
 							// We're adding a bot. Let's make sure we're not adding a bot over a nickserv user
-							global $modules
+							global $modules;
 							if (isset($modules['nickserv'])) {
 								// NickServ is loaded, let's do the checks
 								if ($mysql->get($mysql->sql('SELECT * FROM `nickserv` WHERE `nick` = '.$mysql->escape($d[2])))) {
@@ -257,15 +257,16 @@
 								$ircd->notice('BotController',$from,'Illegal characters in the hostname. Please try again.');
 								return 0;
 							}
-							if (isValidNick($d[2]) != 1) {
+							if ($ircd->isValidNick($d[2]) != 1) {
 								$ircd->notice('BotController',$from,'Illegal nickname. I\'m calling the cops.');
 								return 0;
 							}
+/*
 							if (isValidNick($d[5]) != 1) {
 								$ircd->notice('BotController',$from,'Illegal owner nickname. Try using their current nick instead? :D');
 								return 0;
 							}
-
+*/ // Owners don't follow IRC nick rules... Yet.
 							// Everything is sane. Add the bot.
 							$this->addbot($d[2],$d[3],$d[4],$d[5],$d[6]);
 							$ircd->notice('BotController',$from,$d[2].' ('.$d[3].'@'.$d[4].') created for '.$d[5].' on '.$d[6]);
