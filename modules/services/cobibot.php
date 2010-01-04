@@ -341,7 +341,7 @@
 			$ircd->join('CobiBot','#ClueIRC');
 			$ircd->join('CobiBot','#HelpOps');
 
-			$ircd->raw(':CobiBot SVSMODE #CobiBot -vhoaqIeb');
+			$ircd->svsmode('CobiBot','#CobiBot','-vhoaqIeb');
 			$ircd->mode('CobiBot','#CobiBot','-kfLljpcQKVCu');
 			$ircd->mode('CobiBot','#CobiBot','-zNSMTG+smntir');
 			$ircd->mode('CobiBot','#CobiBot','+ROAI Cobi!*@*');
