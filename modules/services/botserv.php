@@ -189,7 +189,7 @@
 			}
 		}
 
-		function event_topic ($nick,$chan,$newtopic) {
+		function event_topic ($from,$to,$newtopic) {
 			global $mysql;
 			$ircd = &ircd();
 			$cmd = '__e_topic';
