@@ -67,6 +67,7 @@
 					registerm();
 					if(function_exists('registerm'))
 						runkit_function_remove("registerm");
+					event('module_loaded',$file);
 					return 1;
 				}
 			}
