@@ -53,7 +53,7 @@
 						'owner'		=> $extra['uid']
 					);
 					$mysql->insert('chanserv', $data);
-					$ircd->notice($to, $from, 'Success. The channel ' . $extra[0] . ' is now registered.');
+					$ircd->notice($to, $from, 'Success. The channel ' . $rest[0] . ' is now registered.');
 				}
 			}
 		}
