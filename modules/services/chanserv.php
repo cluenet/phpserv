@@ -30,14 +30,12 @@
 
 				switch($command) {
 				case 'help':
-					$ircd->notice($to, $from, 'Hi, I\'m ChanServ! I will keep other users from stealing your channel(s).');
-					$ircd->notice($to, $from, 'Below is a list of supported commands:');
+					$ircd->notice($to, $from, '--- Commands overview ---');
 					$ircd->notice($to, $from, 'REGISTER <channel>    - Registers your channel on ChanServ');
 					$ircd->notice($to, $from, 'OP <channel> [nick]   - Ops you (or the given nick) on the given channel if you have access.');
 					$ircd->notice($to, $from, 'DEOP <channel> [nick] - Deops you (or the given nick) on the given channel if you have access.');
 					$ircd->notice($to, $from, 'DROP <channel>        - Drops the channel so other people can register it');
-					$ircd->notice($to, $from, ' ');
-					$ircd->notice($to, $from, 'Enjoy my services! I live to serve!');
+					$ircd->notice($to, $from, '--- End of help ---');
 					break;
 
 				case 'register':

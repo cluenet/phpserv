@@ -31,14 +31,26 @@
 						$ircd->notice($to,$from,'REGISTER                    - Link your nick to your PHPserv account.');
 						$ircd->notice($to,$from,'IDENTIFY <password>[:user]  - Identify to your PHPserv account.');
 						$ircd->notice($to,$from,'GHOST <user>                - Kill a user on your nickname.');
-						$ircd->notice($to,$from,'INFO [user]                 - Retrieve info on a user.');
+//						$ircd->notice($to,$from,'INFO [user] [nick|account]  - Retrieve info on a user.');
 						$ircd->notice($to,$from,'DROP                        - Unlink your nick from your PHPserv account.');
 						$ircd->notice($to,$from,'--- End of help ---');
 						return 1;
 					case 'info':
-						$ircd->notice($to,$from,'ERROR: CNT_CHICKENS_B4_HATCH');
-						$ircd->notice($to,$from,'Please complain to SnoFox if you get this message.');
-						return 1;
+/*						$who = (isset($d[1]) ? $d[1] : $from)
+						if (isset($d[2]) {
+							switch (strtolower($d[2])) {
+								case 'account':	$what = 'a'; break;
+								case 'nick': $what = 'n'; break;
+								default: $ircd->notice('NickServ',$from,'Invalid syntax. Try "/NS HELP INFO" instead.'); return 0;
+							}
+						} else {
+							$what = 'n';
+						}
+						// Okay, now we've found what we want to get. Let's get them.
+						switch ($what) {
+							case 'a':
+						$data = $mysql->get($mysql->sql('SELECT `user` FROM `access` WHERE `user` = '.$mysql->escape($d[1])))
+						*/
 					case 'id':
 					case 'ident':
 					case 'identify':
