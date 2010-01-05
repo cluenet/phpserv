@@ -55,7 +55,7 @@
 					$line = substr($line,80-strlen($from)-14); 
 					$ircd->notice($from,$to,$part);
 					while( strlen($line) > 0 ) {
-						$part = str_pad('',$size).' - '.substr($line,0,80-strlen($from)-17-$size);
+						$part = str_pad('',$size).'   '.substr($line,0,80-strlen($from)-17-$size);
 						$line = substr($line,80-strlen($from)-17-$size);
 						$ircd->notice($from,$to,$part);
 					}
