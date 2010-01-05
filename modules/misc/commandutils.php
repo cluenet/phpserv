@@ -70,7 +70,10 @@
 			
 			$parsed = explode(' ',$data,2);
 			
-			$rest = $parsed[1];
+			if(isset($parsed[1]))
+				$rest = $parsed[1];
+			else
+				$rest = '';
 			$command = strtolower($parsed[0]);
 			
 			if( $command == 'help' ) {
