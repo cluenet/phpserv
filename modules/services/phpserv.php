@@ -107,6 +107,15 @@
 					$ircd->notice('PHPServ',$from,'IDENTIFY <user> <pass> - Identifies you to a username in PHPServ.');
 					$ircd->notice('PHPServ',$from,'SETPASS  <pass>        - Changes your password if you are identified.');
 					$ircd->notice('PHPServ',$from,'LOGOUT                 - Does the reverse of IDENTIFY if you are identified.');
+				} elseif (strtolower($d[0]) == 'svninfo') {
+					if (pcntl_fork() == 0) {
+						$svn = popen('svn info 2>&1', 'r');
+						while (!feof($svn)) {
+							$ircd->notice('PHPServ',$from,fgets($svn,512));
+						}
+						pclose($svn);
+						die();
+					}
 				}
 			}
 		}
