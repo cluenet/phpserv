@@ -123,7 +123,10 @@
 				$nickd = $mysql->get($mysql->sql('SELECT * FROM `users` WHERE `nick` = ' . $mysql->escape($from)));
 				$uid = $nickd['loggedin'];
 
-				getmod('commandutils')->parsecommand($this, $uid == -1 ? 'anon' : 'auth', $from, $to, $message, array('uid' => $uid, 'nickd' => $nickd));
+				if($uid == -1)
+					$ircd->notice($to,$from,'You must be identified to use ChanServ.');
+				else
+					getmod('commandutils')->parsecommand($this, $uid == -1 ? 'anon' : 'auth', $from, $to, $message, array('uid' => $uid, 'nickd' => $nickd));
 			}
 		}
 
