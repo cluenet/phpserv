@@ -39,7 +39,7 @@
 				$size = max(array(strlen($value['command'].' '.$params),$size));
 			}
 				
-			$ircd->notice($from,$to,'---- '.$from.' Help ----');
+			$ircd->notice($from,$to,'---- Help ----');
 			foreach($this->commands[ get_class($module) ][ $section ] as $key => $value) {
 				$params = explode(' - ',$value['help'],2);
 				if(count($params) == 1)
@@ -62,7 +62,7 @@
 				} else
 					$ircd->notice($from,$to,$line);
 			}
-			$ircd->notice($from,$to,'---- End '.$from.' Help ----');
+			$ircd->notice($from,$to,'---- End Help ----');
 		}
 		
 		function parsecommand($module, $section, $from, $to, $data, $extra = array()) {
