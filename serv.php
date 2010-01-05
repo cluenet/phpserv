@@ -330,7 +330,7 @@
 
 				function setsetting ($name,$value,$section = 'core') {
 					if($this->issetting($name,$section))
-						$this->sql('update `settings` set `value` = '.$this->escape($value).', `section` = '.$this->escape($section).' where `name` = '.$this->escape($name));
+						$this->sql('update `settings` set `value` = '.$this->escape($value).' where `name` = '.$this->escape($name).' and `section` = '.$this->escape($section));
 					else
 						$this->addsetting($name,$value,$section);
 				}
