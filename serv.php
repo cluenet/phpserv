@@ -59,6 +59,7 @@
 					logit('Error loading module: '.$file.' Syntax Error.');
 					return 0;
 				} else {
+					event('module_load',$file);
 					runkit_import($file, 18);
 					logit('Imported module: '.$file.' Sent request for registration. Awaiting Module Registration.');
 					registerm();
@@ -96,6 +97,7 @@
 					logit('Error unloading module: '.$module.' Not Loaded.');
 					return 0;
 				} else {
+					event('module_unload',$module);
 					if (method_exists($modules[$module], "destruct")) {
 						$modules[$module]->destruct();
 					}
@@ -106,9 +108,11 @@
 						runkit_method_remove($classname,$y);
 					}
 
+					$file = $modinfo[$module]['file'];
 					unset($modules[$module]);
 					unset($modinfo[$module]);
 					logit('Destroyed module: '.$module);
+					event('module_destroy',$module,$file);
 					return 1;
 				}
 			}
@@ -121,6 +125,7 @@
 				$modinfo[$name]['desc'] = $desc;
 				logit('(Module Registration) Name: '.$name.' File: '.$file.' Description: '.$desc);
 				if (method_exists($modules[$name], "construct")) { $modules[$name]->construct(); }
+				event('module_register',$name);
 				return 1;
 			}
 
@@ -128,8 +133,10 @@
 				global $modules;
 				global $modinfo;
 				$file = $modinfo[$module]['file'];
+				event('module_reload_before',$module);
 				if (unload($module) == 1) {
 					if (load($file)) {
+						event('module_reload_after',$module);
 						return 1;
 					} else {
 						return 0;
