@@ -28,6 +28,7 @@
 			$cu->registercommand($this, 'auth', 'REGISTER', '<channel> - Registers your channel on ChanServ');
 			$cu->registercommand($this, 'auth', 'DROP', '<channel> - Drops the channel so other people can register it');
 			$cu->registercommand($this, 'auth', 'OP', '<channel> [nick] - Ops you (or the given nick) on the given channel if you have access.');
+			$cu->registercommand($this, 'auth', 'INFO', '<channel> - Returns some basic info on the channel.');
 			$cu->registercommand($this, 'auth', 'DEOP', '<channel> [nick] - Deops you (or the given nick) on the given channel if you have access.');
 		}
 
@@ -93,6 +94,28 @@
 					$ircd->svsmode('ChanServ', $rest[0], '-o ' . $user);
 				} else {
 					$ircd->notice($to, $from, 'Access denied.');
+				}
+			}
+		}
+
+		function command_auth_info($from, $to, $rest, $extra) {
+			global $mysql;
+			$ircd = &ircd();
+
+			if (!isset($rest[0])) {
+				$ircd->notice($to, $from, 'You need to supply a channel name.');
+			} else {
+				$data = $mysql->get(
+					$mysql->sql(
+						'SELECT `access`.`user` FROM `access`, `chanserv` WHERE `chanserv`.`channel` = ' . $mysql->escape($rest[0])
+						. 'AND `access`.`id` = `chanserv`.`owner`'));
+				if ($data) {
+					$ircd->notice($to, $from, '---- Info ----');
+					$ircd->notice($to, $from, 'Channel: ' . $rest[0]);
+					$ircd->notice($to, $from, 'Owner: ' . $data['user']);
+					$ircd->notice($to, $from, '---- End Info ----');
+				} else {
+					$ircd->notice($to, $from, 'That channel doesn\'t exist');
 				}
 			}
 		}
