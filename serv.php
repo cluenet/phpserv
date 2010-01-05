@@ -150,6 +150,12 @@
 				global $modules;
 				return $modules[$module];
 			}
+			
+			function ismod ($module) {
+				global $modules;
+				return isset($modules[$module]);
+			}
+			}
 
 			function ircd () {
 				global $modules;
