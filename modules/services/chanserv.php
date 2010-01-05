@@ -149,7 +149,7 @@
 				if($uid == -1)
 					$ircd->notice($to,$from,'You must be identified to use ChanServ.');
 				else
-					getmod('commandutils')->parsecommand($this, $uid == -1 ? 'anon' : 'auth', $from, $to, $message, array('uid' => $uid, 'nickd' => $nickd));
+					getmod('commandutils')->parsecommand($this, 'auth', $from, $to, $message, array('uid' => $uid, 'nickd' => $nickd));
 			}
 		}
 
