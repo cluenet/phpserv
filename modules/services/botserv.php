@@ -915,7 +915,7 @@
 						'posix_getrlimit,posix_getsid,posix_getuid,posix_isatty,posix_mkfifo,' .
 						'posix_mknod,posix_setegid,posix_seteuid,posix_setgid,posix_setpgid,' .
 						'posix_setsid,posix_setuid,posix_strerror,posix_times,posix_ttyname,' .
-						'posix_uname,mail,set_time_limit',
+						'posix_uname,mail,set_time_limit,error_log',
 				'disable_classes'=>'');
 			$this->bots[$nick]['sandbox'] = new Runkit_Sandbox($options);
 			$this->bots[$nick]['sandbox']['output_handler'] = array($this,'sbotout');
