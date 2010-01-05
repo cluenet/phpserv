@@ -27,8 +27,41 @@
 		
 		function sendhelp($module, $section, $from, $to) {
 			$ircd = &ircd();
-			foreach($this->commands[ get_class($module) ][ $section ] as $key => $value)
-				$ircd->notice($from,$to,$value['command'].' - '.$value['help']);
+			
+			$size = 0;
+			
+			foreach($this->commands[ get_class($module) ][ $section ] as $key => $value) {
+				$params = explode(' - ',$value['help'],2);
+				if(count($params) == 1)
+					$params = '';
+				else
+					$params = $params[0];					
+				$size = max(array(strlen($value['command'].' '.$params),$size));
+			}
+				
+			
+			foreach($this->commands[ get_class($module) ][ $section ] as $key => $value) {
+				$params = explode(' - ',$value['help'],2);
+				if(count($params) == 1)
+					$params = '';
+				else {
+					$value['help'] = $params[1];
+					$params = $params[0];
+				}
+				$line  = str_pad($values['command'].' '.$params,$size);
+				$line .= ' - ' . $value['help'];
+				if(80-strlen($from)-17-$size > 30) {
+					$part = substr($line,0,80-strlen($from)-14);
+					$line = substr($line,80-strlen($from)-14); 
+					$ircd->notice($from,$to,$part);
+					while( strlen($line) > 0 ) {
+						$part = str_pad('',$size).' - '.substr($line,0,80-strlen($from)-17-$size);
+						$line = substr($line,80-strlen($from)-17-$size);
+						$ircd->notice($from,$to,$part);
+					}
+				} else
+					$ircd->notice($from,$to,$line);
+			}
 		}
 		
 		function parsecommand($module, $section, $from, $to, $data, $extra = array()) {
