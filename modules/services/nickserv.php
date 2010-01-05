@@ -2,6 +2,8 @@
 	class nickserv {
 		function construct () {
 			$this->event_eos('a');
+			if(ismod('commandutils'))
+				$this->event_commandutils_load();
 		}
 		
 		function event_module_loaded($file) {
