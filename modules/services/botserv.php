@@ -437,9 +437,10 @@
 							$uid = $mysql->get($mysql->sql('SELECT `id` FROM `access` WHERE `user` = '.$mysql->escape($d[2])));
 							$uid = $uid['id'];
 							if ($clvl = $mysql->get($mysql->sql('SELECT `level` FROM `botserv_acc` WHERE `uid` = '.$mysql->escape($uid).' AND `botid` = '.$mysql->escape($botid)))) {
-//								$ircd->notice($to,$from,'User '.$d[2].' is already level '.$clvl['level'].' on me! Use del then add to change his level.');
+								$ircd->notice($to,$from,'User '.$d[2].' is already level '.$clvl['level'].' on me! Use del then add to change his level.');
 								// Uh, or we can delete it and add them again?
-								$mysql->sql('DELETE FROM `botserv_acc` WHERE `uid` = '.$mysql->escape($uid).' AND `botid` = '.$mysql->escape($botid));
+								// We could, but I like the current method.  It doesn't assume to know what the user wants.
+								//$mysql->sql('DELETE FROM `botserv_acc` WHERE `uid` = '.$mysql->escape($uid).' AND `botid` = '.$mysql->escape($botid));
 							} else {
 								$data = array
 								(
