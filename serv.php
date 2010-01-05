@@ -59,11 +59,14 @@
 					logit('Error loading module: '.$file.' Syntax Error.');
 					return 0;
 				} else {
+					if(function_exists('registerm'))
+						runkit_function_remove("registerm");
 					event('module_load',$file);
 					runkit_import($file, 18);
 					logit('Imported module: '.$file.' Sent request for registration. Awaiting Module Registration.');
 					registerm();
-					runkit_function_remove("registerm");
+					if(function_exists('registerm'))
+						runkit_function_remove("registerm");
 					return 1;
 				}
 			}
@@ -154,7 +157,6 @@
 			function ismod ($module) {
 				global $modules;
 				return isset($modules[$module]);
-			}
 			}
 
 			function ircd () {
