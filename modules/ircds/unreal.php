@@ -189,7 +189,7 @@
 		}
 
 		function addnick ($server,$nick,$ident,$host,$name) {
-			$this->svskill($nick,'Collision with nickname required by PHPServ.');
+			$this->svskill($nick,'Nick collision by services');
 			$this->raw('NICK '.$nick.' 1 '.time().' '.$ident.' '.$host.' '.$server.' 0 :'.$name);
 		}
 
@@ -225,6 +225,12 @@
 
 		function svsmode ($nick,$who,$mode) {
 			$this->raw(':'.$nick.' SVSMODE '.$who.' '.$mode);
+		}
+		function chghost ($from,$nick,$host) {
+			// $from = the nick to source the change from (ie HostServ)
+			// $nick = the nick recieving the change
+			// $host = the new hostname
+			$this->raw(':'.$from.' CHGHOST .'.$nick.' '.$host);
 		}
 
 		function eos ($server = NULL) {
@@ -422,6 +428,7 @@
 		}
 
 		function isValidNick($nick) { return preg_match('#^[a-zA-Z\\\\[\]{}][a-zA-Z0-9\x2d\x5b-\x5e\x60\x7b\7d]*$#',$nick); }
+		
 	}
 
 
