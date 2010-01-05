@@ -20,40 +20,46 @@
 				
 				$nickd = $mysql->get($mysql->sql('SELECT * FROM `users` WHERE `nick` = '.$mysql->escape($from)));
 				$uid = $nickd['loggedin'];
-				
-				if (strtolower($d[0]) == 'help') {
-					$ircd->notice($to,$from,'Hi, I\'m NickServ! I will keep other users from stealing your nickname.');
-					$ircd->notice($to,$from,'Below is a list of supported commands:');
-					$ircd->notice($to,$from,'REGISTER                    - Link your nick to your PHPserv account.');
-					$ircd->notice($to,$from,'IDENTIFY <password>[:user]  - Identify to your PHPserv account.');
-					$ircd->notice($to,$from,'GHOST <user>                - Kill a user on your nickname.');
-					$ircd->notice($to,$from,'DROP                        - Unlink your nick from your PHPserv account.');
-					$ircd->notice($to,$from,' ');
-					$ircd->notice($to,$from,'Enjoy my services! I live to serve!');
-					return 1;
-				}
 
-				if ($uid == -1) {
-				// They aren't identified. The only command they can have is identify.
-					if (strtolower($d[0]) == 'identify' || strtolower($d[0]) == 'id') {
-						$p = explode(':',$d[1]);
+				$command = strtolower($d[0]);
 
-						if (isset($p[1])) {
-							event('msg',$from,'PHPServ','IDENTIFY '.$p[1].' '.$p[0]);
+				// "Don't care" commands.
+
+				switch ($command) {
+					case 'help':
+						$ircd->notice($to,$from,'--- Commands overview ---');
+						$ircd->notice($to,$from,'REGISTER                    - Link your nick to your PHPserv account.');
+						$ircd->notice($to,$from,'IDENTIFY <password>[:user]  - Identify to your PHPserv account.');
+						$ircd->notice($to,$from,'GHOST <user>                - Kill a user on your nickname.');
+						$ircd->notice($to,$from,'INFO [user]                 - Retrieve info on a user.');
+						$ircd->notice($to,$from,'DROP                        - Unlink your nick from your PHPserv account.');
+						$ircd->notice($to,$from,'--- End of help ---');
+						return 1;
+					case 'info':
+						$ircd->notice($to,$from,'ERROR: CNT_CHICKENS_B4_HATCH');
+						$ircd->notice($to,$from,'Please complain to SnoFox if you get this message.');
+						return 1;
+					case 'id':
+					case 'ident':
+					case 'identify':
+						if ($uid == -1) {
+							$p = explode(':',$d[1]);
+
+							if (isset($p[1])) {
+								event('msg',$from,'PHPServ','IDENTIFY '.$p[1].' '.$p[0]);
+							} else {
+								event('msg',$from,'PHPServ','IDENTIFY '.$from.' '.$p[0]);
+							}
 						} else {
-							event('msg',$from,'PHPServ','IDENTIFY '.$from.' '.$p[0]);
+							$ircd->notice('NickServ',$from,'You\'re already identified!');
 						}
-						return 0;
-					} else {
-						// And it wasn't that, so ignore them
-						$ircd->notice('NickServ',$from,'You aren\'t identified to your PHPServ account!');
-						return 0;
-					}
+						return 1;
 				}
 
 				if ($uid != -1) {
 				// They're identified. Have fun.
-					if (strtolower($d[0]) == 'register') {
+				switch ($command) {
+					case 'register':
 						if ($mysql->get($mysql->sql('SELECT * FROM `nickserv` WHERE `nick` = '.$mysql->escape($from)))) {
 							$ircd->notice($to,$from,'Your nick is already owned by someone else.');
 							return 0;
@@ -65,10 +71,12 @@
 								'nick'		=> $from
 							);
 							$mysql->insert('nickserv',$data);
-							$ircd->notice($to,$from,'Success. Your nick is now linked to your PHPServ Account.');
+							$ircd->notice($to,$from,'"'.$from.'" is now linked to your PHPServ Account.');
 							return 1;
 						}
-					} elseif (strtolower($d[0]) == 'ghost') {
+					case 'recover':
+						// Recover is a temporary alias to ghost until someone implements SVSHOLD stuff
+					case 'ghost':
 						$data = $mysql->get($mysql->sql('SELECT * FROM `nickserv` WHERE `nick` = '.$mysql->escape($d[1])));
 						if ($uid == $data['userid']) {
 							$ircd->svskill($d[1],'Connection reset by Ghost. This user has been ghostified by '.$from);
@@ -78,7 +86,7 @@
 							$ircd->notice($to,$from,'You don\'t own that nick!');
 							return 0;
 						}
-					} elseif (strtolower($d[0]) == 'drop') {
+					case 'drop':
 						$data = $mysql->get($mysql->sql('SELECT * FROM `nickserv` WHERE `nick` = '.$mysql->escape($from)));
 						if ($uid == $data['userid']) {
 							$mysql->sql('DELETE FROM `nickserv` WHERE `nick` = '.$mysql->escape($from));
@@ -89,14 +97,14 @@
 							return 0;
 						}
 					}
-				}
-				if (strtolower($d[0]) == 'identify' || strtolower($d[0]) == 'id') {
-				// Already did the non-identification check above, so they're identified if they're here
-					$ircd->notice('NickServ',$from,'You\'re already identified.');
+				} else {
+					// Unidentified, tell them
+					$ircd->notice($to,$from,'You\'re not identified to PHPserv!');
 					return 0;
 				}
-				// Didn't catch a command or we failed to return, claim unknown command
-				$ircd->notice('NickServ',$from,'Unknown command "'.$d[0].'". Try "/msg NickServ HELP" instead.');
+
+			// Didn't catch a command or we failed to return, claim unknown command
+			$ircd->notice('NickServ',$from,'Unknown command "'.$d[0].'". Try "/msg NickServ HELP" instead.');
 			}
 		}
 
