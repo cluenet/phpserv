@@ -88,7 +88,7 @@
 							$ircd->notice($to, $from, 'Channel ' . $d[1] . ' dropped.');
 							return 1;
 						} else {
-							$ircd->notice($to, $from, 'You don\' own that channel!');
+							$ircd->notice($to, $from, 'You don\'t own that channel!');
 							return 0;
 						}
 					}
