@@ -100,4 +100,28 @@
 				}
 			}
 		}
+
+		function event_kill($from, $to, $reason) {
+			global $mysql;
+			$ircd = &ircd();
+
+			if (strtolower($to) == 'chanserv') {
+				$ircd->addnick($mysql->getsetting('server'), 'ChanServ', 'Services', 'Services.ClueNet.Org', 'Channel Service');
+				$ircd->join('ChanServ', '#services');
+				$ircd->svskill($from, 'Killing service bots isn\'t a smart idea.');
+			}
+		}
+
+		function event_eos($a) {
+			global $mysql;
+			$ircd = &ircd();
+
+			$ircd->addnick($mysql->getsetting('server'), 'ChanServ', 'Services', 'Services.ClueNet.Org', 'Channel Service');
+			$ircd->join('ChanServ', '#services');
+		}
+	}
+
+	function registerm() {
+		$class = new chanserv;
+		register($class, __FILE__, 'ChanServ Module', 'chanserv');
 	}
