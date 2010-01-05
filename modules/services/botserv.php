@@ -1090,6 +1090,8 @@
 		}
 
 		function sbotout ($d) {
+			if (!isset($this->curbot) || $this->curbot == '')
+				return;
 			$ircd = &ircd();
 			$x = explode("\n",$d);
 			$nick = $this->curbot;
