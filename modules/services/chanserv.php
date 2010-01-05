@@ -15,7 +15,8 @@
 
 		function event_module_loaded($file) {
 			if (realpath($file) == realpath(__FILE__))
-				load('modules/misc/commandutils.php');
+				if(!ismod('commandutils'))
+					load('modules/misc/commandutils.php');
 		}
 
 		function event_commandutils_load() {
