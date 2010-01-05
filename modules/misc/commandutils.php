@@ -61,6 +61,7 @@
 				return 0;
 			
 			call_user_func_array(array($module, $funct), array($from,$to,$rest,$extra));
+			return 1;
 		}
 		
 		function event_msg($from, $to, $message) {
