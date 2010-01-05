@@ -321,25 +321,33 @@
 					$this->sql('DELETE FROM `servers`');
 				}
 
-				function getsetting ($name) {
-					$tmp = $this->sql('select `value` from `settings` where `name` = '.$this->escape($name));
+				function getsetting ($name,$section = 'core') {
+					$tmp = $this->sql('select `value` from `settings` where `name` = '.$this->escape($name).' and `section` = '.$this->escape($section));
 					$val = $this->get($tmp);
 					$val = $val['value'];
 					return $val;
 				}
 
-				function setsetting ($name,$value) {
-					$tmp = $this->sql('update `settings` set `value` = '.$this->escape($value).' where `name` = '.$this->escape($name));
+				function setsetting ($name,$value,$section = 'core') {
+					if($this->issetting($name,$section))
+						$this->sql('update `settings` set `value` = '.$this->escape($value).', `section` = '.$this->escape($section).' where `name` = '.$this->escape($name));
+					else
+						$this->addsetting($name,$value,$section);
 				}
 
-				function addsetting ($name,$value) {
-					$tmp = $this->sql('insert into `settings` (`name`,`value`) values ('.$this->escape($name).','.$this->escape($value).')');
+				function addsetting ($name,$value,$section = 'core') {
+					$this->sql('insert into `settings` (`name`,`value`,`section`) values ('.$this->escape($name).','.$this->escape($value).','.$this->escape($section).')');
 				}
 
-				function delsetting ($name) {
-					$tmp = $this->sql('delete from `settings` where `name` = '.$this->escape($name));
+				function delsetting ($name,$section = 'core') {
+					$this->sql('delete from `settings` where `name` = '.$this->escape($name).' and `section` = '.$this->escape($section));
 				}
-
+				
+				function issetting ($name,$section = 'core') {
+					if($this->get($this->sql('select `id` from `settings` where `name` = '.$this->escape($name).' and `section` = '.$this->escape($section))) === false)
+						return false;
+					return true;
+				}
 			}
 		
 
