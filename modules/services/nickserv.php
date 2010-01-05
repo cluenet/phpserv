@@ -51,6 +51,7 @@
 							case 'a':
 						$data = $mysql->get($mysql->sql('SELECT `user` FROM `access` WHERE `user` = '.$mysql->escape($d[1])))
 						*/
+						break;
 					case 'id':
 					case 'ident':
 					case 'identify':

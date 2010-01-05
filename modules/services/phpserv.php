@@ -85,7 +85,7 @@
 					}
 
 				} else {
-					if (strtolower($d[0]) == 'identify') {
+					if (strtolower($d[0]) == 'identify' || strtolower($d[0]) == 'id') {
 						if (isset($d[1]) and isset($d[2]) and $mysql->loginaccess($from,$d[1],$d[2])) { $ircd->notice('PHPServ',$from,'Identify processed successfully.'); event('identify',$from); }
 						else { $ircd->notice('PHPServ',$from,'Error while processing identify.'); }
 					} elseif (strtolower($d[0]) == 'register') {

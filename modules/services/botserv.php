@@ -15,19 +15,19 @@
 				$ircd->quit($nick, 'Module Unloaded.');
 			}
 			unset($this->bots);
-			$ircd->quit('BotController', 'Module Unloaded.');
+			$ircd->quit('BotServ', 'Module Unloaded.');
 		}
 
 		function event_kill ($from,$to,$reason) {
 			global $mysql;
 			$ircd = &ircd();
 
-			if (strtolower($to) == 'botcontroller') {
-				$ircd->addnick($mysql->getsetting('server'),'BotController','Services','Services.Idle.us','Bot Service');
-				$ircd->join('BotController','#services');
-				$ircd->join('BotController','#bots');
-				$ircd->mode('BotController','#services','+oa BotController BotController');
-				$ircd->mode('BotController','#bots','+oa BotController BotController');
+			if (strtolower($to) == 'botserv') {
+				$ircd->addnick($mysql->getsetting('server'),'BotServ','Services','Services.ClueNet.org','Bot Service');
+				$ircd->join('BotServ','#services');
+				$ircd->join('BotServ','#bots');
+				$ircd->mode('BotServ','#services','+oa BotServ BotServ');
+//				$ircd->mode('BotController','#bots','+oa BotServ BotServ');
 				$ircd->svso($from,'-');
 			} elseif (isset($this->bots[strtolower($to)])) {
 				$this->initbot(strtolower($to));
@@ -231,7 +231,7 @@
 			global $mysql;
 			$ircd = &ircd();
 
-			if (strtolower($to) == 'botcontroller') {
+			if (strtolower($to) == 'botserv') {
 				if ($mysql->getaccess($from) > 100) {
 					if (strtolower($d[0]) == 'bot') {	
 						if (strtolower($d[1]) == 'add') {
@@ -241,7 +241,7 @@
 								// NickServ is loaded, let's do the checks
 								if ($mysql->get($mysql->sql('SELECT * FROM `nickserv` WHERE `nick` = '.$mysql->escape($d[2])))) {
 									// Found something
-									$ircd->notice('BotController',$from,'"'.$d[2].'" is registered with NickServ!');
+									$ircd->notice('BotServ',$from,'"'.$d[2].'" is registered with NickServ!');
 									return 0;
 								}
 							// NickServ isn't loaded. Nothing to do here.
@@ -251,15 +251,15 @@
 							// 0Bot 1Add 2<nick> 3<ident> 4<host> 5<owner> 6<channel>
 							if (preg_match('/[^-a-z\d.]/i',$d[3]) == 1) {
 								// There are probably a few valid characters that this matches, but those would be rather unclueful
-								$ircd->notice('BotController',$from,'Illegal characters in the ident. Please try again.');
+								$ircd->notice('BotServ',$from,'Illegal characters in the ident. Please try again.');
 								return 0;
 							}
 							if (preg_match('/[^-a-z\d.]/i',$d[4]) == 1) {
-								$ircd->notice('BotController',$from,'Illegal characters in the hostname. Please try again.');
+								$ircd->notice('BotServ',$from,'Illegal characters in the hostname. Please try again.');
 								return 0;
 							}
 							if ($ircd->isValidNick($d[2]) != 1) {
-								$ircd->notice('BotController',$from,'Illegal nickname. I\'m calling the cops.');
+								$ircd->notice('BotServ',$from,'Illegal nickname. I\'m calling the cops.');
 								return 0;
 							}
 /*
@@ -270,14 +270,14 @@
 */ // Owners don't follow IRC nick rules... Yet.
 							// Everything is sane. Add the bot.
 							$this->addbot($d[2],$d[3],$d[4],$d[5],$d[6]);
-							$ircd->notice('BotController',$from,$d[2].' ('.$d[3].'@'.$d[4].') created for '.$d[5].' on '.$d[6]);
+							$ircd->notice('BotServ',$from,$d[2].' ('.$d[3].'@'.$d[4].') created for '.$d[5].' on '.$d[6]);
 	
 						} elseif (strtolower($d[1]) == 'del') {
 							if ($this->bots[strtolower($d[2])]) {
 								$this->delbot($d[2]);
 
 							} else {
-								$ircd->notice('BotController', $from, $d[2].' is not a BotController bot!');
+								$ircd->notice('BotServ', $from, $d[2].' is not a BotServ bot!');
 
 							}
 						}
@@ -290,58 +290,65 @@
 									'data'	=> implode(" ",array_splice($d,3))
 								);
 								$mysql->insert('botserv_cmdtpls',$data);
-								$ircd->notice('BotController', $from, 'Success.');
+								$ircd->notice('BotServ', $from, 'Command template "'.$d[2].'" added.');
 						} elseif (strtolower($d[1]) == 'del') {
 								$mysql->sql('DELETE FROM `botserv_cmdtpls` WHERE `cmd` = '.$mysql->escape($d[2]));
-								$ircd->notice('BotController', $from, 'Success.');
+								$ircd->notice('BotServ', $from, 'Command template "'.$d[2].'" deleted.');
 						}
 					} elseif (strtolower($d[0]) == 'help') {
 						if (!isset($d[1])) {
-							$ircd->notice($to,$from,'BotController Help:');
+							$ircd->notice($to,$from,'--- Commands overview ---');
 							$ircd->notice($to,$from,'Bot                   Manages the bot list.');
 							$ircd->notice($to,$from,'Template         Manages the template list.');
 							$ircd->notice($to,$from,'For more information on these topics:');
-							$ircd->notice($to,$from,'/msg BotController Help Topic');
+							$ircd->notice($to,$from,'/msg BotServ Help Topic');
+							$ircd->notice($to,$from,'--- End of help ---');
 						} elseif (strtolower($d[1]) == 'bot') {
 							if (!isset($d[2])) {
-								$ircd->notice($to,$from,'BotController Help - Bot:');
-								$ircd->notice($to,$from,'Add                   Add a bot to BotController.');
-								$ircd->notice($to,$from,'Del              Remove a bot from BotController.');
+								$ircd->notice($to,$from,'--- BotServ Help - Bot ---');
+								$ircd->notice($to,$from,'Add                   Add a bot to BotServ.');
+								$ircd->notice($to,$from,'Del              Remove a bot from BotServ.');
 								$ircd->notice($to,$from,'For more information on these topics:');
-								$ircd->notice($to,$from,'/msg BotController Help Bot Topic');
+								$ircd->notice($to,$from,'/msg BotServ Help Bot Topic');
+								$ircd->notice($to,$from,'--- End of help ---');
 							} elseif (strtolower($d[2]) == 'add') {
-								$ircd->notice($to,$from,'BotController Help - Bot Add:');
-								$ircd->notice($to,$from,'Adds a bot to BotController.');
-								$ircd->notice($to,$from,'Syntax: /msg BotController Bot Add <nick> <ident> <host> <owner> <channel>');
+								$ircd->notice($to,$from,'--- BotServ Help - Bot Add ---');
+								$ircd->notice($to,$from,'Creates a BotServ bot.');
+								$ircd->notice($to,$from,'Syntax: /msg BotServ Bot Add <nick> <ident> <host> <owner> <channel>');
 								$ircd->notice($to,$from,'<nick> is the nick that the bot will use.');
 								$ircd->notice($to,$from,'<ident> is the ident that the bot will use.');
 								$ircd->notice($to,$from,'<host> is the host that the bot will use.');
 								$ircd->notice($to,$from,"<owner> is the owner's OperServ UserName.");
 								$ircd->notice($to,$from,'<channel> is the channel that the bot will operate on.');
+								$ircd->notice($to,$from,'--- End of help ---');
 							} elseif (strtolower($d[2]) == 'del') {
-								$ircd->notice($to,$from,'BotController Help - Bot Del:');
-								$ircd->notice($to,$from,'Removes a bot from BotController.');
-								$ircd->notice($to,$from,'Syntax: /msg BotController Bot Del <nick>');
+								$ircd->notice($to,$from,'--- BotServ Help - Bot Del ---');
+								$ircd->notice($to,$from,'Removes a BotServ bot.');
+								$ircd->notice($to,$from,'Syntax: /msg BotServ Bot Del <nick>');
 								$ircd->notice($to,$from,'<nick> is the nick that the bot is using.');
+								$ircd->notice($to,$from,'--- End of help ---');
 							}
 						} elseif (strtolower($d[1]) == 'template') {
 							if (!isset($d[2])) {
-								$ircd->notice($to,$from,'BotController Help - Template:');
-								$ircd->notice($to,$from,'Add              Add a template to BotController.');
-								$ircd->notice($to,$from,'Del         Remove a template from BotController.');
+								$ircd->notice($to,$from,'--- BotServ Help - Template ---');
+								$ircd->notice($to,$from,'Add              Add a template to BotServ.');
+								$ircd->notice($to,$from,'Del         Remove a template from BotServ.');
 								$ircd->notice($to,$from,'For more information on these topics:');
-								$ircd->notice($to,$from,'/msg BotController Help Template Topic');
+								$ircd->notice($to,$from,'/msg BotServ Help Template Topic');
+								$ircd->notice($to,$from,'--- End of help ---');
 							} elseif (strtolower($d[2]) == 'add') {
-								$ircd->notice($to,$from,'BotController Help - Template Add:');
-								$ircd->notice($to,$from,'Adds a template to BotController.');
-								$ircd->notice($to,$from,'Syntax: /msg BotController Template Add <command> <script>');
+								$ircd->notice($to,$from,'--- BotServ Help - Template Add ---');
+								$ircd->notice($to,$from,'Adds a template to BotServ bots.');
+								$ircd->notice($to,$from,'Syntax: /msg BotServ Template Add <command> <script>');
 								$ircd->notice($to,$from,'<command> is the command of the template to add.');
 								$ircd->notice($to,$from,'<script> is the script of the template to add.');
+								$ircd->notice($to,$from,'--- End of help ---');
 							} elseif (strtolower($d[2]) == 'del') {
-								$ircd->notice($to,$from,'BotController Help - Template Del:');
-								$ircd->notice($to,$from,'Removes a template from BotController.');
-								$ircd->notice($to,$from,'Syntax: /msg BotController Template Del <command>');
+								$ircd->notice($to,$from,'--- BotServ Help - Template Del ---');
+								$ircd->notice($to,$from,'Removes a template from BotServ bots.');
+								$ircd->notice($to,$from,'Syntax: /msg BotServ Template Del <command>');
 								$ircd->notice($to,$from,'<command> is the command of the template to remove.');
+								$ircd->notice($to,$from,'--- End of help ---');
 							}
 						}
 					}
@@ -360,7 +367,7 @@
 					if (strtolower($d[0]) == 'command') {
 						if (strtolower($d[1]) == 'add') {
 							if ($mysql->get($mysql->sql('SELECT `id` FROM `botserv_cmds` WHERE `cmd` = '.$mysql->escape($d[2]).' AND `botid` = '.$mysql->escape($botid)))) {
-								$ircd->notice($to,$from,'Command exists.');
+								$ircd->notice($to,$from,'Command already exists.');
 							} else {
 								$data = array
 								(
@@ -370,21 +377,21 @@
 									'data'	=> implode(" ",array_splice($d,3))
 								);
 								$mysql->insert('botserv_cmds',$data);
-								$ircd->notice($to,$from,'Success.');
+								$ircd->notice($to,$from,'Command "'.$d[2].'" added.');
 							}
 						} elseif (strtolower($d[1]) == 'del') {
 							if ($mysql->get($mysql->sql('SELECT `id` FROM `botserv_cmds` WHERE `cmd` = '.$mysql->escape($d[2]).' AND `botid` = '.$mysql->escape($botid)))) {
 								$mysql->sql('DELETE FROM `botserv_cmds` WHERE `cmd` = '.$mysql->escape($d[2]).' AND `botid` = '.$mysql->escape($botid));
-								$ircd->notice($to,$from,'Success.');
+								$ircd->notice($to,$from,'Command "'.$d[2].'" deleted.');
 							} else {
-								$ircd->notice($to,$from,'No such command.');
+								$ircd->notice($to,$from,'No such command "'.$d[2].'".');
 							}
 						} elseif (strtolower($d[1]) == 'show') {
 							if ($mysql->get($mysql->sql('SELECT `id` FROM `botserv_cmds` WHERE `cmd` = '.$mysql->escape($d[2]).' AND `botid` = '.$mysql->escape($botid)))) {
 								$data = $mysql->get($mysql->sql('SELECT `data` FROM `botserv_cmds` WHERE `cmd` = '.$mysql->escape($d[2]).' AND `botid` = '.$mysql->escape($botid)));
 								$ircd->notice($to,$from,$data['data']);
 							} else {
-								$ircd->notice($to,$from,'No such command.');
+								$ircd->notice($to,$from,'No such command "'.$d[2].'".');
 							}
 						} elseif (strtolower($d[1]) == 'list') {
 							$ircd->notice($to,$from,'List of commands:');
@@ -404,13 +411,13 @@
 									$data = $mysql->get($mysql->sql('SELECT `data` FROM `botserv_cmdtpls` WHERE `cmd` = '.$mysql->escape($d[3])));
 									$ircd->notice($to,$from,$data['data']);
 								} else {
-									$ircd->notice($to,$from,'No such template.');
+								$ircd->notice($to,$from,'No such template "'.$d[2].'".');
 								}
 							} elseif (strtolower($d[2]) == 'add') {
 								if ($mysql->get($mysql->sql('SELECT `id` FROM `botserv_cmdtpls` WHERE `cmd` = '.$mysql->escape($d[3])))) {
 									$data = $mysql->get($mysql->sql('SELECT * FROM `botserv_cmdtpls` WHERE `cmd` = '.$mysql->escape($d[3])));
 									if ($mysql->get($mysql->sql('SELECT `id` FROM `botserv_cmds` WHERE `cmd` = '.$mysql->escape($d[3]).' AND `botid` = '.$mysql->escape($botid)))) {
-										$ircd->notice($to,$from,'Command exists.');
+										$ircd->notice($to,$from,'Command already exists.');
 									} else {
 										$data = array
 										(
@@ -420,7 +427,7 @@
 											'data'	=> $data['data']
 										);
 										$mysql->insert('botserv_cmds',$data);
-										$ircd->notice($to,$from,'Success.');
+										$ircd->notice($to,$from,'Added command "'.$d[3].'".');
 									}
 								}
 							}
@@ -430,7 +437,9 @@
 							$uid = $mysql->get($mysql->sql('SELECT `id` FROM `access` WHERE `user` = '.$mysql->escape($d[2])));
 							$uid = $uid['id'];
 							if ($clvl = $mysql->get($mysql->sql('SELECT `level` FROM `botserv_acc` WHERE `uid` = '.$mysql->escape($uid).' AND `botid` = '.$mysql->escape($botid)))) {
-								$ircd->notice($to,$from,'User '.$d[2].' is already level '.$clvl['level'].' on me! Use del then add to change his level.');
+//								$ircd->notice($to,$from,'User '.$d[2].' is already level '.$clvl['level'].' on me! Use del then add to change his level.');
+								// Uh, or we can delete it and add them again?
+								$mysql->sql('DELETE FROM `botserv_acc` WHERE `uid` = '.$mysql->escape($uid).' AND `botid` = '.$mysql->escape($botid));
 							} else {
 								$data = array
 								(
@@ -440,16 +449,16 @@
 									'level'	=> $d[3]
 								);
 								$mysql->insert('botserv_acc',$data);
-								$ircd->notice($to,$from,'Success.');
+								$ircd->notice($to,$from,$d[2].' added to my access list at level '.$d[3].'.');
 							}
 						} elseif (strtolower($d[1]) == 'del') {
 							$uid = $mysql->get($mysql->sql('SELECT `id` FROM `access` WHERE `user` = '.$mysql->escape($d[2])));
 							$uid = $uid['id'];
 							if ($clvl = $mysql->get($mysql->sql('SELECT `level` FROM `botserv_acc` WHERE `uid` = '.$mysql->escape($uid).' AND `botid` = '.$mysql->escape($botid)))) {
 								$mysql->sql('DELETE FROM `botserv_acc` WHERE `uid` = '.$mysql->escape($uid).' AND `botid` = '.$mysql->escape($botid));
-								$ircd->notice($to,$from,'Success.');
+								$ircd->notice($to,$from,'Deleted '.$d[2].' from my access list.');
 							} else {
-								$ircd->notice($to,$from,'That user doesn\'t have access to me!');
+								$ircd->notice($to,$from,$d[2].' doesn\'t have access to me!');
 							}
 						} elseif (strtolower($d[1]) == 'list') {
 							$ircd->notice($to,$from,'Here are all the users who have access to me:');
@@ -472,27 +481,27 @@
 									'uid'	=> $uid
 								);
 								$mysql->insert('botserv_cos',$data);
-								$ircd->notice($to,$from,'Success.');
+								$ircd->notice($to,$from,$d[2].' added to the co-owners list.');
 							}
 						} elseif (strtolower($d[1]) == 'del') {
 							$uid = $mysql->get($mysql->sql('SELECT `id` FROM `access` WHERE `user` = '.$mysql->escape($d[2])));
 							$uid = $uid['id'];
 							if ($clvl = $mysql->get($mysql->sql('SELECT * FROM `botserv_cos` WHERE `uid` = '.$mysql->escape($uid).' AND `botid` = '.$mysql->escape($botid)))) {
 								$mysql->sql('DELETE FROM `botserv_cos` WHERE `uid` = '.$mysql->escape($uid).' AND `botid` = '.$mysql->escape($botid));
-								$ircd->notice($to,$from,'Success.');
+								$ircd->notice($to,$from,'Deleted '.$d[2].' from the co-owners list.');
 							} else {
-								$ircd->notice($to,$from,'That user doesn\'t have coowner access to me!');
+								$ircd->notice($to,$from,$d[2].' doesn\'t have co-owner access to me!');
 							}
 						} elseif (strtolower($d[1]) == 'list') {
-							$ircd->notice($to,$from,'Here are all the users who have coowner access to me:');
+							$ircd->notice($to,$from,'Here are all the users who have co-owner access to me:');
 							$result = $mysql->sql('SELECT `access`.`user` FROM `botserv_cos`,`access` WHERE `botserv_cos`.`botid` = '.$mysql->escape($botid).' AND `access`.`id` = `botserv_cos`.`uid`');
 							while ($d = $mysql->get($result)) {
-								$ircd->notice($to,$from,$d['user'].' has level coowner access to me.');
+								$ircd->notice($to,$from,$d['user'].' has level co-owner access to me.');
 							}
 						}
 					} elseif (strtolower($d[0]) == 'set') {	
 						if (strtolower($d[1]) == 'trigger') {
-							if (($d[2] == '.') or ($d[2] == '-') or ($d[2] == '+') or ($d[2] == '!') or ($d[2] == '`') or ($d[2] == '~') or ($d[2] == '*') or ($d[2] == ';') or ($d[2] == '\'')) {
+							if (($d[2] == '.') or ($d[2] == '-') or ($d[2] == '+') or ($d[2] == '!') or ($d[2] == '`') or ($d[2] == '~') or ($d[2] == '*') or ($d[2] == ';') or ($d[2] == '\'') or ($d[2] == ',')) {
 								$mysql->sql('UPDATE `botserv_bots` SET `trig` = '.$mysql->escape($d[2]).' WHERE `id` = '.$mysql->escape($botid));
 								$this->bots[strtolower($to)]['trig'] = $d[2];
 								$ircd->notice($to,$from,'Success.');
@@ -502,15 +511,16 @@
 						}
 					} elseif (strtolower($d[0]) == 'help') {
 						if (!isset($d[1])) {
-							$ircd->notice($to,$from,'Bot Help:');
+							$ircd->notice($to,$from,'--- Commands overview ---');
 							$ircd->notice($to,$from,'Command     Manages the bot\'s script list.');
 							$ircd->notice($to,$from,'Access        Manages the bot\'s user list.');
 							$ircd->notice($to,$from,'Set         Manages the bot\'s settings.');
 							$ircd->notice($to,$from,'For more information on these topics:');
 							$ircd->notice($to,$from,'/msg '.$to.' Help Topic');
+							$ircd->notice($to,$from,'--- End of help ---');
 						} elseif (strtolower($d[1]) == 'command') {
 							if (!isset($d[2])) {
-								$ircd->notice($to,$from,'Bot Help - Command:');
+								$ircd->notice($to,$from,'--- Bot Help - Command ---');
 								$ircd->notice($to,$from,'Add               Add a script to your bot.');
 								$ircd->notice($to,$from,'Del          Remove a script from your bot.');
 								$ircd->notice($to,$from,'Show            Get a script from your bot.');
@@ -518,119 +528,139 @@
 								$ircd->notice($to,$from,'Template         View/use script templates.');
 								$ircd->notice($to,$from,'For more information on these topics:');
 								$ircd->notice($to,$from,'/msg '.$to.' Help Command Topic');
+								$ircd->notice($to,$from,'--- End of help ---');
 							} elseif (strtolower($d[2]) == 'add') {
-								$ircd->notice($to,$from,'Bot Help - Command Add:');
+								$ircd->notice($to,$from,'--- Bot Help - Command Add ---');
 								$ircd->notice($to,$from,'Adds a script to your bot.');
 								$ircd->notice($to,$from,'Syntax: /msg '.$to.' Command Add <command> <script>');
 								$ircd->notice($to,$from,'<command> is the command that you wish to add a script for.');
-								$ircd->notice($to,$from,'Commands are issued by typing .<command> in the channel.');
+								$ircd->notice($to,$from,'Commands are issued by typing <trigger><command> in the channel.');
+								$ircd->notice($to,$from,'For example: .slap Cobi');
+								$ircd->notice($to,$from,'-');
 								$ircd->notice($to,$from,'There are a few special commands:');
 								$ircd->notice($to,$from,'__e_join -- on join event');
 								$ircd->notice($to,$from,'__e_part -- on part event');
 								$ircd->notice($to,$from,'__e_kick -- on kick event');
 								$ircd->notice($to,$from,'__e_mode -- on mode event');
+								$ircd->notice($to,$from,'__e_topic -- on topic change event');
 								$ircd->notice($to,$from,'__pm__<command> -- command issued by /msg');
-								$ircd->notice($to,$from,'<script> is the script for the command.');
-								$ircd->notice($to,$from,'This will be documented more later.');
+								$ircd->notice($to,$from,'<script> is the PHP script for the command.');
+								$ircd->notice($to,$from,'--- End of help ---');
 							} elseif (strtolower($d[2]) == 'del') {
-								$ircd->notice($to,$from,'BotController Help - Command Del:');
+								$ircd->notice($to,$from,'--- Bot Help - Command Del ---');
 								$ircd->notice($to,$from,'Removes a script from your bot.');
 								$ircd->notice($to,$from,'Syntax: /msg '.$to.' Command Del <command>');
 								$ircd->notice($to,$from,'<command> is the command that you wish to remove.');
+								$ircd->notice($to,$from,'--- End of help ---');
 							} elseif (strtolower($d[2]) == 'show') {
-								$ircd->notice($to,$from,'BotController Help - Command Show:');
+								$ircd->notice($to,$from,'--- Bot Help - Command Show ---');
 								$ircd->notice($to,$from,'Gets a script from your bot.');
 								$ircd->notice($to,$from,'Syntax: /msg '.$to.' Command Show <command>');
 								$ircd->notice($to,$from,'<command> is the command that you wish to view.');
+								$ircd->notice($to,$from,'--- End of help ---');
 							} elseif (strtolower($d[2]) == 'list') {
-								$ircd->notice($to,$from,'BotController Help - Command List:');
+								$ircd->notice($to,$from,'--- Bot Help - Command List ---');
 								$ircd->notice($to,$from,'Lists all scripts on your bot.');
 								$ircd->notice($to,$from,'Syntax: /msg '.$to.' Command List');
+								$ircd->notice($to,$from,'--- End of help ---');
 							} elseif (strtolower($d[2]) == 'template') {
 								if (!isset($d[3])) {
-									$ircd->notice($to,$from,'Bot Help - Command Template:');
+									$ircd->notice($to,$from,'--- Bot Help - Command Template ---');
 									$ircd->notice($to,$from,'Add      Add a script template to your bot.');
 									$ircd->notice($to,$from,'Show                 Get a script template.');
 									$ircd->notice($to,$from,'List            List all script templates.');
 									$ircd->notice($to,$from,'For more information on these topics:');
 									$ircd->notice($to,$from,'/msg '.$to.' Help Command Template Topic');
+									$ircd->notice($to,$from,'--- End of help ---');
 								} elseif (strtolower($d[3]) == 'add') {
-									$ircd->notice($to,$from,'Bot Help - Command Template Add:');
+									$ircd->notice($to,$from,'--- Bot Help - Command Template Add ---');
 									$ircd->notice($to,$from,'Adds a script template to your bot.');
 									$ircd->notice($to,$from,'Syntax: /msg '.$to.' Command Template Add <command>');
 									$ircd->notice($to,$from,'<command> is the template command that you wish to add to your bot.');
+									$ircd->notice($to,$from,'--- End of help ---');
 								} elseif (strtolower($d[3]) == 'show') {
-									$ircd->notice($to,$from,'Bot Help - Command Template Show:');
+									$ircd->notice($to,$from,'--- Bot Help - Command Template Show ---');
 									$ircd->notice($to,$from,'Gets a script template.');
 									$ircd->notice($to,$from,'Syntax: /msg '.$to.' Command Template Show <command>');
 									$ircd->notice($to,$from,'<command> is the template command that you wish to view.');
 								} elseif (strtolower($d[3]) == 'list') {
-									$ircd->notice($to,$from,'Bot Help - Command Template List:');
+									$ircd->notice($to,$from,'--- Bot Help - Command Template List ---');
 									$ircd->notice($to,$from,'Lists all script templates.');
 									$ircd->notice($to,$from,'Syntax: /msg '.$to.' Command Template List');
+									$ircd->notice($to,$from,'--- End of help ---');
 								}
 							}
 						} elseif (strtolower($d[1]) == 'access') {
 							if (!isset($d[2])) {
-								$ircd->notice($to,$from,'Bot Help - Access:');
+								$ircd->notice($to,$from,'--- Bot Help - Access ---');
 								$ircd->notice($to,$from,'Add                 Add a user to your bot.');
 								$ircd->notice($to,$from,'Del            Remove a user from your bot.');
 								$ircd->notice($to,$from,'List            List all users on your bot.');
 								$ircd->notice($to,$from,'For more information on these topics:');
 								$ircd->notice($to,$from,'/msg '.$to.' Help Access Topic');
+								$ircd->notice($to,$from,'--- End of help ---');
 							} elseif (strtolower($d[2]) == 'add') {
-								$ircd->notice($to,$from,'Bot Help - Access Add:');
+								$ircd->notice($to,$from,'--- Bot Help - Access Add ---');
 								$ircd->notice($to,$from,'Adds a user to your bot.');
 								$ircd->notice($to,$from,'Syntax: /msg '.$to.' Access Add <username> <level>');
-								$ircd->notice($to,$from,'<username> is the user\'s phpserv username that you wish to add.');
+								$ircd->notice($to,$from,'<username> is the user\'s PHPserv username that you wish to add.');
 								$ircd->notice($to,$from,'<level> is the level that you wish to add them at.');
 								$ircd->notice($to,$from,'This will be available in the script lang as $blvl.');
+								$ircd->notice($to,$from,'--- End of help ---');
 							} elseif (strtolower($d[2]) == 'del') {
-								$ircd->notice($to,$from,'BotController Help - Access Del:');
+								$ircd->notice($to,$from,'--- Bot Help - Access Del ---');
 								$ircd->notice($to,$from,'Removes a user from your bot.');
 								$ircd->notice($to,$from,'Syntax: /msg '.$to.' Access Del <username>');
-								$ircd->notice($to,$from,'<username> is the user\'s phpserv username that you wish to remove.');
+								$ircd->notice($to,$from,'<username> is the user\'s PHPserv username that you wish to remove.');
+								$ircd->notice($to,$from,'--- End of help ---');
 							} elseif (strtolower($d[2]) == 'list') {
-								$ircd->notice($to,$from,'BotController Help - Access List:');
+								$ircd->notice($to,$from,'--- Bot Help - Access List ---');
 								$ircd->notice($to,$from,'Lists all users on your bot.');
 								$ircd->notice($to,$from,'Syntax: /msg '.$to.' Access List');
+								$ircd->notice($to,$from,'--- End of help ---');
 							}
 						} elseif (strtolower($d[1]) == 'coowner') {
 							if (!isset($d[2])) {
-								$ircd->notice($to,$from,'Bot Help - Coowner:');
-								$ircd->notice($to,$from,'Add              Add a coowner to your bot.');
-								$ircd->notice($to,$from,'Del         Remove a coowner from your bot.');
-								$ircd->notice($to,$from,'List         List all coowners on your bot.');
+								$ircd->notice($to,$from,'--- Bot Help - Coowner ---');
+								$ircd->notice($to,$from,'Add              Add a co-owner to your bot.');
+								$ircd->notice($to,$from,'Del         Remove a co-owner from your bot.');
+								$ircd->notice($to,$from,'List         List all co-owners on your bot.');
 								$ircd->notice($to,$from,'For more information on these topics:');
 								$ircd->notice($to,$from,'/msg '.$to.' Help Coowner Topic');
+								$ircd->notice($to,$from,'--- End of help ---');
 							} elseif (strtolower($d[2]) == 'add') {
-								$ircd->notice($to,$from,'Bot Help - Coowner Add:');
+								$ircd->notice($to,$from,'--- Bot Help - Coowner Add ---');
 								$ircd->notice($to,$from,'Adds a coowner to your bot.');
 								$ircd->notice($to,$from,'Syntax: /msg '.$to.' Coowner Add <username>');
-								$ircd->notice($to,$from,'<username> is the user\'s phpserv username that you wish to add.');
+								$ircd->notice($to,$from,'<username> is the user\'s PHPserv username that you wish to add.');
 								$ircd->notice($to,$from,'This will be available in the script lang as $coowner.');
+								$ircd->notice($to,$from,'--- End of help ---');
 							} elseif (strtolower($d[2]) == 'del') {
-								$ircd->notice($to,$from,'BotController Help - Coowner Del:');
+								$ircd->notice($to,$from,'--- Bot Help - Coowner Del ---');
 								$ircd->notice($to,$from,'Removes a coowner from your bot.');
 								$ircd->notice($to,$from,'Syntax: /msg '.$to.' Coowner Del <username>');
 								$ircd->notice($to,$from,'<username> is the user\'s phpserv username that you wish to remove.');
+								$ircd->notice($to,$from,'--- End of help ---');
 							} elseif (strtolower($d[2]) == 'list') {
-								$ircd->notice($to,$from,'BotController Help - Coowner List:');
+								$ircd->notice($to,$from,'--- Bot Help - Coowner List ---');
 								$ircd->notice($to,$from,'Lists all users on your bot.');
 								$ircd->notice($to,$from,'Syntax: /msg '.$to.' Coowner List');
+								$ircd->notice($to,$from,'--- End of help ---');
 							}
 						} elseif (strtolower($d[1]) == 'set') {
 							if (!isset($d[2])) {
-								$ircd->notice($to,$from,'Bot Help - Set:');
+								$ircd->notice($to,$from,'--- Bot Help - Set ---');
 								$ircd->notice($to,$from,'Trigger         Set the command trigger for your bot.');
 								$ircd->notice($to,$from,'For more information on these topics:');
 								$ircd->notice($to,$from,'/msg '.$to.' Help Set Topic');
+								$ircd->notice($to,$from,'--- End of help ---');
 							} elseif (strtolower($d[2]) == 'trigger') {
-								$ircd->notice($to,$from,'Bot Help - Set Trigger:');
+								$ircd->notice($to,$from,'--- Bot Help - Set Trigger ---');
 								$ircd->notice($to,$from,'Sets the in-channel command trigger for your bot.');
 								$ircd->notice($to,$from,'Syntax: /msg '.$to.' Set Trigger <trigger>');
 								$ircd->notice($to,$from,'<trigger> is the trigger you wish to set for the bot.');
-								$ircd->notice($to,$from,'The trigger may be one of the following: . - + ! ` ~ * ; \'');
+								$ircd->notice($to,$from,'The trigger may be one of the following: . , - + ! ` ~ * ; \'');
+								$ircd->notice($to,$from,'--- End of help ---');
 							}
 						}
 					}
@@ -861,7 +891,7 @@
 			$ircd->join($bot['nick'],'#services');
 			$ircd->join($bot['nick'],'#bots');
 			$ircd->mode($bot['nick'],'#services','+v '.$bot['nick']);
-			$ircd->mode($bot['nick'],'#bots','+v '.$bot['nick']);
+//			$ircd->mode($bot['nick'],'#bots','+v '.$bot['nick']); // Please don't
 			$ircd->mode($bot['nick'],$bot['nick'],'+S');
 			return $this->sandbot($nick);
 		}
@@ -1078,11 +1108,11 @@
 //			global $modules;
 			$ircd = &ircd();
 
-			$ircd->addnick($mysql->getsetting('server'),'BotController','Services','Services.idle.us','Bot Service');
-			$ircd->join('BotController','#services');
-			$ircd->join('BotController','#bots');
-			$ircd->mode('BotController','#services','+oa BotController BotController');
-			$ircd->mode('BotController','#bots','+oa BotController BotController');
+			$ircd->addnick($mysql->getsetting('server'),'BotServ','Services','Services.ClueNet.org','Bot Service');
+			$ircd->join('BotServ','#services');
+			$ircd->join('BotServ','#bots');
+			$ircd->mode('BotServ','#services','+oa BotServ BotServ');
+//			$ircd->mode('BotController','#bots','+oa BotController BotController');
 			$this->startbots();
 		}
 	}
@@ -1091,7 +1121,7 @@
                 function registerm () {
 //                        global $modules;
                         $class = new botcontroller;
-                        register($class, __FILE__, 'BotController Module', 'botcontroller');
+                        register($class, __FILE__, 'BotServ Module', 'botcontroller');
 		}
 //	}
 ?>
