@@ -48,7 +48,7 @@
 					$value['help'] = $params[1];
 					$params = $params[0];
 				}
-				$line  = str_pad($values['command'].' '.$params,$size);
+				$line  = str_pad($value['command'].' '.$params,$size);
 				$line .= ' - ' . $value['help'];
 				if(80-strlen($from)-17-$size > 30) {
 					$part = substr($line,0,80-strlen($from)-14);
