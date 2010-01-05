@@ -79,7 +79,7 @@
 			} else {
 				if ($this->is_allowed($extra['uid'], $rest[0], 'op')) {
 					$user = (isset($rest[1]) ? $rest[1] : $from);
-					$ircd->svsmode('ChanServ', $rest[0], '+o ' . $user);
+					$ircd->mode('ChanServ', $rest[0], '+o ' . $user);
 				} else {
 					$ircd->notice($to, $from, 'Access denied.');
 				}
@@ -94,7 +94,7 @@
 			} else {
 				if ($this->is_allowed($extra['uid'], $rest[0], 'deop')) {
 					$user = (isset($rest[1]) ? $rest[1] : $from);
-					$ircd->svsmode('ChanServ', $rest[0], '-o ' . $user);
+					$ircd->mode('ChanServ', $rest[0], '-o ' . $user);
 				} else {
 					$ircd->notice($to, $from, 'Access denied.');
 				}
