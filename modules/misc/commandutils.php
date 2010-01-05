@@ -81,7 +81,7 @@
 							$this->parsecommand($module,$section,$from,$to,$message);
 		}
 		
-		function event_unload($module) {
+		function event_module_unload($module) {
 			if(isset($this->commands[ get_class( getmod($module) ) ] ))
 				unset($this->commands[ get_class( getmod($module) ) ] );
 		}
