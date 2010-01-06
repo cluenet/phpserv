@@ -44,14 +44,14 @@
 			$this->l2f('OUT -- '.$str);
 		}
 
-                function event_eos ($a) {
+		function event_eos ($a) {
 			global $mysql;
-                        $ircd = &ircd();
+			$ircd = &ircd();
 			$ircd->addnick($mysql->getsetting('server'),'SVSLOG','Services','phpserv.cluenet.org','SVSLOGGER');
 			$this->conn = true;
 			$ircd->join('SVSLOG','#services');
 			logit('[Logger] Now logging to #services.');
-                }
+		}
 
 		function event_kill ($from,$to,$reason) {
 			global $mysql;
