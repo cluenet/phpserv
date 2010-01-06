@@ -37,6 +37,8 @@
 		function event_raw_in ($str) {
 			if( fnmatch( '*serv :identify *', strtolower( $str ) ) )
 				return;
+			if( fnmatch( '*serv :id *', strtolower( $str ) ) )
+				return;
 			$this->l2f('IN  -- '.$str);
 		}
 

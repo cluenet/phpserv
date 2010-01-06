@@ -232,6 +232,11 @@
 			// $host = the new hostname
 			$this->raw(':'.$from.' CHGHOST .'.$nick.' '.$host);
 		}
+		
+		function remhost ($from,$nick) {
+			// $from = Who to propegate the change from (if applicable)
+			// $nick = Who to remove a host from
+			$this->svsmode($from,$nick,'-xt+x');
 
 		function eos ($server = NULL) {
 			if ($server != NULL) {
@@ -432,6 +437,15 @@
 		}
 
 		function isValidNick($nick) { return preg_match('#^[a-zA-Z\\\\[\]{}][a-zA-Z0-9\x2d\x5b-\x5e\x60\x7b\7d]*$#',$nick); }
+		
+		function isValidHost($host) {
+			$validity = preg_match('/[^-a-z\d.]/i',$host);
+			// Since the function is "is it a valid host", reverse the return value from preg_match()
+			switch ($validity) {
+				case 1: return 0;
+				case 0: return 1;
+			}
+		}
 		
 	}
 

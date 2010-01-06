@@ -19,11 +19,9 @@
 			}
 				
 			getmod('commandutils')->registercommand($this, 'anon', 'IDENTIFY', '<password>[:<username>] - Identifies you to services.');
-			getmod('commandutils')->registercommand($this, 'anon', 'IDENT', 'Alias for IDENTIFY.');
 			getmod('commandutils')->registercommand($this, 'anon', 'ID', 'Alias for IDENTIFY.');
 			
 			getmod('commandutils')->registercommand($this, 'auth', 'IDENTIFY', '<password>[:<username>] - Identifies you to services.');
-			getmod('commandutils')->registercommand($this, 'auth', 'IDENT', 'Alias for IDENTIFY.');
 			getmod('commandutils')->registercommand($this, 'auth', 'ID', 'Alias for IDENTIFY.');
 			
 			getmod('commandutils')->registercommand($this, 'auth', 'REGISTER', 'Associates your current nick with your PHPServ account.');
@@ -40,10 +38,6 @@
 			$this->command_anon_identify($from,$to,$rest,$extra);
 		}
 		
-		function command_anon_ident ($from,$to,$rest,$extra) {
-			$this->command_anon_identify($from,$to,$rest,$extra);
-		}
-		
 		function command_anon_identify ($from,$to,$rest,$extra) {
 			$p = explode(':',$rest[0]);
 
@@ -55,10 +49,6 @@
 		}
 		
 		function command_auth_id ($from,$to,$rest,$extra) {
-			$this->command_auth_identify($from,$to,$rest,$extra);
-		}
-		
-		function command_auth_ident ($from,$to,$rest,$extra) {
 			$this->command_auth_identify($from,$to,$rest,$extra);
 		}
 		

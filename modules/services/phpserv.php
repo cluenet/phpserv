@@ -78,7 +78,7 @@
 						}
 					} elseif (strtolower($d[0]) == 'logout') {
 						if ($mysql->logoutaccess($from)) {
-							$ircd->notice('PHPServ',$from,'Success.');
+							$ircd->notice('PHPServ',$from,'Successfully logged out of PHPserv account.');
 							$ircd->svsmode('PHPServ',$from,'+d 0 ');
 							$ircd->svsmode('PHPServ',$from,'-r');
 							$ircd->swhois($from);
