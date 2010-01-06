@@ -115,11 +115,12 @@
 					}
 				}
 				if (strtolower($d[0]) == 'help') {
-					$ircd->notice('PHPServ',$from,'PHPServ help:');
+					$ircd->notice('PHPServ',$from,'---- Help ----');
 					$ircd->notice('PHPServ',$from,'REGISTER <user> <pass> - Registers a username with PHPServ.');
 					$ircd->notice('PHPServ',$from,'IDENTIFY <user> <pass> - Identifies you to a username in PHPServ.');
 					$ircd->notice('PHPServ',$from,'SETPASS  <pass>        - Changes your password if you are identified.');
 					$ircd->notice('PHPServ',$from,'LOGOUT                 - Does the reverse of IDENTIFY if you are identified.');
+					$ircd->notice('PHPServ',$from,'---- End Help ----');
 				} elseif (strtolower($d[0]) == 'svninfo') {
 					if (pcntl_fork() == 0) {
 						$svn = popen('svn info 2>&1', 'r');

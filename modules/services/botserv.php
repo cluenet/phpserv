@@ -224,7 +224,41 @@
 				}
 			}
 		}
-
+		function event_identify ($nick,$uid) {
+			global $mysql;
+			$ircd = &ircd();
+			$cmd = '__e_id';
+			foreach ($this->bots as $bot) {
+				if (strtolower($bot['channel']) == strtolower($to)) {
+					$botid = $mysql->get($mysql->sql('SELECT `id` FROM `botserv_bots` WHERE `nick` = '.$mysql->escape($bot['nick'])));
+					$botid = $botid['id'];
+					if ($x = $mysql->get($mysql->sql('SELECT * FROM `botserv_cmds` WHERE `botid` = '.$mysql->escape($botid).' AND `cmd` = '.$mysql->escape($cmd)))) {
+						$nickd = $mysql->get($mysql->sql('SELECT * FROM `users` WHERE `nick` = '.$mysql->escape($from)));
+						$uid = $nickd['loggedin'];
+						$user = $mysql->get($mysql->sql('SELECT * FROM `access` WHERE `id` = '.$mysql->escape($uid)));
+						$level = $user['level'];
+						$user = $user['user'];
+						$blvl = $mysql->get($mysql->sql('SELECT * FROM `botserv_acc` WHERE `uid` = '.$mysql->escape($uid).' AND `botid` = '.$mysql->escape($botid)));
+						$blvl = $blvl['level'];
+						if ($mysql->get($mysql->sql('SELECT * FROM `botserv_cos` WHERE `uid` = '.$mysql->escape($uid).' AND `botid` = '.$mysql->escape($botid)))) { $coowner = 1; } else { $coowner = 0; }
+						if ($bot['owner'] == $uid) { $owner = 1; } else { $owner = 0; }
+						$vars = array
+						(
+							'user'	=> $user,
+							'uid'	=> $uid,
+							'nickd'	=> $nickd,
+							'level'	=> $level,
+							'owner'	=> $owner,
+							'coowner'=>$coowner,
+							'blvl'	=> $blvl,
+							'trig'	=> $bot['trig']
+						);
+						$this->sboteval($from,$cmd,$mode,$to,$bot['nick'],$x['data'],$vars);
+					}
+				}
+			}
+		}
+		
 		function event_msg ($from,$to,$message) {
 			$d = explode(' ', $message);
 
@@ -544,6 +578,7 @@
 								$ircd->notice($to,$from,'__e_kick -- on kick event');
 								$ircd->notice($to,$from,'__e_mode -- on mode event');
 								$ircd->notice($to,$from,'__e_topic -- on topic change event');
+								$ircd->notice($to,$from,'__e_id -- on-identify-to-PHPserv event'); 
 								$ircd->notice($to,$from,'__pm__<command> -- command issued by /msg');
 								$ircd->notice($to,$from,'<script> is the PHP script for the command.');
 								$ircd->notice($to,$from,'--- End of help ---');
