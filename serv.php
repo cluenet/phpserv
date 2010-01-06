@@ -383,8 +383,16 @@
 				}
 
 				function read () {
-					$tmp = fgets($this->socket);
-					return $tmp;
+					$read = array($this->socket);
+					$write = array();
+					$except = array();
+					if(socket_select($read,$write,$except,NULL))
+						foreach($read as $socket) {
+							$tmp = fgets($socket);
+							return $tmp;
+						}
+					else
+						return false;
 				}
 
 				function timeout ($time) {
@@ -430,7 +438,8 @@
 
 			while (!$sock->eof()) {
 				$sock->timeout(1);
-				$data = $sock->read();
+				if(($data = $sock->read()) === false)
+					continue;
 				$time = microtime(1);
 				if ($data) {
 					event('raw_in', $data);
