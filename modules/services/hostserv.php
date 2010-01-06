@@ -177,7 +177,7 @@
 			if ($data == false) {
 				$ircd->notice('HostServ',$from,$rest[0].' did not request a vHost!');
 			} else {
-				$mysql->sql('UPDATE `hostserv` SET `active` = 1 WHERE `uid` = '.$mysql->escape($data['uid']));
+				$mysql->sql('UPDATE `hostserv` SET `active` = 1 WHERE `uid` = '.$mysql->escape($data['id']));
 				$ircd->notice('HostServ',$from,'vHost for '.$rest[0].' activated.');
 				$ircd->chghost('HostServ',$rest[0],$data['host']);
 			}
