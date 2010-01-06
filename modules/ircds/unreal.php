@@ -237,7 +237,8 @@
 			// $from = Who to propegate the change from (if applicable)
 			// $nick = Who to remove a host from
 			$this->svsmode($from,$nick,'-xt+x');
-
+		}
+		
 		function eos ($server = NULL) {
 			if ($server != NULL) {
 				$this->raw(':'.$server.' EOS');
