@@ -365,15 +365,13 @@
 
 				function connect ($ip,$port,$bind) {
 					global $modules;
-					$opts = array('socket' => array('bindto' => $bind.':0'));
-					$context = stream_context_create($opts);
-					$this->socket = stream_socket_client('tcp://'.$ip.':'.$port, $errno, $errstr, 30, STREAM_CLIENT_CONNECT, $context);
-					if (!$this->socket) {
-						logit('Error: '.$errno.': '.$errstr);
+					if(!($this->socket = socket_create(AF_INET,SOCK_STREAM,SOL_TCP)))
 						return 0;
-					} else {
-						return 1;
-					}
+					if(!socket_bind($this->socket,$bind,0))
+						return 0;
+					if(!socket_connect($this->socket,$ip,$port))
+						return 0;
+					return 1;
 				}
 
 				function write ($data) {
