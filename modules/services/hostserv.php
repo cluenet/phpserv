@@ -256,7 +256,7 @@
 	}
 
 	function registerm() {
-		$class = new chanserv;
+		$class = new hostserv;
 		register($class, __FILE__, 'HostServ Module', 'hostserv');
 	}
 ?>
