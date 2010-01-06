@@ -253,8 +253,7 @@
 					);
 					$this->sboteval($nick,$cmd,NULL,$to,$bot['nick'],$x['data'],$vars);
 				}
-				}
-		}
+			}
 		}
 		
 		function event_msg ($from,$to,$message) {
@@ -286,7 +285,7 @@
 								$ircd->notice('BotServ',$from,'Illegal characters in the ident. Please try again.');
 								return 0;
 							}
-							if ($ircd->isValidHost($d[4] == 0) {
+							if ($ircd->isValidHost($d[4]) == 0) {
 								$ircd->notice('BotServ',$from,'Illegal characters in the hostname. Please try again.');
 								return 0;
 							}

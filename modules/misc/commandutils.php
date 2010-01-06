@@ -82,7 +82,7 @@
 			}
 			
 			if(!$this->command($module, $section, $from, $to, $command, explode(' ',$rest), $extra)) {
-				$ircd->notice($to,$from,'Unknown command "'.$command.'". Type "/msg .'$to.' HELP" for help.');
+				$ircd->notice($to,$from,'Unknown command "'.$command.'". Type "/msg .'.$to.' HELP" for help.');
 				return 0;
 			}
 			return 1;
