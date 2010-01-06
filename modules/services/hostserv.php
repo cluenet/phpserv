@@ -93,6 +93,10 @@
 		// You can use $mysql->sql('DELETE FROM `hostserv` WHERE `uid` = '.$mysql->escape($userid)); to reject one.
 		// You can use $mysql->get($mysql->sql('SELECT `host` FROM `hostserv` WHERE `active` = 1 AND `uid` = '.$mysql->escape($userid))); to get an array containing one element, the host of the user ... or false if no record exists.
 
+		function command_setter_on($from,$to,$rest,$extra) {
+			return $this->command_auth_on($from,$to,$rest,$extra);
+		}
+		
 		function command_setter_set($from,$to,$rest,$extra) {
 			global $mysql;
 			$ircd = &ircd();
@@ -108,7 +112,7 @@
 			if ($mysql->get($mysql->sql('SELECT `host` FROM `hostserv` WHERE `active` = 1 AND `uid` = '.$mysql->escape($extra['uid'])))) {
 				$mysql->insert('hostserv',array('uid' => $uid,'host' => $vhost,'active' => 0));
 			} else {
-				$mysql->sql('UPDATE `hostserv` SET `host` = '.$mysql->escape($rest[0]).' SET `active` = 1 WHERE `uid` = '.$mysql->escape($extra['uid']));
+				$mysql->sql('UPDATE `hostserv` SET `host` = '.$mysql->escape($rest[0]).', `active` = 1 WHERE `uid` = '.$mysql->escape($extra['uid']));
 			}
 			$ircd->notice('HostServ',$from,'vHost "'.$rest[1].'" assigned to '.$rest[0].'.');
 			$ircd->chghost('HostServ',$rest[0],$rest[1]);
@@ -162,7 +166,7 @@
 			if ($data = false) {
 				$ircd->notice('HostServ',$from,$rest[0].' did not request a vHost!');
 			} else {
-				$mysql->sql('UPDATE `hostserv` SET `host` = '.$mysql->escape($rest[0]).' SET `active` = 1 WHERE `uid` = '.$mysql->escape($extra['uid']));
+				$mysql->sql('UPDATE `hostserv` SET `host` = '.$mysql->escape($rest[0]).', `active` = 1 WHERE `uid` = '.$mysql->escape($extra['uid']));
 				$ircd->notice('HostServ',$from,'vHost for '.$rest[0].' activated.');
 				$ircd->chghost('HostServ',$rest[0],$data['host']);
 			}
