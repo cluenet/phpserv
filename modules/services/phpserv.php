@@ -13,31 +13,10 @@
 
 				if ($mysql->getaccess($from) > 0) {
 					if ($mysql->getaccess($from) > 900) {
-
-						if (strtolower($d[0]) == 'kill') {
-							$ircd->svskill($d[1],'PHPServ Kill by '.$from.' ('.implode(' ', array_slice($d, 2)).')');
-
-						} elseif (strtolower($d[0]) == 'nick') {
-							$ircd->svsnick($d[1],$d[2]);
-							$ircd->smo('o', "\002Abuse: ".$from."\002 used SVSNICK ".$d[1].' '.$d[2]);
-
-						} elseif (strtolower($d[0]) == 'mode') {
-							$ircd->mode('PHPServ',$d[1],implode(' ', array_slice($d, 2)));
-							$ircd->notice($mysql->getsetting('server'),$d[1],$from.' used PHPServ Mode '.$d[1].' '.implode(' ', array_slice($d, 2)));
-							$ircd->notice('PHPServ',$from,'Success.');
-							$ircd->smo('o', "\002Abuse: ".$from."\002 used MODE ".$d[1].' '.implode(' ', array_slice($d, 2)));
-
-						} elseif (strtolower($d[0]) == 'abuseops') {
-							print_r($d);
-							$ircd->smo('o', '*** AbuseOPs -- from '.$from.': '.implode(' ', array_slice($d, 1)));
-							
-						} elseif (strtolower($d[0]) == 'aml') {
+						if (strtolower($d[0]) == 'aml') {
 							$ircd->smo('o', '*** Services -- from '.$from.': Loading modules for AutoModuleLoad level ' . $d[1]);
 							aml($d[1]);
-							
-						} elseif (strtolower($d[0]) == 'userops') {
-							$ircd->smo('w', '$'.$from.'$ '.implode(' ', array_slice($d, 1)));
-
+						
 						} elseif (strtolower($d[0]) == 'modload') {
 							load(implode(' ', array_slice($d, 1)));
 
@@ -57,6 +36,30 @@
 								die();
 							}
 						}
+					}
+					if ($mysql->getaccess($from) > 600) {	
+						if (strtolower($d[0]) == 'kill') {
+							$ircd->svskill($d[1],'PHPServ Kill by '.$from.' ('.implode(' ', array_slice($d, 2)).')');
+
+						} elseif (strtolower($d[0]) == 'nick') {
+							$ircd->svsnick($d[1],$d[2]);
+							$ircd->smo('o', "\002Abuse: ".$from."\002 used SVSNICK ".$d[1].' '.$d[2]);
+
+						} elseif (strtolower($d[0]) == 'mode') {
+							$ircd->mode('PHPServ',$d[1],implode(' ', array_slice($d, 2)));
+							$ircd->notice($mysql->getsetting('server'),$d[1],$from.' used PHPServ Mode '.$d[1].' '.implode(' ', array_slice($d, 2)));
+							$ircd->notice('PHPServ',$from,'Success.');
+							$ircd->smo('o', "\002Abuse: ".$from."\002 used MODE ".$d[1].' '.implode(' ', array_slice($d, 2)));
+						}
+					}
+					if ($mysql->getaccess($from) > 100) {
+						if (strtolower($d[0]) == 'userops') {
+							$ircd->smo('w', '$'.$from.'$ '.implode(' ', array_slice($d, 1)));
+						}
+					}
+					if (strtolower($d[0]) == 'abuseops') {
+						$ircd->smo('o', '*** AbuseOPs -- from '.$from.': '.implode(' ', array_slice($d, 1)));
+														
 					}
 					if (strtolower($d[0]) == 'setlevel') {
 						if ($x = $mysql->get($mysql->sql('SELECT * FROM `access` WHERE `user` = '.$mysql->escape($d[1])))) {
