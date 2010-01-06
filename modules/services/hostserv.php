@@ -64,9 +64,9 @@
 			$vhost = $data['host'];
 			
 			// Do they have a vHost?
-			if ($active == 0 || $active == false) {
+			if (!$active) {
 				// They don't have a vHost. Why?
-				if ($active !== false) {
+				if ($data !== false) {
 					$ircd->notice('HostServ',$from,'Your vHost ('.$vhost.') is awaiting verification.');
 				} else {
 					$ircd->notice('HostServ',$from,'There is no vHost assigned to this account.');
