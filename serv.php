@@ -386,7 +386,7 @@
 					$read = array($this->socket);
 					$write = array();
 					$except = array();
-					if(stream_select($read,$write,$except,NULL))
+					if(@stream_select($read,$write,$except,NULL))
 						foreach($read as $socket) {
 							$tmp = fgets($socket);
 							return $tmp;
