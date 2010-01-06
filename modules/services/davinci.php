@@ -439,8 +439,12 @@ $mysql->getsetting('server')
 									$rating = ($spanish?'Extremadamente':'Extremely').' clueful';
 								elseif ($pts < 5000)
 									$rating = ($spanish?'Clueful estupendo':'Super clueful');
-								elseif ($pts >= 5000)
+								elseif ($pts < 50000)
 									$rating = ($spanish?'Élite de clueful':'Clueful elite');
+								elseif ($pts < 100000)
+									$rating = ($spanish?'La realeza clueful':'The clueful royalty');
+								elseif ($pts >= 100000)
+									$rating = ($spanish?'Los dioses the cluefuldad':'The gods of cluefulness');
 								
 								$ircd->notice('DaVinci',$sourcet,($spanish?'El ':'').$who.($spanish?' lleva a cabo a fila de: ':' holds the rank of: ').$rating.'.');
 								$ircd->notice('DaVinci',$sourcet,($spanish?'El ':'').$who.($spanish?' tiene ':' has ').$pts.($spanish?' puntos.':' points.'));
