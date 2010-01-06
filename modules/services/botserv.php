@@ -915,7 +915,7 @@
 						'posix_getrlimit,posix_getsid,posix_getuid,posix_isatty,posix_mkfifo,' .
 						'posix_mknod,posix_setegid,posix_seteuid,posix_setgid,posix_setpgid,' .
 						'posix_setsid,posix_setuid,posix_strerror,posix_times,posix_ttyname,' .
-						'posix_uname,mail,error_log',
+						'posix_uname,mail,error_log,unregister_tick_function,set_time_limit',
 				'disable_classes'=>'');
 			$this->bots[$nick]['sandbox'] = new Runkit_Sandbox($options);
 			$this->bots[$nick]['sandbox']['output_handler'] = array($this,'sbotout');
@@ -937,8 +937,9 @@
 			$functions .= 'function call ($func) { global $__return__; $__return__["call"] = $func; }';
 			$functions .= 'function get ($key, $default = "") { $cfg = unserialize(file_get_contents("cfg.ser")); if(isset($cfg[$key])) return $cfg[$key]; return $default; }';
 			$functions .= 'function set ($key, $value) { $cfg = unserialize(file_get_contents("cfg.ser")); $cfg[$key] = $value; file_put_contents("cfg.ser",serialize($cfg)); }';
-			$functions .= 'function __trap_alrm ($s) { die("timeout"); }';
-			$functions .= 'pcntl_signal(SIGALRM, "__trap_alrm");';
+			//$functions .= 'function __trap_alrm ($s) { die("timeout"); }';
+			$functions .= 'function __trap_tick() { static $start = time(); if(time() - $start > 5) die("Timeout."); }';
+			//$functions .= 'pcntl_signal(SIGALRM, "__trap_alrm");';
 			//format_time (gnarfel)
 			$functions .= 'function format_time($seconds) {$secs = intval($seconds % 60); $mins =';
 			$functions .= 'intval($seconds / 60 % 60); $hours = intval($seconds / 3600 % 24); $da';
@@ -974,11 +975,12 @@
 				foreach ($othervars as $y => $x) {
 					$this->bots[$ubot]['sandbox']->$y = $x;
 				}
-				$this->bots[$ubot]['sandbox']->eval('pcntl_alarm(5);');
-				$this->bots[$ubot]['sandbox']->eval('set_time_limit(6);');
+				//$this->bots[$ubot]['sandbox']->pcntl_alarm(5);
+				//$this->bots[$ubot]['sandbox']->set_time_limit(6);
+				$this->bots[$ubot]['sandbox']->eval('register_tick_function("__trap_tick");');
 				$this->bots[$ubot]['sandbox']->eval($script);
-				$this->bots[$ubot]['sandbox']->eval('set_time_limit(0);');
-				$this->bots[$ubot]['sandbox']->eval('pcntl_alarm(0);');
+				//$this->bots[$ubot]['sandbox']->set_time_limit(0);
+				//$this->bots[$ubot]['sandbox']->pcntl_alarm(0);
 				$data = $this->bots[$ubot]['sandbox']->__return__;
 			}
 			catch (Exception $e) {
@@ -1073,11 +1075,11 @@
 					if ($called < 3) {
 						if ($x = $mysql->get($mysql->sql('SELECT * FROM `botserv_cmds` WHERE `botid` = '.$mysql->escape($this->bots[$ubot]['botid']).' AND `cmd` = '.$mysql->escape($data['call'])))) {
 							$this->curbot = $bot;
-							$this->bots[$ubot]['sandbox']->eval('pcntl_alarm(5);');
-							$this->bots[$ubot]['sandbox']->eval('set_time_limit(6);');
+							//$this->bots[$ubot]['sandbox']->eval('pcntl_alarm(5);');
+							//$this->bots[$ubot]['sandbox']->eval('set_time_limit(6);');
 							$this->bots[$ubot]['sandbox']->eval($x['data']);
-							$this->bots[$ubot]['sandbox']->eval('set_time_limit(0);');
-							$this->bots[$ubot]['sandbox']->eval('pcntl_alarm(0);');
+							//$this->bots[$ubot]['sandbox']->eval('set_time_limit(0);');
+							//$this->bots[$ubot]['sandbox']->eval('pcntl_alarm(0);');
 							$data = $this->bots[$ubot]['sandbox']->__return__;
 							unset($this->bots[$ubot]['sandbox']->__return__);
 							$this->curbot = '';
