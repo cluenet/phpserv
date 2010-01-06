@@ -300,6 +300,10 @@
 			$this->raw('SVSKILL '.$nick.' :'.$reason);
 			event('svskill',$mysql->getsetting('server'),$nick,$reason);
 		}
+		
+		function swhois ($nick,$swhois='') {
+			$this->raw('SWHOIS '.$nick.' :'.$swhois);
+		}
 
 		function nicetkl ($type,$mask,$duration,$reason,$source = null) {
 			global $mysql;

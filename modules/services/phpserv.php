@@ -77,8 +77,14 @@
 							$ircd->notice('PHPServ',$from,'Failed.  User does not exist.');
 						}
 					} elseif (strtolower($d[0]) == 'logout') {
-						if ($mysql->logoutaccess($from)) { $ircd->notice('PHPServ',$from,'Success.'); $ircd->svsmode('PHPServ',$from,'+d -1 '); }
-						else { $ircd->notice('PHPServ',$from,'Failure.'); }
+						if ($mysql->logoutaccess($from)) {
+							$ircd->notice('PHPServ',$from,'Success.');
+							$ircd->svsmode('PHPServ',$from,'+d 0 ');
+							$ircd->svsmode('PHPServ',$from,'-r');
+							$ircd->swhois($from);
+						} else {
+							$ircd->notice('PHPServ',$from,'Failure.');
+						}
 					} elseif (strtolower($d[0]) == 'setpass') {
 						if ($x = $mysql->get($mysql->sql('SELECT `loggedin` FROM `users` WHERE `nick` = '.$mysql->escape($from)))) {
 							$mysql->setaccesspassword($x['loggedin'],$d[1]);
@@ -95,6 +101,8 @@
 							event('identify',$from);
 							$user = $mysql->get($mysql->sql('SELECT `loggedin` FROM `users` WHERE `nick` = '.$mysql->escape($from)));
 							$ircd->svsmode('PHPServ',$from,'+d ' . $user['loggedin']);
+							$ircd->svsmode('PHPServ',$from,'+r');
+							$ircd->swhois($from,'is identified to PHPServ as '.$d[1].' (uid='.$user['loggedin'].')');
 						} else { $ircd->notice('PHPServ',$from,'Error while processing identify.'); }
 					} elseif (strtolower($d[0]) == 'register') {
 						if ($mysql->get($mysql->sql('SELECT `user` FROM `access` WHERE `user` = '.$mysql->escape($d[1])))) {
