@@ -915,7 +915,7 @@
 						'posix_getrlimit,posix_getsid,posix_getuid,posix_isatty,posix_mkfifo,' .
 						'posix_mknod,posix_setegid,posix_seteuid,posix_setgid,posix_setpgid,' .
 						'posix_setsid,posix_setuid,posix_strerror,posix_times,posix_ttyname,' .
-						'posix_uname,mail,error_log,unregister_tick_function,set_time_limit',
+						'posix_uname,mail,error_log',
 				'disable_classes'=>'');
 			$this->bots[$nick]['sandbox'] = new Runkit_Sandbox($options);
 			$this->bots[$nick]['sandbox']['output_handler'] = array($this,'sbotout');
@@ -938,7 +938,7 @@
 			$functions .= 'function get ($key, $default = "") { $cfg = unserialize(file_get_contents("cfg.ser")); if(isset($cfg[$key])) return $cfg[$key]; return $default; }';
 			$functions .= 'function set ($key, $value) { $cfg = unserialize(file_get_contents("cfg.ser")); $cfg[$key] = $value; file_put_contents("cfg.ser",serialize($cfg)); }';
 			//$functions .= 'function __trap_alrm ($s) { die("timeout"); }';
-			$functions .= 'function __trap_tick() { static $start = time(); if(time() - $start > 5) die("Timeout."); }';
+			$functions .= 'function __trap_tick () { static $start = null; if($start == null) $start = time(); if (time() - $start > 5) die("Timeout."); }';
 			//$functions .= 'pcntl_signal(SIGALRM, "__trap_alrm");';
 			//format_time (gnarfel)
 			$functions .= 'function format_time($seconds) {$secs = intval($seconds % 60); $mins =';
