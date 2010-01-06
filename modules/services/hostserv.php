@@ -1,5 +1,4 @@
 <?PHP
-
 	class hostserv {
 		function construct() {
 			$this->event_eos('a');
@@ -50,7 +49,7 @@
 					$mysql->insert('hostserv',array('uid' => $uid,'host' => $vhost,'active' => '0'));
 				}
 				$ircd->notice('HostServ',$from,'Queued vHost "'.$vhost.'" for oper verification.');
-				$ircd->msg('HostServ','#services','New vHost requested by '.$from.' (Account '.$extra['nickd']['user'].')');
+				logit('[HostServ] New vHost requested by '.$from.' (Account '.$extra['nickd']['loggedin'].')');
 			} else {
 				$ircd->notice('HostServ',$from,'Invalid hostname. Please try again.');
 			}
@@ -67,7 +66,7 @@
 			// Do they have a vHost?
 			if ($active == 0 || $active == false) {
 				// They don't have a vHost. Why?
-				if ($active == 0) {
+				if ($active !== false) {
 					$ircd->notice('HostServ',$from,'Your vHost ('.$vhost.') is awaiting verification.');
 				} else {
 					$ircd->notice('HostServ',$from,'There is no vHost assigned to this account.');
