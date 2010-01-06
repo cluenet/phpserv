@@ -251,9 +251,9 @@
 					$ret = mysql_query($sql);
 					if ((microtime(1) - $time) > 1)
 						echo 'SQL Long Query time: '.(microtime(1) - $time).' Query: '.$sql."\n";
-					if (mysql_error()) {
-						logit("MySQL Error: ".mysql_error()."\nSQL: ".$sql);
-					}
+					//if (mysql_error()) {
+					//	logit("MySQL Error: ".mysql_error()."\nSQL: ".$sql);
+					//}
 					return $ret;
 				}
 
