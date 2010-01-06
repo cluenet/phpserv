@@ -162,7 +162,7 @@
 			if ($data == false) {
 				$ircd->notice('HostServ',$from,$rest[0].' did not request a vHost!');
 			} else {
-				$this->delhost($extra['uid']);
+				$this->delhost($data['id']);
 				$ircd->notice('HostServ',$from,'vHost for '.$rest[0].' rejected.');
 			}
 		}
@@ -170,12 +170,14 @@
 		function command_setter_activate($from,$to,$rest,$extra) {
 			global $mysql;
 			$ircd = &ircd();
-			
-			$data = $mysql->get($mysql->sql('SELECT `host` FROM `hostserv` WHERE `active` = 0 AND `uid` = '.$mysql->escape($extra['uid'])));
+
+			$data  = $mysql->get($mysql->sql('SELECT `id` FROM `access` WHERE `user` = ' . $mysql->escape($rest[0])));
+
+			$data = $mysql->get($mysql->sql('SELECT `host` FROM `hostserv` WHERE `active` = 0 AND `uid` = '.$mysql->escape($data['id'])));
 			if ($data == false) {
 				$ircd->notice('HostServ',$from,$rest[0].' did not request a vHost!');
 			} else {
-				$mysql->sql('UPDATE `hostserv` SET `active` = 1 WHERE `uid` = '.$mysql->escape($extra['uid']));
+				$mysql->sql('UPDATE `hostserv` SET `active` = 1 WHERE `uid` = '.$mysql->escape($data['uid']));
 				$ircd->notice('HostServ',$from,'vHost for '.$rest[0].' activated.');
 				$ircd->chghost('HostServ',$rest[0],$data['host']);
 			}
