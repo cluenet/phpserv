@@ -97,6 +97,10 @@
 			return $this->command_auth_on($from,$to,$rest,$extra);
 		}
 		
+		function command_setter_request($from,$to,$rest,$extra) {
+			return $this->command_auth_request($from,$to,$rest,$extra);
+		}
+		
 		function command_setter_set($from,$to,$rest,$extra) {
 			global $mysql;
 			$ircd = &ircd();
