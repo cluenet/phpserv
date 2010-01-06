@@ -365,12 +365,17 @@
 
 				function connect ($ip,$port,$bind) {
 					global $modules;
-					if(!($this->socket = socket_create(AF_INET,SOCK_STREAM,SOL_TCP)))
+/*					if(!($this->socket = socket_create(AF_INET,SOCK_STREAM,SOL_TCP)))
 						return 0;
 					if(!socket_bind($this->socket,$bind,0))
 						return 0;
 					if(!socket_connect($this->socket,$ip,$port))
+						return 0;*/
+					$this->socket = fsockopen($ip,$port,$es,$en,5);
+					if(!$this->socket) {
+						logit('Error: '.$en.' - '.$es);
 						return 0;
+					}
 					return 1;
 				}
 
@@ -394,7 +399,7 @@
 				}
 
 				function timeout ($time) {
-					stream_set_timeout($this->socket, $time);
+					//stream_set_timeout($this->socket, $time);
 				}
 
 				function eof () {
