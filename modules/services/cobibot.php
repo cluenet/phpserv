@@ -174,7 +174,7 @@
 					$ircd->msg('CobiBot','#CobiBot','Cobi: People are talking about you in '.$to.' - <'.$from.'> '.$message);
 					if ((substr(strtolower($message),0,4) == 'cobi') or (substr(strtolower($message),-5,4) == 'cobi')) {
 						if ((time() - $this->lastcobispeak) > 300) {
-							$ircd->notice('CobiBot',$from,'Cobi may not be here, however if you have a question, now or in the future, please use !Cobi <your question> if it is semi-important.  Cobi will see it ASAP.  Thanks.');
+							$ircd->notice('CobiBot',$from,'Cobi may not be here. However if you have a question, now or in the future, please use !Cobi <your question> if it is semi-important.  Cobi will see it ASAP.  Thanks.');
 						}
 					}
 				}
