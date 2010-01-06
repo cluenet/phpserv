@@ -243,17 +243,21 @@
 					return $data;
 				}
 
-				function sql ($sql) {
+				function sql ($sql,$tryagain = true) {
 					$time = microtime(1);
-					if (!mysql_ping($this->conn)) $this->connect();
+					if (!@mysql_ping($this->conn)) $this->connect();
 					if (strtolower(substr($sql,0,6)) == 'select')
 						$sql = 'SELECT HIGH_PRIORITY'.substr($sql,6);
 					$ret = mysql_query($sql);
 					if ((microtime(1) - $time) > 1)
 						echo 'SQL Long Query time: '.(microtime(1) - $time).' Query: '.$sql."\n";
-					//if (mysql_error()) {
-					//	logit("MySQL Error: ".mysql_error()."\nSQL: ".$sql);
-					//}
+					if (mysql_error()) {
+						if(mysql_error() == 'Lost connection to MySQL server during query' and $tryagain) {
+							$this->connect();
+							return $this->sql($sql,false);
+						} else
+							logit("MySQL Error: ".mysql_error()."\nSQL: ".$sql);
+					}
 					return $ret;
 				}
 
