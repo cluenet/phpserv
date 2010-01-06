@@ -9,7 +9,8 @@
 
 		function event_module_loaded($file) {
 			if (realpath($file) == realpath(__FILE__))
-				load('modules/misc/commandutils.php');
+				if(!ismod('commandutils'))
+					load('modules/misc/commandutils.php');
 		}
 
 		function event_commandutils_load() {
@@ -37,25 +38,31 @@
 		}
 		
 		function command_auth_request($from,$to,$rest,$extra) {
+			global $mysql;
+			$ircd = &ircd();
+			
 			$vhost = $rest[0];
-			$uid = $extra[0];
-			if ($ircd->isValidHost($vhost) {
+			$uid = $extra['uid'];
+			if ($ircd->isValidHost($vhost)) {
 				$mysql->insert('hostserv',array('uid' => $uid,'host' => $vhost,'active' => 0));
 				$ircd->notice('HostServ',$from,'Queued vHost "'.$vhost.'" for oper verification.');
-				$ircd->msg('HostServ','#services','New vHost requested by '.$from.' (Account '.$extra[1]['user'].')');
+				$ircd->msg('HostServ','#services','New vHost requested by '.$from.' (Account '.$extra['nickd']['user'].')');
 			} else {
 				$ircd->notice('HostServ',$from,'Invalid hostname. Please try again.');
 			}
 		}
 		
 		function command_auth_on($from,$to,$rest,$extra) {
-		$data = $mysql->get($mysql->sql('SELECT * FROM `hostserv` WHERE `active` = 1 AND `uid` = '.$mysql->escape($extra[0])));
-		$active = $data['active']
-		$vhost = $data['host']
-		
-		// Do they have a vHost?
+			global $mysql;
+			$ircd = &ircd();
+			
+			$data = $mysql->get($mysql->sql('SELECT * FROM `hostserv` WHERE `active` = 1 AND `uid` = '.$mysql->escape($extra['uid'])));
+			$active = $data['active'];
+			$vhost = $data['host'];
+			
+			// Do they have a vHost?
 			if ($active == 0 || $active == false) {
-			// They don't have a vHost. Why?
+				// They don't have a vHost. Why?
 				if ($active == 0) {
 					$ircd->notice('HostServ',$from,'Your vHost ('.$vhost.') is awaiting verification.');
 				} else {
@@ -69,8 +76,11 @@
 		}
 		
 		function command_auth_off($from,$to,$rest,$extra) {
-			$data = $mysql->get($mysql->sql('SELECT `active` FROM `hostserv` WHERE `active` = 1 AND `uid` = '.$mysql->escape($extra[0])));
-			$active = $data['active']
+			global $mysql;
+			$ircd = &ircd();
+			
+			$data = $mysql->get($mysql->sql('SELECT `active` FROM `hostserv` WHERE `active` = 1 AND `uid` = '.$mysql->escape($extra['uid'])));
+			$active = $data['active'];
 			
 			if ($active == false) {
 				$ircd->notice('HostServ',$from,'There is no vHost assigned to this account.');
@@ -79,12 +89,15 @@
 			}
 		}
 		
-// You can use $mysql->sql('UPDATE `hostserv` SET `active` = 1 WHERE `uid` = '.$mysql->escape($userid)); to activate them.
-// You can use $mysql->sql('DELETE FROM `hostserv` WHERE `uid` = '.$mysql->escape($userid)); to reject one.
-// You can use $mysql->get($mysql->sql('SELECT `host` FROM `hostserv` WHERE `active` = 1 AND `uid` = '.$mysql->escape($userid))); to get an array containing one element, the host of the user ... or false if no record exists.
+		// You can use $mysql->sql('UPDATE `hostserv` SET `active` = 1 WHERE `uid` = '.$mysql->escape($userid)); to activate them.
+		// You can use $mysql->sql('DELETE FROM `hostserv` WHERE `uid` = '.$mysql->escape($userid)); to reject one.
+		// You can use $mysql->get($mysql->sql('SELECT `host` FROM `hostserv` WHERE `active` = 1 AND `uid` = '.$mysql->escape($userid))); to get an array containing one element, the host of the user ... or false if no record exists.
 
 		function command_setter_set($from,$to,$rest,$extra) {
-			if (isValidHost($rest[1]) == 0) {
+			global $mysql;
+			$ircd = &ircd();
+			
+			if ($ircd->isValidHost($rest[1]) == 0) {
 				$ircd->notice('HostServ',$from,'Invalid hostname. Try again later.');
 				return 0;
 			}
@@ -92,16 +105,19 @@
 				$ircd->notice('HostServ',$from,$rest[0].' is not a PHPserv account.');
 				return 0;
 			}
-			if ($mysql->get($mysql->sql('SELECT `host` FROM `hostserv` WHERE `active` = 1 AND `uid` = '.$mysql->escape($userid)))) {
+			if ($mysql->get($mysql->sql('SELECT `host` FROM `hostserv` WHERE `active` = 1 AND `uid` = '.$mysql->escape($extra['uid'])))) {
 				$mysql->insert('hostserv',array('uid' => $uid,'host' => $vhost,'active' => 0));
 			} else {
-				$mysql->sql('UPDATE `hostserv` SET `host` = '.$mysql->escape($rest[0]).' SET `active` = 1 WHERE `uid` = '.$mysql->escape($extra[1]['id']));
+				$mysql->sql('UPDATE `hostserv` SET `host` = '.$mysql->escape($rest[0]).' SET `active` = 1 WHERE `uid` = '.$mysql->escape($extra['uid']));
 			}
 			$ircd->notice('HostServ',$from,'vHost "'.$rest[1].'" assigned to '.$rest[0].'.');
 			$ircd->chghost('HostServ',$rest[0],$rest[1]);
 		}
 
 		function command_setter_waiting($from,$to,$rest,$extra) {
+			global $mysql;
+			$ircd = &ircd();
+			
 			// Copypasta query from Cobi
 			$result = $mysql->sql('SELECT `u`.`user` AS `username`,`hs`.`host` AS `vhost` FROM `hostserv` AS `hs`, `access` as `u` WHERE `u`.`id` = `hs`.`uid` AND `hs`.`active` = 0');
 			$ircd->notice('HostServ',$from,'List of waiting vHosts:');
@@ -112,49 +128,64 @@
 		}
 
 		function command_setter_del($from,$to,$rest,$extra) {
-			$data = $mysql->get($mysql->sql('SELECT `host` FROM `hostserv` WHERE `active` = 1 AND `uid` = '.$mysql->escape($extra[0])));
+			global $mysql;
+			$ircd = &ircd();
+			
+			$data = $mysql->get($mysql->sql('SELECT `host` FROM `hostserv` WHERE `active` = 1 AND `uid` = '.$mysql->escape($extra['uid'])));
 			if ($data == false) {
 				$ircd->notice('HostServ',$from,$rest[0].' does not have a vHost!');
 			} else {
-				$this->delhost($extra[0]);
+				$this->delhost($extra['uid']);
 				$ircd->remhost('HostServ',$rest[0]);
 				$ircd->notice('HostServ',$from,'Deleted vHost for '.$rest[0]);
 			}
 		}
 		
 		function command_setter_reject($from,$to,$rest,$extra) {
-			$data = $mysql->get($mysql->sql('SELECT `host` FROM `hostserv` WHERE `active` = 0 AND `uid` = '.$mysql->escape($extra[0])));
+			global $mysql;
+			$ircd = &ircd();
+			
+			$data = $mysql->get($mysql->sql('SELECT `host` FROM `hostserv` WHERE `active` = 0 AND `uid` = '.$mysql->escape($extra['uid'])));
 			if ($data == false) {
 				$ircd->notice('HostServ',$from,$rest[0].' did not request a vHost!');
 			} else {
-				$this->delhost($extra[0]);
+				$this->delhost($extra['uid']);
 				$ircd->notice('HostServ',$from,'vHost for '.$rest[0].' rejected.');
 			}
 		}
 		
 		function command_setter_activate($from,$to,$rest,$extra) {
-			$data = $mysql->get($mysql->sql('SELECT `host` FROM `hostserv` WHERE `active` = 0 AND `uid` = '.$mysql->escape($extra[0])));
+			global $mysql;
+			$ircd = &ircd();
+			
+			$data = $mysql->get($mysql->sql('SELECT `host` FROM `hostserv` WHERE `active` = 0 AND `uid` = '.$mysql->escape($extra['uid'])));
 			if ($data = false) {
 				$ircd->notice('HostServ',$from,$rest[0].' did not request a vHost!');
 			} else {
-				$mysql->sql('UPDATE `hostserv` SET `host` = '.$mysql->escape($rest[0]).' SET `active` = 1 WHERE `uid` = '.$mysql->escape($extra[1]['id']));
+				$mysql->sql('UPDATE `hostserv` SET `host` = '.$mysql->escape($rest[0]).' SET `active` = 1 WHERE `uid` = '.$mysql->escape($extra['uid']));
 				$ircd->notice('HostServ',$from,'vHost for '.$rest[0].' activated.');
 				$ircd->chghost('HostServ',$rest[0],$data['host']);
 			}
 		}
 		
 		function command_auth_del($from,$to,$rest,$extra) {
-			$data = $mysql->get($mysql->sql('SELECT `host` FROM `hostserv` WHERE `uid` = '.$mysql->escape($extra[0])));
+			global $mysql;
+			$ircd = &ircd();
+			
+			$data = $mysql->get($mysql->sql('SELECT `host` FROM `hostserv` WHERE `uid` = '.$mysql->escape($extra['uid'])));
 			if ($data == false) {
 				$ircd->notice('HostServ',$from,'You don\'t have a vHost!');
 			} else {
-				$this->delhost($extra[0]);
+				$this->delhost($extra['uid']);
 				$ircd->remhost('HostServ',$from);
 			}
 		}
 		
 		function event_identify($nick,$uid) {
-			$hostd = $mysql->get($mysql->sql('SELECT * FROM `hostserv` WHERE `uid` = '$mysql->escape($uid)));
+			global $mysql;
+			$ircd = &ircd();
+			
+			$hostd = $mysql->get($mysql->sql('SELECT * FROM `hostserv` WHERE `uid` = '.$mysql->escape($uid)));
 			if ($hostd == false || $hostd['active'] == 0) {
 				return;
 			} else {
@@ -164,10 +195,14 @@
 		}
 			
 		function delhost($uid) {
-		// $uid = the UID's host to delete
-			$mysql->sql('DELETE FROM `hostserv` WHERE `uid` = '.$mysql->escape($userid));
+			global $mysql;
+			$ircd = &ircd();
+			
+			// $uid = the UID's host to delete
+			$mysql->sql('DELETE FROM `hostserv` WHERE `uid` = '.$mysql->escape($uid));
 			return 1;
 		}
+		
 		function destruct() {
 			$ircd = &ircd();
 			$ircd->quit('HostServ', 'La Gone!');
@@ -190,7 +225,6 @@
 				}
 				
 				if ($nickd['level'] > 49) { $what = 'setter'; }
-				elseif ($uid == -1) { $what = 'anon'; }
 				else { $what = 'auth'; }
 				
 				getmod('commandutils')->parsecommand($this,$what, $from, $to, $message, array('uid' => $uid,'nickd' => $nickd));
@@ -221,3 +255,4 @@
 		$class = new chanserv;
 		register($class, __FILE__, 'HostServ Module', 'hostserv');
 	}
+?>
