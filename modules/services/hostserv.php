@@ -44,7 +44,7 @@
 			$vhost = $rest[0];
 			$uid = $extra['uid'];
 			if ($ircd->isValidHost($vhost)) {
-				$mysql->insert('hostserv',array('uid' => $uid,'host' => $vhost,'active' => 0));
+				$mysql->insert('hostserv',array('uid' => $uid,'host' => $vhost,'active' => '0'));
 				$ircd->notice('HostServ',$from,'Queued vHost "'.$vhost.'" for oper verification.');
 				$ircd->msg('HostServ','#services','New vHost requested by '.$from.' (Account '.$extra['nickd']['user'].')');
 			} else {
