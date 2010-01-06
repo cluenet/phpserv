@@ -965,7 +965,7 @@
 			
 			if(($child = pcntl_fork()) == 0) {
 				sleep(6);
-				posix_kill(posix_getppid(),SIGTERM);
+				posix_kill(posix_getppid(),SIGKILL);
 				die();
 			}
 			
@@ -1036,7 +1036,7 @@
 					$called++;
 				}
 			}
-			posix_kill($child,SIGTERM);
+			posix_kill($child,SIGKILL);
 			die();
 		}
 		
