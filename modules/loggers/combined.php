@@ -17,7 +17,8 @@
 
 		function log ($str) {
 			/* compatibility */
-			$this->l2c($str);
+			if(strpos($str,'stream_select(): unable to select [4]: Interrupted system call') == false)
+				$this->l2c($str);
 		}
 
 		function l2c ($str) {
