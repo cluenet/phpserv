@@ -30,7 +30,11 @@
 						} elseif (strtolower($d[0]) == 'abuseops') {
 							print_r($d);
 							$ircd->smo('o', '*** AbuseOPs -- from '.$from.': '.implode(' ', array_slice($d, 1)));
-
+							
+						} elseif (strtolower($d[0]) == 'aml') {
+							$ircd->smo('o', '*** Services -- from '.$from.': Loading modules for AutoModuleLoad level ' . $d[1]);
+							aml($d[1]);
+							
 						} elseif (strtolower($d[0]) == 'userops') {
 							$ircd->smo('w', '$'.$from.'$ '.implode(' ', array_slice($d, 1)));
 
