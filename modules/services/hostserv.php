@@ -130,7 +130,7 @@
 			$result = $mysql->sql('SELECT `u`.`user` AS `username`,`hs`.`host` AS `vhost` FROM `hostserv` AS `hs`, `access` as `u` WHERE `u`.`id` = `hs`.`uid` AND `hs`.`active` = 0');
 			$ircd->notice('HostServ',$from,'List of waiting vHosts:');
 			while ($row = $mysql->get($result)) {
-				$ircd->notice('HostServ',$from,$row['user'].' - '.$row['host']);
+				$ircd->notice('HostServ',$from,$row['username'].' - '.$row['vhost']);
 			}
 			$ircd->notice('HostServ',$from,'End of waiting list.');
 		}
