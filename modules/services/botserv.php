@@ -28,10 +28,10 @@
 				$ircd->join('BotServ','#bots');
 				$ircd->mode('BotServ','#services','+oa BotServ BotServ');
 //				$ircd->mode('BotController','#bots','+oa BotServ BotServ');
-				$ircd->svso($from,'-');
+				//$ircd->svso($from,'-');
 			} elseif (isset($this->bots[strtolower($to)])) {
 				$this->initbot(strtolower($to));
-				$ircd->svso($from,'-');
+				//$ircd->svso($from,'-');
 			}
 		}
 
@@ -251,7 +251,7 @@
 						'blvl'	=> $blvl,
 						'trig'	=> $bot['trig']
 					);
-					$this->sboteval($nick,$cmd,NULL,$to,$bot['nick'],$x['data'],$vars);
+					$this->sboteval($nick,$cmd,$nick,$to,$bot['nick'],$x['data'],$vars);
 				}
 			}
 		}
