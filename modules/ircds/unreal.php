@@ -189,7 +189,7 @@
 		}
 
 		function addnick ($server,$nick,$ident,$host,$name) {
-			$this->svskill($nick,'Nick collision by services');
+			//$this->svskill($nick,'Nick collision by services');
 			$this->raw('NICK '.$nick.' 1 '.time().' '.$ident.' '.$host.' '.$server.' 0 :'.$name);
 		}
 
