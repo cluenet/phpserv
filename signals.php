@@ -34,6 +34,7 @@
 				while (pcntl_waitpid(0, $status) != -1) {
 					$status = pcntl_wexitstatus($status);
 				}
+				if (function_exists('event')) { event("signal_chld"); }
 				break;
 		}
 

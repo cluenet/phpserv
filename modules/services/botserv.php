@@ -938,7 +938,7 @@
 			$functions .= 'function get ($key, $default = "") { $cfg = unserialize(file_get_contents("cfg.ser")); if(isset($cfg[$key])) return $cfg[$key]; return $default; }';
 			$functions .= 'function set ($key, $value) { $cfg = unserialize(file_get_contents("cfg.ser")); $cfg[$key] = $value; file_put_contents("cfg.ser",serialize($cfg)); }';
 			//$functions .= 'function __trap_alrm ($s) { die("timeout"); }';
-			$functions .= 'function __trap_tick () { static $start = null; if($start == null) $start = time(); if (time() - $start > 5) die("Timeout."); }';
+			//$functions .= 'function __trap_tick () { static $start = null; if($start == null) $start = time(); if (time() - $start > 5) die("Timeout."); }';
 			//$functions .= 'pcntl_signal(SIGALRM, "__trap_alrm");';
 			//format_time (gnarfel)
 			$functions .= 'function format_time($seconds) {$secs = intval($seconds % 60); $mins =';
@@ -959,6 +959,16 @@
 		function sboteval ($nick,$cmd,$message,$chan,$bot,$script,$othervars) {
 			global $mysql;
 			$ircd = &ircd();
+			
+			if(pcntl_fork() != 0)
+				return;
+			
+			if(pcntl_fork() == 0) {
+				sleep(6);
+				posix_kill(posix_getppid(),SIGTERM);
+				die();
+			}
+			
 			$ubot = strtolower($bot);
 			try {
 				if (!$this->bots[$ubot]['sandbox']['active']) {
@@ -977,11 +987,16 @@
 				}
 				//$this->bots[$ubot]['sandbox']->pcntl_alarm(5);
 				//$this->bots[$ubot]['sandbox']->set_time_limit(6);
-				$this->bots[$ubot]['sandbox']->eval('register_tick_function("__trap_tick");');
+				//$this->bots[$ubot]['sandbox']->eval('register_tick_function("__trap_tick");');
 				$this->bots[$ubot]['sandbox']->eval($script);
 				//$this->bots[$ubot]['sandbox']->set_time_limit(0);
 				//$this->bots[$ubot]['sandbox']->pcntl_alarm(0);
-				$data = $this->bots[$ubot]['sandbox']->__return__;
+				if(file_exists('/home/phpserv/phpserv/modules/services/botcontroller/bots.ser'))
+					$data = unserialize(file_get_contents('/home/phpserv/phpserv/modules/services/botcontroller/bots.ser'));
+				else
+					$data = array();
+				$data[] = array($ubot,$nick,$cmd,$message,$chan,$bot,$script,$othervars,$this->bots[$ubot]['sandbox']->__return__);
+				file_put_contents('/home/phpserv/phpserv/modules/services/botcontroller/bots.ser',serialize($data));
 			}
 			catch (Exception $e) {
 				logit('Caught exception: '.$e->getMessage());
@@ -991,102 +1006,128 @@
 					logit($y);
 				}
 			}
+			
 			unset($this->bots[$ubot]['sandbox']->__return__);
 			$this->curbot = '';
+			
 			$repeat = 1;
 			$called = 0;
-			
-			while ($repeat == 1) {
+			while($repeat == 1) {
 				$repeat = 0;
-				if (isset($data['say'])) {
-					$x = 0;
-					foreach ($data['say'] as $y) {
-						$y = str_replace("\n",'',$y);
-						if ($x <= 10) { $ircd->msg($bot,$chan,$y); }
-						$x++;
-					}
-				}
-	
-				if (isset($data['notice'])) {
-					$x = 0;
-					foreach ($data['notice'] as $y) {
-						$y = str_replace("\n",'',$y);
-						if ($x <= 10) { $ircd->notice($bot,$nick,$y); }
-						$x++;
-					}
-				}
-
-				if (isset($data['ctcpreply'])) {
-					$x = 0;
-					foreach ($data['ctcpreply'] as $y) {
-						$y = str_replace("\n",'',$y);
-						if ($x <= 3) { $ircd->notice($bot,$nick,"\001".$y."\001"); }
-						$x++;
-					}
-				}
-
-
-				if (isset($data['kick'])) {
-					$x = 0;
-					foreach ($data['kick'] as $y) {
-						$y = str_replace("\n",'',$y);
-						if ($x <= 10) { $y1 = explode(" ",$y); $ircd->kick($bot,$chan,$y1[0],implode(" ",array_splice($y1,1))); }
-						$x++;
-					}
-				}
-				
-				if (isset($data['wkb'])) {
-					$x = 0;
-					foreach ($data['wkb'] as $y) {
-						$y = str_replace("\n",'',$y);
-						if ($x <= 10) { $y1 = explode(" ",$y); event('warnkickban',$chan,$y1[0],implode(" ",array_splice($y1,1))); }
-						$x++;
-					}
-				}
-
-				if (isset($data['mode'])) {
-					$x = 0;
-					foreach ($data['mode'] as $y) {
-						$y = str_replace("\n",'',$y);
-						if ($x <= 10) { $ircd->mode($bot,$chan,$y); }
-						$x++;
-					}
-				}
-
-				if (isset($data['topic'])) {
-					$x = 0;
-					foreach ($data['topic'] as $y) {
-						$y = str_replace("\n",'',$y);
-						if ($x <= 2) { $ircd->topic($bot,$chan,$y); }
-						$x++;
-					}
-				}
-
-				if (isset($data['invite'])) {
-					$x = 0;
-					foreach ($data['invite'] as $y) {
-						$y = str_replace("\n",'',$y);
-						if ($x <= 3) { $ircd->invite($bot,$chan,$y); }
-						$x++;
-					}
-				}
-
 				if (isset($data['call'])) {
 					if ($called < 3) {
 						if ($x = $mysql->get($mysql->sql('SELECT * FROM `botserv_cmds` WHERE `botid` = '.$mysql->escape($this->bots[$ubot]['botid']).' AND `cmd` = '.$mysql->escape($data['call'])))) {
 							$this->curbot = $bot;
-							//$this->bots[$ubot]['sandbox']->eval('pcntl_alarm(5);');
-							//$this->bots[$ubot]['sandbox']->eval('set_time_limit(6);');
+
 							$this->bots[$ubot]['sandbox']->eval($x['data']);
-							//$this->bots[$ubot]['sandbox']->eval('set_time_limit(0);');
-							//$this->bots[$ubot]['sandbox']->eval('pcntl_alarm(0);');
+
 							$data = $this->bots[$ubot]['sandbox']->__return__;
 							unset($this->bots[$ubot]['sandbox']->__return__);
+							if(file_exists('/home/phpserv/phpserv/modules/services/botcontroller/bots.ser'))
+								$botdata = unserialize(file_get_contents('/home/phpserv/phpserv/modules/services/botcontroller/bots.ser'));
+							else
+								$botdata = array();
+							$botdata[] = array($ubot,$nick,$cmd,$message,$chan,$bot,$script,$othervars,$data);
+							file_put_contents('/home/phpserv/phpserv/modules/services/botcontroller/bots.ser',serialize($botdata));
 							$this->curbot = '';
 							$repeat = 1;
 						}
 					}
 					$called++;
+				}
+			}
+			die();
+		}
+		
+		function event_signal_chld() {
+			global $mysql;
+			$ircd = &ircd();
+			
+			if(!file_exists('/home/phpserv/phpserv/modules/services/botcontroller/bots.ser'))
+				return;
+			
+			$botdata = unserialize(file_get_contents('/home/phpserv/phpserv/modules/services/botcontroller/bots.ser'));
+			unlink('/home/phpserv/phpserv/modules/services/botcontroller/bots.ser');
+			foreach($botdata as $entry) {
+				list($ubot,$nick,$cmd,$message,$chan,$bot,$script,$othervars,$data) = $entry;
+				
+				$repeat = 1;
+				$called = 0;
+				
+				while ($repeat == 1) {
+					$repeat = 0;
+					if (isset($data['say'])) {
+						$x = 0;
+						foreach ($data['say'] as $y) {
+							$y = str_replace("\n",'',$y);
+							if ($x <= 10) { $ircd->msg($bot,$chan,$y); }
+							$x++;
+						}
+					}
+		
+					if (isset($data['notice'])) {
+						$x = 0;
+						foreach ($data['notice'] as $y) {
+							$y = str_replace("\n",'',$y);
+							if ($x <= 10) { $ircd->notice($bot,$nick,$y); }
+							$x++;
+						}
+					}
+	
+					if (isset($data['ctcpreply'])) {
+						$x = 0;
+						foreach ($data['ctcpreply'] as $y) {
+							$y = str_replace("\n",'',$y);
+							if ($x <= 3) { $ircd->notice($bot,$nick,"\001".$y."\001"); }
+							$x++;
+						}
+					}
+	
+	
+					if (isset($data['kick'])) {
+						$x = 0;
+						foreach ($data['kick'] as $y) {
+							$y = str_replace("\n",'',$y);
+							if ($x <= 10) { $y1 = explode(" ",$y); $ircd->kick($bot,$chan,$y1[0],implode(" ",array_splice($y1,1))); }
+							$x++;
+						}
+					}
+					
+					if (isset($data['wkb'])) {
+						$x = 0;
+						foreach ($data['wkb'] as $y) {
+							$y = str_replace("\n",'',$y);
+							if ($x <= 10) { $y1 = explode(" ",$y); event('warnkickban',$chan,$y1[0],implode(" ",array_splice($y1,1))); }
+							$x++;
+						}
+					}
+	
+					if (isset($data['mode'])) {
+						$x = 0;
+						foreach ($data['mode'] as $y) {
+							$y = str_replace("\n",'',$y);
+							if ($x <= 10) { $ircd->mode($bot,$chan,$y); }
+							$x++;
+						}
+					}
+	
+					if (isset($data['topic'])) {
+						$x = 0;
+						foreach ($data['topic'] as $y) {
+							$y = str_replace("\n",'',$y);
+							if ($x <= 2) { $ircd->topic($bot,$chan,$y); }
+							$x++;
+						}
+					}
+	
+					if (isset($data['invite'])) {
+						$x = 0;
+						foreach ($data['invite'] as $y) {
+							$y = str_replace("\n",'',$y);
+							if ($x <= 3) { $ircd->invite($bot,$chan,$y); }
+							$x++;
+						}
+					}
 				}
 			}
 		}
