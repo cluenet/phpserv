@@ -219,7 +219,7 @@
 							'blvl'	=> $blvl,
 							'trig'	=> $bot['trig']
 						);
-						$this->sboteval($from,$cmd,$mode,$to,$bot['nick'],$x['data'],$vars);
+						$this->sboteval($from,$cmd,$newtopic,$to,$bot['nick'],$x['data'],$vars);
 					}
 				}
 			}
@@ -229,34 +229,32 @@
 			$ircd = &ircd();
 			$cmd = '__e_id';
 			foreach ($this->bots as $bot) {
-				if (strtolower($bot['channel']) == strtolower($to)) {
-					$botid = $mysql->get($mysql->sql('SELECT `id` FROM `botserv_bots` WHERE `nick` = '.$mysql->escape($bot['nick'])));
-					$botid = $botid['id'];
-					if ($x = $mysql->get($mysql->sql('SELECT * FROM `botserv_cmds` WHERE `botid` = '.$mysql->escape($botid).' AND `cmd` = '.$mysql->escape($cmd)))) {
-						$nickd = $mysql->get($mysql->sql('SELECT * FROM `users` WHERE `nick` = '.$mysql->escape($from)));
-						$uid = $nickd['loggedin'];
-						$user = $mysql->get($mysql->sql('SELECT * FROM `access` WHERE `id` = '.$mysql->escape($uid)));
-						$level = $user['level'];
-						$user = $user['user'];
-						$blvl = $mysql->get($mysql->sql('SELECT * FROM `botserv_acc` WHERE `uid` = '.$mysql->escape($uid).' AND `botid` = '.$mysql->escape($botid)));
-						$blvl = $blvl['level'];
-						if ($mysql->get($mysql->sql('SELECT * FROM `botserv_cos` WHERE `uid` = '.$mysql->escape($uid).' AND `botid` = '.$mysql->escape($botid)))) { $coowner = 1; } else { $coowner = 0; }
-						if ($bot['owner'] == $uid) { $owner = 1; } else { $owner = 0; }
-						$vars = array
-						(
-							'user'	=> $user,
-							'uid'	=> $uid,
-							'nickd'	=> $nickd,
-							'level'	=> $level,
-							'owner'	=> $owner,
-							'coowner'=>$coowner,
-							'blvl'	=> $blvl,
-							'trig'	=> $bot['trig']
-						);
-						$this->sboteval($from,$cmd,$mode,$to,$bot['nick'],$x['data'],$vars);
-					}
+				$botid = $mysql->get($mysql->sql('SELECT `id` FROM `botserv_bots` WHERE `nick` = '.$mysql->escape($bot['nick'])));
+				$botid = $botid['id'];
+				if ($x = $mysql->get($mysql->sql('SELECT * FROM `botserv_cmds` WHERE `botid` = '.$mysql->escape($botid).' AND `cmd` = '.$mysql->escape($cmd)))) {
+					$nickd = $mysql->get($mysql->sql('SELECT * FROM `users` WHERE `nick` = '.$mysql->escape($nick)));
+					$user = $mysql->get($mysql->sql('SELECT * FROM `access` WHERE `id` = '.$mysql->escape($uid)));
+					$level = $user['level'];
+					$user = $user['user'];
+					$blvl = $mysql->get($mysql->sql('SELECT * FROM `botserv_acc` WHERE `uid` = '.$mysql->escape($uid).' AND `botid` = '.$mysql->escape($botid)));
+					$blvl = $blvl['level'];
+					if ($mysql->get($mysql->sql('SELECT * FROM `botserv_cos` WHERE `uid` = '.$mysql->escape($uid).' AND `botid` = '.$mysql->escape($botid)))) { $coowner = 1; } else { $coowner = 0; }
+					if ($bot['owner'] == $uid) { $owner = 1; } else { $owner = 0; }
+					$vars = array
+					(
+						'user'	=> $user,
+						'uid'	=> $uid,
+						'nickd'	=> $nickd,
+						'level'	=> $level,
+						'owner'	=> $owner,
+						'coowner'=>$coowner,
+						'blvl'	=> $blvl,
+						'trig'	=> $bot['trig']
+					);
+					$this->sboteval($nick,$cmd,NULL,$to,$bot['nick'],$x['data'],$vars);
 				}
-			}
+				}
+		}
 		}
 		
 		function event_msg ($from,$to,$message) {
@@ -288,7 +286,7 @@
 								$ircd->notice('BotServ',$from,'Illegal characters in the ident. Please try again.');
 								return 0;
 							}
-							if (preg_match('/[^-a-z\d.]/i',$d[4]) == 1) {
+							if ($ircd->isValidHost($d[4] == 0) {
 								$ircd->notice('BotServ',$from,'Illegal characters in the hostname. Please try again.');
 								return 0;
 							}
