@@ -228,7 +228,7 @@
 					return 0;
 				}
 				
-				if ($nickd['level'] > 49) { $what = 'setter'; }
+				if ($mysql->getaccess($from) > 49) { $what = 'setter'; }
 				else { $what = 'auth'; }
 				
 				getmod('commandutils')->parsecommand($this,$what, $from, $to, $message, array('uid' => $uid,'nickd' => $nickd));
