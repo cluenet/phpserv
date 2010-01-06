@@ -230,7 +230,7 @@
 			// $from = the nick to source the change from (ie HostServ)
 			// $nick = the nick recieving the change
 			// $host = the new hostname
-			$this->raw(':'.$from.' CHGHOST .'.$nick.' '.$host);
+			$this->raw(':'.$from.' CHGHOST '.$nick.' '.$host);
 		}
 		
 		function remhost ($from,$nick) {

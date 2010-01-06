@@ -171,7 +171,7 @@
 			$ircd = &ircd();
 			
 			$data = $mysql->get($mysql->sql('SELECT `host` FROM `hostserv` WHERE `active` = 0 AND `uid` = '.$mysql->escape($extra['uid'])));
-			if ($data = false) {
+			if ($data == false) {
 				$ircd->notice('HostServ',$from,$rest[0].' did not request a vHost!');
 			} else {
 				$mysql->sql('UPDATE `hostserv` SET `active` = 1 WHERE `uid` = '.$mysql->escape($extra['uid']));
