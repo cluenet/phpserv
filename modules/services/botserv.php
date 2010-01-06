@@ -251,7 +251,7 @@
 						'blvl'	=> $blvl,
 						'trig'	=> $bot['trig']
 					);
-					$this->sboteval($nick,$cmd,$nick,$to,$bot['nick'],$x['data'],$vars);
+					$this->sboteval($nick,$cmd,$nick,$bot['channel'],$bot['nick'],$x['data'],$vars);
 				}
 			}
 		}
