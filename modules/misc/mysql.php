@@ -11,7 +11,7 @@
 			}
 		}
 
-		function event_signon ($nick,$user,$host,$real,$ip,$server) {
+		function event_signon ($nick,$user,$host,$real,$ip,$server,$stamp=0) {
 			global $mysql;
 			$servid = $mysql->get($mysql->sql('SELECT `servid` FROM `servers` WHERE `name` = '.$mysql->escape($server)));
 			$servid = $servid['servid'];
@@ -22,7 +22,8 @@
 				'host'		=> $host,
 				'realname'	=> $real,
 				'ip'		=> $ip,
-				'servid'	=> $servid
+				'servid'	=> $servid,
+				'loggedin'	=> $stamp == 0 ? -1 : $stamp
 			);
 			$mysql->insert('users', $data);	
 		}

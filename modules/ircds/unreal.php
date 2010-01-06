@@ -16,7 +16,7 @@
 					$a[$y] = ord($x);
 				}
 				$msg = implode('.',$a);
-				event('signon', $d_a[1], $d_a[4], $d_a[5], substr(implode(array_slice($d_a, 11), " "), 1), $msg, $d_a[6]);
+				event('signon', $d_a[1], $d_a[4], $d_a[5], substr(implode(array_slice($d_a, 11), " "), 1), $msg, $d_a[6], $d_a[7]);
 
 			} elseif (@strtolower($d_a[1]) == "nick") {
 				event('nick', substr($d_a[0],1), $d_a[2]);
