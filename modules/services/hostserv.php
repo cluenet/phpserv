@@ -44,7 +44,11 @@
 			$vhost = $rest[0];
 			$uid = $extra['uid'];
 			if ($ircd->isValidHost($vhost)) {
-				$mysql->insert('hostserv',array('uid' => $uid,'host' => $vhost,'active' => '0'));
+				if($mysql->get($mysql->sql('SELECT `uid` FROM `hostserv` WHERE `uid` = '.$mysql->escape($uid)))) {
+					$mysql->sql('UPDATE `hostserv` SET `host` = '.$mysql->escape($vhost).', `active` = 0 WHERE `uid` = '.$mysql->escape($uid));
+				} else {
+					$mysql->insert('hostserv',array('uid' => $uid,'host' => $vhost,'active' => '0'));
+				}
 				$ircd->notice('HostServ',$from,'Queued vHost "'.$vhost.'" for oper verification.');
 				$ircd->msg('HostServ','#services','New vHost requested by '.$from.' (Account '.$extra['nickd']['user'].')');
 			} else {
