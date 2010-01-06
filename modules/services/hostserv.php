@@ -184,7 +184,7 @@
 		}
 
 		function command_setter_accept($from,$to,$rest,$extra) {
-			command_setter_activate($from,$to,$rest,$extra);
+			$this->command_setter_activate($from,$to,$rest,$extra);
 		}
 
 		function command_auth_del($from,$to,$rest,$extra) {
