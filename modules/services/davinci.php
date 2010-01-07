@@ -68,6 +68,14 @@ $mysql->getsetting('server')
 			$ircd = &ircd();
 			if (isset($this->users[$source]) and isset($this->users[$source]['vlog']) and ($this->users[$source]['vlog'] == true))
 				$ircd->notice('DaVinci',str_replace('*deauth','',$source),$reason);
+			if(!isset($this->users))
+				$this->users = array();
+			if(!isset($this->users[$source]))
+				$this->users[$source] = array();
+			if(!isset($this->users[$source]['log']))
+				$this->users[$source]['log'] = array();
+			if(!isset($this->users[$source]['log'][$reason]))
+				$this->users[$source]['log'][$reason] = 0;
 			$this->users[$source]['log'][$reason]++;
 		}
 		
