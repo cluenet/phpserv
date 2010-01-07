@@ -448,6 +448,20 @@
 			}
 		}
 		
+		function event_logout($from) {
+			global $mysql;
+			$me = $mysql->getsetting('server');
+			$this->svsmode($me,$from,'+d 0');
+			$this->svsmode($me,$from,'-r');
+		}
+		
+		function event_identify($from,$uid) {
+			global $mysql;
+			$me = $mysql->getsetting('server');
+			$ircd->svsmode('PHPServ',$from,'+d ' . $user['loggedin']);
+			$ircd->svsmode('PHPServ',$from,'+r');
+		}
+		
 	}
 
 
