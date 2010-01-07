@@ -37,7 +37,7 @@
 							}
 						}
 					}
-					if ($mysql->getaccess($from) > 600) {	
+					if ($mysql->getaccess($from) > 600) {
 						if (strtolower($d[0]) == 'kill') {
 							$ircd->svskill($d[1],'PHPServ Kill by '.$from.' ('.implode(' ', array_slice($d, 2)).')');
 
