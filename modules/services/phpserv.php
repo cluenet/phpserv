@@ -83,7 +83,6 @@
 						if ($mysql->logoutaccess($from)) {
 							$ircd->notice('PHPServ',$from,'Successfully logged out of PHPserv account.');
 							$ircd->swhois($from);
-							event('logout',$from);
 						} else {
 							$ircd->notice('PHPServ',$from,'Failure.');
 						}
@@ -101,7 +100,6 @@
 						if (isset($d[1]) and isset($d[2]) and $mysql->loginaccess($from,$d[1],$d[2])) {
 							$ircd->notice('PHPServ',$from,'Identify processed successfully.');
 							$user = $mysql->get($mysql->sql('SELECT `loggedin` FROM `users` WHERE `nick` = '.$mysql->escape($from)));
-							event('identify',$from,$user['loggedin']);
 							$ircd->swhois($from,'is identified to PHPServ as '.$d[1].' (uid='.$user['loggedin'].')');
 						} else { $ircd->notice('PHPServ',$from,'Error while processing identify.'); }
 					} elseif (strtolower($d[0]) == 'register') {

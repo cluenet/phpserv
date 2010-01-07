@@ -312,6 +312,7 @@
 					$access = $this->get($this->sql('SELECT * FROM `access` WHERE `user` = '.$this->escape($user).' AND `pass` = PASSWORD('.$this->escape($pass).')'));
 					if (is_array($access)) {
 						$this->sql('UPDATE `users` SET `loggedin` = '.$this->escape($access['id']).' WHERE `nick` = '.$this->escape($who));
+						event('identify',$from,$access['id']);
 						return true;
 					} else {
 						return false;
@@ -320,6 +321,7 @@
 
 				function logoutaccess ($who) {
 					$this->sql('UPDATE `users` SET `loggedin` = -1 WHERE `nick` = '.$this->escape($who));
+					event('logout',$from);
 					return true;
 				}
 
