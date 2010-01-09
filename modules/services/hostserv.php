@@ -31,9 +31,10 @@
 			$cu->registercommand($this, 'setter', 'REQUEST','<vhost> - Requests a vHost from HostServ.');
 			$cu->registercommand($this, 'setter', 'SET','<nick> <vhost> - Assigns a vHost on a user.');
 			$cu->registercommand($this, 'setter', 'ACTIVATE','<nick> - Activates a requested vHost.');
-			$cu->registercommand($this, 'setter', 'ACCEPT','<nick> - Alias to ACCEPT.');
+			$cu->registercommand($this, 'setter', 'ACCEPT','<nick> - Alias to ACTIVATE.');
 			$cu->registercommand($this, 'setter', 'WAITING','Lists requested vHosts.');
 			$cu->registercommand($this, 'setter', 'REJECT','<nick> - Rejects a waiting vHost.');
+			$cu->registercommand($this, 'setter', 'DECLINE', '<nick> - Alias to REJECT.');
 		}
 		
 		function command_auth_request($from,$to,$rest,$extra) {
@@ -131,6 +132,12 @@
 			
 			// Copypasta query from Cobi
 			$result = $mysql->sql('SELECT `u`.`user` AS `username`,`hs`.`host` AS `vhost` FROM `hostserv` AS `hs`, `access` as `u` WHERE `u`.`id` = `hs`.`uid` AND `hs`.`active` = 0');
+
+			if ($result === false) { 
+				$ircd->notice('HostServ',$from,'No vHosts waiting.');
+				return 0;
+			}
+			
 			$ircd->notice('HostServ',$from,'List of waiting vHosts:');
 			while ($row = $mysql->get($result)) {
 				$ircd->notice('HostServ',$from,$row['username'].' - '.$row['vhost']);
@@ -147,6 +154,8 @@
 				$ircd->notice('HostServ',$from,$rest[0].' does not have a vHost!');
 			} else {
 				$this->delhost($extra['uid']);
+				// XXX: This needs to track down the user if they're not on the same nick as the account.
+				// This would require at least one MySQL query. Is it worth it?
 				$ircd->remhost('HostServ',$rest[0]);
 				$ircd->notice('HostServ',$from,'Deleted vHost for '.$rest[0]);
 			}
@@ -165,6 +174,10 @@
 				$this->delhost($userdata['id']);
 				$ircd->notice('HostServ',$from,'vHost for '.$rest[0].' rejected.');
 			}
+		}
+		
+		function command_setter_decline($from,$to,$rest,$extra) {
+			return $this->command_setter_reject($from,$to,$rest,$extra);
 		}
 		
 		function command_setter_activate($from,$to,$rest,$extra) {

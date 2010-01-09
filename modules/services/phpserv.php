@@ -50,6 +50,8 @@
 							$ircd->notice($mysql->getsetting('server'),$d[1],$from.' used PHPServ Mode '.$d[1].' '.implode(' ', array_slice($d, 2)));
 							$ircd->notice('PHPServ',$from,'Success.');
 							$ircd->smo('o', "\002Abuse: ".$from."\002 used MODE ".$d[1].' '.implode(' ', array_slice($d, 2)));
+						} elseif (strtolower($d[0]) == 'global') {
+							$ircd->notice('PHPServ','$*','*** Network Announcement: '.implode(' ',array_slice($d,1)));
 						}
 					}
 					if ($mysql->getaccess($from) > 100) {
