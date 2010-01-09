@@ -6,6 +6,13 @@
 
 		function construct() {
 			$this->set = unserialize(file_get_contents('Katelin.set'));
+			if(!is_array($this->set)) {
+				$this->set = array(
+					'trigger' => '!',
+					'chans' => array()
+				);
+				file_put_contents('Katelin.set',serialize($this->set));
+			}
 			$this->loadstate();
 			$this->event_eos();
 		}
