@@ -223,6 +223,13 @@ $mysql->getsetting('server')
 		
 		function construct() {
 			$this->config = unserialize(file_get_contents('DaVinci.set'));
+			if(!is_array($this->config)) {
+				$this->config = array(
+					'chans' => array( '#clueirc' ),
+					'trigger' => '.'
+				);
+				file_put_contents('DaVinci.set',serialize($this->config));
+			}
 			$this->lineaverage = $this->getlineaverage();
 			$this->users = $this->get_db();
 			$this->event_eos();
