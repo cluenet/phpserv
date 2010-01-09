@@ -458,7 +458,7 @@
 		function event_identify($from,$uid) {
 			global $mysql;
 			$me = $mysql->getsetting('server');
-			$this->svsmode('PHPServ',$from,'+d ' . $user['loggedin']);
+			$this->svsmode('PHPServ',$from,'+d ' . $uid);
 			$this->svsmode('PHPServ',$from,'+r');
 		}
 		
