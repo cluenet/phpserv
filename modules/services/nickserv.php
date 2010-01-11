@@ -18,6 +18,7 @@
 				return;
 			}
 				
+			getmod('commandutils')->registercommand($this, 'anon', 'REGISTER', 'Catches the command to stop scaring off noobies');
 			getmod('commandutils')->registercommand($this, 'anon', 'IDENTIFY', '<password>[:<username>] - Identifies you to services.');
 			getmod('commandutils')->registercommand($this, 'anon', 'ID', 'Alias for IDENTIFY.');
 			
@@ -34,6 +35,10 @@
 			$ircd->quit('NickServ','La Gone!');
 		}
 
+		function command_anon_register($from,$to,$rest,$extra) {
+			$ircd->notice($to,$from,'You need to identify to your PHPserv account to do this.');
+		}
+		
 		function command_anon_id ($from,$to,$rest,$extra) {
 			$this->command_anon_identify($from,$to,$rest,$extra);
 		}
