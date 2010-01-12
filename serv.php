@@ -261,7 +261,7 @@
 					return $ret;
 				}
 
-				function insert ($tbl,$data) {
+				function insert ($tbl,$data,$onduplicate = false) {
 					$sql = 'INSERT INTO `'.$tbl.'`';
 					foreach ($data as $name => $val) {
 						$names[] = '`'.$name.'`';
@@ -276,6 +276,13 @@
 					$names = implode(',',$names);
 					$values = implode(',',$values);
 					$sql .= ' ('.$names.') VALUES ('.$values.')';
+					if ($onduplicate) {
+						$sql .= ' ON DUPLICATE KEY UPDATE ';
+						$update = array();
+						foreach ($data as $name => $value)
+							$update[] = '`'.$name.'`=VALUES(`'.$name.'`)';
+						$sql .= implode(', ', $update);
+					}
 					return $this->sql($sql);
 				}
 
@@ -362,6 +369,57 @@
 					if($this->get($this->sql('select `id` from `settings` where `name` = '.$this->escape($name).' and `section` = '.$this->escape($section))) === false)
 						return false;
 					return true;
+				}
+				
+				function setaccountproperty ($uid,$key,$value,$visibility = 'hidden',$section = 'core') {
+					$data = array(
+						'uid' => $uid,
+						'key' => $key,
+						'value' => $value,
+						'visibility' => $visibility,
+						'section' => $section
+					);
+					$this->insert('access_properties',$data,true);
+				}
+				
+				function listaccountproperties ($uid=null,$key=null,$value=null,$visibility=null,$section=null) {
+					$sql = 'SELECT * FROM `access_properties` WHERE 1=1';
+					if($uid !== null)
+						$sql .= ' AND `uid` = '.$this->escape($uid);
+					if($key !== null)
+						$sql .= ' AND `key` = '.$this->escape($key);
+					if($value !== null)
+						$sql .= ' AND `value` = '.$this->escape($value);
+					if($visibility !== null)
+						$sql .= ' AND `visibility` = '.$this->escape($visibility);
+					if($section !== null)
+						$sql .= ' AND `section` = '.$this->escape($section);
+					
+					$result = $this->sql($sql);
+					$results = array();
+					while($results[] = $this->get($result));
+					return $results;
+				}
+				
+				function getaccountproperty ($uid,$key,$section = 'core') {
+					$data = $this->listaccountproperties($uid,$key,null,null,$section);
+					return $data[0];
+				}
+				
+				function delaccountproperty ($uid=null,$key=null,$value=null,$visibility=null,$section=null) {
+					$sql = 'DELETE FROM `access_properties` WHERE 1=1';
+					if($uid !== null)
+						$sql .= ' AND `uid` = '.$this->escape($uid);
+					if($key !== null)
+						$sql .= ' AND `key` = '.$this->escape($key);
+					if($value !== null)
+						$sql .= ' AND `value` = '.$this->escape($value);
+					if($visibility !== null)
+						$sql .= ' AND `visibility` = '.$this->escape($visibility);
+					if($section !== null)
+						$sql .= ' AND `section` = '.$this->escape($section);
+					
+					$this->sql($sql);
 				}
 			}
 		
