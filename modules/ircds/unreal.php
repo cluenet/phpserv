@@ -458,8 +458,8 @@
 		function event_identify($from,$uid) {
 			global $mysql;
 			$me = $mysql->getsetting('server');
-			$this->svsmode('PHPServ',$from,'+d ' . $uid);
-			$this->svsmode('PHPServ',$from,'+r');
+			$this->svsmode($me,$from,'+d ' . $uid);
+			$this->svsmode($me,$from,'+r');
 		}
 		
 	}
