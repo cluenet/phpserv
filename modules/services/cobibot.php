@@ -133,6 +133,9 @@
 						mail('cobi@cluenet.org',$from.'@IRC',$data[1]);
 						$ircd->notice('CobiBot',$from,'Email sent.');
 						break;
+					case 'mj94':
+						mail($mysql->getsetting('mj94.textaddress','cobibot'),$from.'@IRC',$data[1]);
+						break;
 					case 'cobitask':
 						//php ~/taskfreakadder/addtask.php Cobi 1 'Incoming from CobiBot' 8 - 1 'Testing' 'This is just another test.'
 						$items = explode(':',$data[1],4);
