@@ -337,14 +337,14 @@
 			$ircd->addnick($mysql->getsetting('server'),'CobiBot','Cobi','Cobi.cluenet.org','Cobi.');
 //			$ircd->mode('CobiBot','CobiBot','');
 			$ircd->join('CobiBot','#CobiBot');
-			if (!isset($this->set['nspass'])) {
-				$this->set['nspass'] = md5(rand(1,1000000000000000000000));
-				$ircd->msg('CobiBot','NickServ','REGISTER '.$this->set['nspass']);
-				$this->needreg = 1;
-				$this->saveset();
-			}
+//			if (!isset($this->set['nspass'])) {
+//				$this->set['nspass'] = md5(rand(1,1000000000000000000000));
+//				$ircd->msg('CobiBot','NickServ','REGISTER '.$this->set['nspass']);
+//				$this->needreg = 1;
+//				$this->saveset();
+//			}
 			$this->timer = 0;
-			$ircd->msg('CobiBot','NickServ','IDENTIFY '.$this->set['nspass']);
+//			$ircd->msg('CobiBot','NickServ','IDENTIFY '.$this->set['nspass']);
 
 			foreach ($this->set['join'] as $chan => $junk) $ircd->join('CobiBot',$chan);
 			foreach ($this->set['newchans'] as $chan => $junk) $ircd->join('CobiBot',$chan);
@@ -355,7 +355,7 @@
 			$ircd->svsmode('CobiBot','#CobiBot','-vhoaqIeb');
 			$ircd->mode('CobiBot','#CobiBot','-kfLljpcQKVCu');
 			$ircd->mode('CobiBot','#CobiBot','-zNSMTG+smntir');
-			$ircd->mode('CobiBot','#CobiBot','+ROAI Cobi!*@*');
+			$ircd->mode('CobiBot','#CobiBot','+ROI Cobi!*@*');
 
 			$ircd->msg('CobiBot','#CobiBot','End of sync.');
 			$this->bans = array();
