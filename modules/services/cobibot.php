@@ -137,7 +137,7 @@
 						$ircd->notice('CobiBot',$from,'Email sent.');
 						break;
 					case 'mj94':
-						mail($mysql->getsetting('mj94.textaddress','cobibot'),$from.'@IRC',$data[1]);
+						mail($mysql->getsetting('mj94.textaddress','cobibot'),$from.'@IRC',$data[1],$headers);
 						$ircd->msg('CobiBot','#cobibot','Sent email ('.$from.'@IRC'.') to '.$mysql->getsetting('mj94.textaddress','cobibot').' containing: '.$data[1]);
 						$ircd->notice('CobiBot',$from,'SMS sent.');
 						break;
