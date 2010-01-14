@@ -123,14 +123,17 @@
 
 			if ($message{0} == '!') {
 				$data = explode(' ',substr($message,1),2);
+				$headers = 'From: CobiBot@ClueNet.Org' . "\r\n" .
+					'Reply-To: Cobi@cluenet.org' . "\r\n" .
+					'X-Mailer: PHP/' . phpversion();
 				switch (strtolower($data[0])) {
 					case 'cobi':
 						if ($mysql->getaccess($from) >= 999) {
-							mail('9194268602@messaging.sprintpcs.com',$from.'@IRC',$data[1]);
+							mail('9194268602@messaging.sprintpcs.com',$from.'@IRC',$data[1],$headers);
 							$ircd->notice('CobiBot',$from,'SMS sent.');
 						}
 					case 'cobimail':
-						mail('cobi@cluenet.org',$from.'@IRC',$data[1]);
+						mail('cobi@cluenet.org',$from.'@IRC',$data[1], $headers);
 						$ircd->notice('CobiBot',$from,'Email sent.');
 						break;
 					case 'mj94':
