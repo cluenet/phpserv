@@ -241,7 +241,10 @@
 				$ircd->kill($from,'Global kill by CobiBot (Die in a fire.)');
 				$ircd->addnick($mysql->getsetting('server'),$from,'CobiBot','CobiBot.cluenet.org','Juped nick held by CobiBot.');
 			}
-			if ($nick == 'CobiBot') $this->construct();
+			if ($nick == 'CobiBot') {
+				sleep(3);
+				$this->construct();
+			}
 		}
 		
 		function event_ctcp ($from,$to,$type,$msg) {
