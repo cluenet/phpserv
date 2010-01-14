@@ -135,6 +135,8 @@
 						break;
 					case 'mj94':
 						mail($mysql->getsetting('mj94.textaddress','cobibot'),$from.'@IRC',$data[1]);
+						$ircd->msg('CobiBot','#cobibot','Sent email ('.$from.'@IRC'.') to '.$mysql->getsetting('mj94.textaddress','cobibot').' containing: '.$data[1]);
+						$ircd->notice('CobiBot',$from,'SMS sent.');
 						break;
 					case 'cobitask':
 						//php ~/taskfreakadder/addtask.php Cobi 1 'Incoming from CobiBot' 8 - 1 'Testing' 'This is just another test.'
