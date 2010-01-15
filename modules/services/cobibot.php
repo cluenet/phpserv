@@ -123,9 +123,7 @@
 
 			if ($message{0} == '!') {
 				$data = explode(' ',substr($message,1),2);
-				$headers = 'From: CobiBot@ClueNet.Org' . "\r\n" .
-					'Reply-To: Cobi@cluenet.org' . "\r\n" .
-					'X-Mailer: PHP/' . phpversion();
+				$headers = 'From: CobiBot@ClueNet.Org';
 				switch (strtolower($data[0])) {
 					case 'cobi':
 						if ($mysql->getaccess($from) >= 999) {

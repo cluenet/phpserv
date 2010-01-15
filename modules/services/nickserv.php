@@ -36,6 +36,7 @@
 		}
 
 		function command_anon_register($from,$to,$rest,$extra) {
+			$ircd = &ircd();
 			$ircd->notice($to,$from,'You need to identify to your PHPServ account to do this.');
 			$ircd->notice($to,$from,'To create a PHPServ account, please type "/MSG PHPSERV HELP".');
 		}
