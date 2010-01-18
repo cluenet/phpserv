@@ -997,7 +997,7 @@
 				return;
 			
 			if(($child = pcntl_fork()) == 0) {
-				sleep(6);
+				sleep(20);
 				posix_kill(posix_getppid(),SIGKILL);
 				die();
 			}
