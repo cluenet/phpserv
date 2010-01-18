@@ -1040,6 +1040,8 @@
 				}
 			}
 			
+			$data = $this->bots[$ubot]['sandbox']->__return__;
+			
 			unset($this->bots[$ubot]['sandbox']->__return__);
 			$this->curbot = '';
 			
