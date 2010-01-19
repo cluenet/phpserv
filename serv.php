@@ -245,13 +245,15 @@
 
 				function sql ($sql,$tryagain = true) {
 					$time = microtime(1);
-					if (!@mysql_ping($this->conn)) $this->connect();
 					if (strtolower(substr($sql,0,6)) == 'select')
 						$sql = 'SELECT HIGH_PRIORITY'.substr($sql,6);
+					
+					mysql_close($this->conn);
+					$this->connect();
 					$ret = mysql_query($sql);
 					if ((microtime(1) - $time) > 1)
 						echo 'SQL Long Query time: '.(microtime(1) - $time).' Query: '.$sql."\n";
-					if (mysql_error()) {
+					if (mysql_error() or !$ret) {
 						if(mysql_error() == 'Lost connection to MySQL server during query' and $tryagain) {
 							$this->connect();
 							return $this->sql($sql,false);
