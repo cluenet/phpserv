@@ -124,6 +124,7 @@
 		}
 
 		function command_auth_drop($from, $to, $rest, $extra) {
+			global $mysql;
 			$ircd = &ircd();
 
 			if (!isset($rest[0])) {
