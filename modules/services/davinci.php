@@ -449,17 +449,17 @@ $mysql->getsetting('server')
 								elseif ($pts < 50)
 									$rating = 'Clueful';
 								elseif ($pts < 500)
-									$rating = ($spanish?'Muy':'Very').' clueful';
+									$rating = ($spanish?'Muy':'Very').' Clueful';
 								elseif ($pts < 1000)
-									$rating = ($spanish?'Extremadamente':'Extremely').' clueful';
+									$rating = ($spanish?'Extremadamente':'Extremely').' Clueful';
 								elseif ($pts < 5000)
-									$rating = ($spanish?'Clueful estupendo':'Super clueful');
+									$rating = ($spanish?'Clueful estupendo':'Super Clueful');
 								elseif ($pts < 50000)
-									$rating = ($spanish?'Élite de clueful':'Clueful elite');
+									$rating = ($spanish?'Élite de clueful':'Clueful Elite');
 								elseif ($pts < 100000)
-									$rating = ($spanish?'La realeza clueful':'The clueful royalty');
+									$rating = ($spanish?'La realeza clueful':'Clueful Royalty');
 								elseif ($pts >= 100000)
-									$rating = ($spanish?'Los dioses the cluefuldad':'The gods of cluefulness');
+									$rating = ($spanish?'El dios clueful':'Clueful God');
 								
 								$ircd->notice('DaVinci',$sourcet,($spanish?'El ':'').$who.($spanish?' lleva a cabo a fila de: ':' holds the rank of: ').$rating.'.');
 								$ircd->notice('DaVinci',$sourcet,($spanish?'El ':'').$who.($spanish?' tiene ':' has ').$pts.($spanish?' puntos.':' points.'));
