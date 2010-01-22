@@ -250,7 +250,9 @@
 		
 		function event_ctcp ($from,$to,$type,$msg) {
 			$ircd = &ircd();
-			$ircd->msg('CobiBot','#CobiBot','CTCP: '.$from.' sent CTCP ('.$type.') to '.$to.' with message: '.$msg);
+			if (strtoupper($type) != 'ACTION') {
+				$ircd->msg('CobiBot','#CobiBot','CTCP: '.$from.' sent CTCP ('.$type.') to '.$to.' with message: '.$msg);
+			}
 			if (strtoupper($type) == 'ACTION') {
 				if ($to{0} == '#') {
 					if (fnmatch('*cobi*',strtolower($msg))) {
