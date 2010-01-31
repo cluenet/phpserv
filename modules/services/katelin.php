@@ -275,9 +275,11 @@
 						}
 						switch (strtolower($cmd[0])) {
 							case 'ibeam':
+								if ($from != 'MJ94') {
 								$ircd->msg('Katelin',$to,chr(1).'ACTION gets out her massive, industrial-strength I-beam out from its place in the corner.'.chr(1));
 								$ircd->msg('Katelin',$to,chr(1).'ACTION whacks '.((isset($cmd[1])) ? $cmd[1] : $from).' around a bit with her massive, industrial-strength I-beam.'.chr(1));
 								$ircd->msg('Katelin',$to,chr(1).'ACTION puts her massive, industrial-strength I-beam back in its place in the corner.'.chr(1));
+								}
 								break;
 							case 'suicide':
 								$ircd->kill($from,$from.' committed suicide! :(');
