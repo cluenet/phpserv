@@ -127,6 +127,7 @@
 
 			} elseif (@strtolower($d_a[1]) == "eos") {
 				global $connected;
+				$this->raw( 'TSCTL SVSTIME ' . time() );
 				if (!$connected) { 
 					$connected = true;
 					global $aml3;
