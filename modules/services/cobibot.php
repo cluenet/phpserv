@@ -6,6 +6,7 @@
 		private $bans;
 		private $timer;
 		private $lastcobispeak;
+		private $deathbyfire;
 
 		function construct() {
 			$this->set = unserialize(file_get_contents('CobiBot.set'));
@@ -164,6 +165,20 @@
 						else $ircd->msg('CobiBot',$to,$from.': '.$akanick.' has not been known as any other nick.');
 						unset($send,$akanick);
 						break;
+					case 'deathbyfire':
+					case 'listdbf':
+						if( $mysql->getaccess( $from ) >= 999 ) {
+							if( isset( $data[ 1 ] ) ) $time = $data[ 1 ];
+							else $time = 60;
+							foreach( $this->deathbyfire as $v )
+								if( time() - $v[ 'time' ] < $time )
+									if( strtolower( $data[ 0 ] ) == 'deathbyfire' )
+										$ircd->gzline( 'CobiBot', $v[ 'nick' ], '84d', 'Die in a fire!' );
+									else
+										$ircd->notice( 'CobiBot', $from, $v[ 'nick' ] . ' - ' . ( time() - $v[ 'time' ] ) . ' ago.' );
+						}
+						unset( $time );
+						break;
 				}
 			}
 
@@ -227,6 +242,15 @@
 			global $mysql;
 			$ircd = &ircd();
 			$ircd->msg('CobiBot','#CobiBot','User join: '.$nick.' -> '.$channel);
+			if( strtolower( $channel ) == '#clueirc' ) {
+				foreach( $this->deathbyfire as $k => $v )
+					if( time() - $v[ 'time' ] > 3600 )
+						unset( $this->deathbyfire[ $k ] );
+				$this->deathbyfire[] = array(
+					'time' => time(),
+					'nick' => $nick
+				);
+			}
 		}
 		
 		function event_part ($nick,$channel,$reason) {
