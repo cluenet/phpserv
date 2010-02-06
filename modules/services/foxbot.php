@@ -7,15 +7,16 @@
 	
 	function construct() {
 		$this->config = array (
-			'nick' => 'Unix'
-			'user' => 'Unix'
-			'host' => 'SnoFox.net'
-			'gecos' => 'SnoFox\'s friend'
+			'nick' => 'Unix',
+			'user' => 'Unix',
+			'host' => 'SnoFox.net',
+			'gecos' => 'SnoFox\'s friend',
 			'chan' => array (
-				'main' => '#FoxDen'
-				'secure' => '#FoxSecure'
+				'main' => '#FoxDen',
+				'secure' => '#FoxSecure',
 			)
-		)
+		);
+		
 		$this->set = unserialize(file_get_contents('foxbot.db'));
 		
 		$this->doBotStart('load');
@@ -41,7 +42,7 @@
 		case 'load':
 			// Doesn't do anything atm...
 			break;
-		case default:
+		case 'default':
 			// Shouldn't hit, but let's be safe
 			break;
 		}
@@ -83,7 +84,7 @@
 		$ircd = &ircd();
 		$ircd->msg($this->config['nick'],$this->config['chan']['secure'],'\003IRC\003: '.$this->config['nick'].' has left '.$chan);
 		$ircd->part($this->config['nick'],$chan,$reason);
-		unset($this->set['chan'][strtolower($chan));
+		unset($this->set['chan'][strtolower($chan)]);
 		$this->saveset();
 	}
 	
@@ -124,17 +125,17 @@
 				}
 				break;
 			case '!part':
-				$this->doPart($chan,'Requested by '.$nick)
+				$this->doPart($chan,'Requested by '.$nick);
 				break;
 			case '!fpart':
 				$message = explode(' ',$message,2);
 				$where = $message[0];
-				if (isset($message[1])
+				if (isset($message[1]))
 					$why = $message[1];
 				if ($this->chkAccess($nick,'599'))
 					$this->doPart($chan,(isset($why) ? $why : 'Requested by '.$nick));
 				break;
-			case default:
+			case 'default':
 				return;
 		}
 	}
@@ -221,7 +222,7 @@
 	function event_kick ($src,$pwntUser,$chan,$reason) {
 		if (strtolower($nick) == strtolower($this->config['nick'])) {
 			$ircd = &ircd();
-			$ircd->msg($config['nick'],$config['chan']['secure'],'\003IRC\003: '.$src.' kicked '.$config['nick'].' from '.$chan.'\015 ('.$reason'.\015)');
+			$ircd->msg($config['nick'],$config['chan']['secure'],'\003IRC\003: '.$src.' kicked '.$config['nick'].' from '.$chan.'\015 ('.$reason.'\015)');
 			$ircd->msg($config['nick'],$chan,'All you had to do was ask! :(');
 			unset($this->set['chan'][strtolower($chan)]);
 			$this->saveset();
@@ -235,7 +236,7 @@
 			if ($this->chkAccess($nick,599) === 0) {
 				$ircd = &ircd();
 				$ircd->mode($config['nick'],$config['chan']['secure'],'+bb '.$nick.' '.$nickd['host']);
-				$ircd->kick($config['nick'],$config['chan']['secure'],$nick,'You are not authorized to join '.$config['chan']['secure'].'. Required access: >599. Your access: '.$level'. Ciao!');
+				$ircd->kick($config['nick'],$config['chan']['secure'],$nick,'You are not authorized to join '.$config['chan']['secure'].'. Required access: >599. Your access: '.$level.'. Ciao!');
 			}
 		}
 	}
@@ -252,7 +253,7 @@
 		$ircd = &ircd();
 		$config = $this->config;
 		
-		switch $why {
+		switch ($why) {
 			case 'sapart':
 			case 'part':
 				$msg = 'due to '.$nick.' parting.';
@@ -267,7 +268,7 @@
 			case 'quit':
 				$msg = 'due to '.$nick.' quitting.';
 				break;
-			case default:
+			case 'default':
 				$msg = 'for unknown reasons.';
 			}
 		$ircd->msg($config['nick'],$config['chan']['secure'],'\003Chan Destroy\003: '.$channel.'\015 destroyed '.$msg);
