@@ -19,6 +19,7 @@
 				event('signon', $d_a[1], $d_a[4], $d_a[5], substr(implode(array_slice($d_a, 11), " "), 1), $msg, $d_a[6], $d_a[7]);
 
 			} elseif (@strtolower($d_a[1]) == "nick") {
+				// Emit event: nick, $oldNick $newNick
 				event('nick', substr($d_a[0],1), $d_a[2]);
 
 			} elseif (@strtolower($d_a[1]) == "svsnick") {
@@ -99,6 +100,7 @@
 
 			} elseif (@strtolower($d_a[1]) == "invite") {
 				//:Cobi INVITE Katelin :#fun
+				// Emit event: invite, $src $invitedUser $chan
 				event('invite', substr($d_a[0],1), $d_a[2], substr($d_a[3],1));
 
 			} elseif (@strtolower($d_a[1]) == "privmsg") {

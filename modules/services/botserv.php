@@ -262,7 +262,7 @@
 			global $mysql;
 			$ircd = &ircd();
 
-			if (strtolower($to) == 'botserv') {
+			if (strtolower($to) == 'botserv' || strtolower($to) == 'botserv@'.strtolower($mysql->getsetting('server'))) {
 				if ($mysql->getaccess($from) > 100) {
 					if (strtolower($d[0]) == 'bot') {	
 						if (strtolower($d[1]) == 'add') {

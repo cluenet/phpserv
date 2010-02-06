@@ -1,13 +1,16 @@
 <?PHP
 	class mysqlserv {
 
-		function check_empty () {
+		function check_empty ($nick = '<unknown>', $why = 'unknown') {
+			// nick = the nickname of the user who destroyed the channel
+			// why = the exact reason it was destroyed
+			// Normal reasons: (sa)part, quit, (svs)kill, kick, unknown
 			global $mysql;
 			$res = $mysql->sql('SELECT `chanid`,`name` FROM `channels` WHERE `chanid` NOT IN (SELECT `channels`.`chanid` FROM `channels`, `user_chan` WHERE `channels`.`chanid` = `user_chan`.`chanid` GROUP BY `channels`.`chanid` HAVING COUNT(*) > 0)');
 
 			while ($x = $mysql->get($res)) {
 				$mysql->sql('DELETE FROM `channels` WHERE `chanid` = \''.$mysql->escape($x['chanid']).'\'');
-				event('channel_destroyed',$x['name']);
+				event('channel_destroyed',$x['name'],$nick, $why);
 			}
 		}
 
@@ -34,7 +37,7 @@
 			$userid = $userid['userid'];
 			$mysql->sql('DELETE FROM `user_chan` WHERE `userid` = \''.$userid.'\'');
 			$mysql->sql('DELETE FROM `users` WHERE `userid` = \''.$userid.'\'');
-			$this->check_empty();
+			$this->check_empty($nick,'quit');
 		}
 
 		function event_kill ($from,$nick,$message) {
@@ -43,7 +46,7 @@
 			$userid = $userid['userid'];
 			$mysql->sql('DELETE FROM `user_chan` WHERE `userid` = \''.$userid.'\'');
 			$mysql->sql('DELETE FROM `users` WHERE `userid` = \''.$userid.'\'');
-			$this->check_empty();
+			$this->check_empty($nick,'kill');
 		}
 
 		function event_svskill ($from,$nick,$message) {
@@ -52,7 +55,7 @@
 			$userid = $userid['userid'];
 			$mysql->sql('DELETE FROM `user_chan` WHERE `userid` = \''.$userid.'\'');
 			$mysql->sql('DELETE FROM `users` WHERE `userid` = \''.$userid.'\'');
-			$this->check_empty();
+			$this->check_empty($nick,'svskill');
 		}
 
 		function event_join ($nick,$channel) {
@@ -75,7 +78,7 @@
 					'chanid'	=> $chanid,
 					'modes'		=> 'o'
 				);
-				event('channel_create',$channel);
+				event('channel_create',$channel,$nick);
 			} else {
 				$data = Array (
 					'id'		=> 'NULL',
@@ -123,7 +126,7 @@
 			$chanid = $mysql->get($mysql->sql('SELECT `chanid` FROM `channels` WHERE `name` = '.$mysql->escape($channel)));
 			$chanid = $chanid['chanid'];
 			$mysql->sql('DELETE FROM `user_chan` WHERE `chanid` = \''.$chanid.'\' AND `userid` = \''.$userid.'\'');
-			$this->check_empty();
+			$this->check_empty($nick,'part');
 		}
 
 		function event_sapart ($from,$nick,$channel,$reason) {
@@ -133,7 +136,7 @@
 			$chanid = $mysql->get($mysql->sql('SELECT `chanid` FROM `channels` WHERE `name` = '.$mysql->escape($channel)));
 			$chanid = $chanid['chanid'];
 			$mysql->sql('DELETE FROM `user_chan` WHERE `chanid` = \''.$chanid.'\' AND `userid` = \''.$userid.'\'');
-			$this->check_empty();
+			$this->check_empty($nick,'sapart');
 		}
 
 		function event_kick ($from,$nick,$channel,$reason) {
@@ -143,7 +146,7 @@
 			$chanid = $mysql->get($mysql->sql('SELECT `chanid` FROM `channels` WHERE `name` = '.$mysql->escape($channel)));
 			$chanid = $chanid['chanid'];
 			$mysql->sql('DELETE FROM `user_chan` WHERE `chanid` = \''.$chanid.'\' AND `userid` = \''.$userid.'\'');
-			$this->check_empty();
+			$this->check_empty($nick,'kick');
 		}
 
 /*		function event_mode ($from,$to,$mode) {

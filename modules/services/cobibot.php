@@ -332,7 +332,7 @@
 			}
 		}
 		
-		function event_channel_create ($channel) {
+		function event_channel_create ($channel,$nick) {
 			$ircd = &ircd();
 			$ircd->msg('CobiBot','#CobiBot','Channel Created: '.$channel);
 			$this->set['newchans'][strtolower($channel)] = 1;
@@ -341,7 +341,7 @@
 			$ircd->msg('CobiBot',$channel,'Congratulations!  You have created a new channel.  If you want to register this channel with ClueNet\'s services so that it will be yours if you get disconnected, type /cs help register.  If you need help, don\'t hesitate to PM me.  Unless you object, I am going to hang out here for a while.  If I have intruded upon a private channel, please accept my apologies, and kick me to let me know it was private.  I won\'t mind.  :)');
 		}
 		
-		function event_channel_destroyed ($channel) {
+		function event_channel_destroyed ($channel,$nick,$why) {
 			$ircd = &ircd();
 			$ircd->msg('CobiBot','#CobiBot','Channel Destroyed: '.$channel);
 			$ircd->part('CobiBot',$channel);

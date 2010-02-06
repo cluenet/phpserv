@@ -28,6 +28,10 @@
 				$d = explode("\n",$str);
 				foreach ($d as $x) {
 					$ircd->msg('SVSLOG','#services',$x);
+					// Emit a log event only if connected.
+					// XXX make modules check for connection before sending messages and move this to be called no matter what.
+					// Un-needed atm because only FoxBot uses this event.
+					event('logger',$str);
 				}
 			} else {
 				$this->l2f($str);
