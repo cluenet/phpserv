@@ -30,6 +30,7 @@
 			$cu = getmod('commandutils');
 			$cu->registercommand($this, 'auth', 'REGISTER', '<channel> - Registers your channel on ChanServ');
 			$cu->registercommand($this, 'auth', 'DROP', '<channel> - Drops the channel so other people can register it');
+			$cu->registercommand($this, 'auth', 'OWNER', '<channel> [nick] - Sets +q on you (or the given nick) on the given channel if you have access.');
 			$cu->registercommand($this, 'auth', 'OP', '<channel> [nick] - Ops you (or the given nick) on the given channel if you have access.');
 			$cu->registercommand($this, 'auth', 'INFO', '<channel> - Returns some basic info on the channel.');
 			$cu->registercommand($this, 'auth', 'DEOP', '<channel> [nick] - Deops you (or the given nick) on the given channel if you have access.');
@@ -80,6 +81,21 @@
 				if ($this->is_allowed($extra['uid'], $rest[0], 'op')) {
 					$user = (isset($rest[1]) ? $rest[1] : $from);
 					$ircd->mode('ChanServ', $rest[0], '+o ' . $user);
+				} else {
+					$ircd->notice($to, $from, 'Access denied.');
+				}
+			}
+		}
+		
+		function command_auth_owner($from, $to, $rest, $extra) {
+			$ircd = &ircd();
+
+			if (!isset($rest[0])) {
+				$ircd->notice($to, $from, 'You need to supply a channel name.');
+			} else {
+				if ($this->is_allowed($extra['uid'], $rest[0], 'owner')) {
+					$user = (isset($rest[1]) ? $rest[1] : $from);
+					$ircd->mode('ChanServ', $rest[0], '+qo ' . $user.' '.$user);
 				} else {
 					$ircd->notice($to, $from, 'Access denied.');
 				}
