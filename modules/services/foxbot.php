@@ -137,7 +137,7 @@
 				if (isset($message[1]))
 					$why = $message[1];
 				if ($this->chkAccess($nick,'599'))
-					$this->doPart($$where,(isset($why) ? $why : 'Requested by '.$nick));
+					$this->doPart($where,(isset($why) ? $why : 'Requested by '.$nick));
 				break;
 			case 'default':
 				return;
@@ -188,7 +188,7 @@
 		$ircd = &ircd();
 		$config = $this->config;
 		
-		$ircd->msg($config['nick'],$config['chan']['secure'],"\002Disconnect\002: ".$nick.' disconnected from the network.');
+		$ircd->msg($config['nick'],$config['chan']['secure'],"\002Disconnect\002: ".$nick.' left the network');
 	}
 
 	function event_nick($old,$new) {
@@ -200,7 +200,7 @@
 	function event_ctcp ($from,$to,$type,$msg) {
 	
 		$config = $this->config;
-		if (strtolower($to) == $config['nick'] && strtoupper($type) != 'ACTION') {
+		if (strtolower($to) == strtolower($config['nick']) && strtoupper($type) != 'ACTION') {
 			$ircd = &ircd();
 			$ircd->msg($config['nick'],$config['chan']['secure'],"\002CTCP\002: Got CTCP from ".$from.': '.$type.' '.$msg);
 		}
@@ -208,7 +208,7 @@
 	
 	function event_ctcpreply ($from,$to,$ctcp,$message = NULL) {
 		$config = $this->config;
-		if (strtolower($to) == $config['nick']) {
+		if (strtolower($to) == strtolower($config['nick'])) {
 			$ircd = &ircd();
 			$ircd->msg($config['nick'],$config['chan']['secure'],"\002CTCP\002: Got CTCP reply from ".$from.': '.$ctcp.' '.$message);
 		}
@@ -216,7 +216,7 @@
 		
 	function event_notice ($from,$to,$message) {
 		$config = $this->config;
-		if (strtolower($to) == $config['nick']) {			
+		if (strtolower($to) == strtolower($config['nick'])) {
 			$ircd = &ircd();
 		
 			$ircd->msg($config['nick'],$config['chan']['secure'],"\002Message\002: <".$from.'/Notice> '.$message);
@@ -226,7 +226,8 @@
 	function event_kick ($src,$pwntUser,$chan,$reason) {
 		if (strtolower($pwntUser) == strtolower($this->config['nick'])) {
 			$ircd = &ircd();
-			$ircd->msg($config['nick'],$config['chan']['secure'],"\002IRC\002: ".$src.' kicked '.$config['nick'].' from '.$chan.'\015 ('.$reason.'\015)');
+			$config = $this->config;
+			$ircd->msg($config['nick'],$config['chan']['secure'],"\002IRC\002: ".$src.' kicked '.$config['nick'].' from '.$chan."\015".' ('.$reason."\015)");
 			$ircd->msg($config['nick'],$chan,'All you had to do was ask! :(');
 			unset($this->set['chan'][strtolower($chan)]);
 			$this->saveset();
@@ -245,6 +246,7 @@
 				$user = $mysql->get($mysql->sql('SELECT `level` FROM `access` WHERE `id` = '.$mysql->escape($uid)));
 				$level = $user['level'];
 				
+				$ircd->svsmode($config['nick'],$config['chan']['secure'],'-e');
 				$ircd->mode($config['nick'],$config['chan']['secure'],'+bb '.$nick.' '.$nickd['host']);
 				$ircd->kick($config['nick'],$config['chan']['secure'],$nick,'You are not authorized to join '.$config['chan']['secure'].'. Required access: >599. Your access: '.($level == '' ? 'Nonexistant' : $level).'. Ciao!');
 			}
@@ -255,7 +257,7 @@
 		$ircd = &ircd();
 		$config = $this->config;
 		
-		$ircd->msg($config['nick'],$config['chan']['secure'],"\002Chan Create\002: ".$channel.'\015 created by '.$nick);
+		$ircd->msg($config['nick'],$config['chan']['secure'],"\002Chan Create\002: ".$channel."\015".' created by '.$nick);
 	}
 		
 	
@@ -281,7 +283,7 @@
 			case 'default':
 				$msg = 'for unknown reasons.';
 			}
-		$ircd->msg($config['nick'],$config['chan']['secure'],"\002Chan Destroy\002: ".$channel.'\015 destroyed '.$msg);
+		$ircd->msg($config['nick'],$config['chan']['secure'],"\002Chan Destroy\002: ".$channel."\015".' destroyed '.$msg);
 		
 		if (isset($this->set['chan'][strtolower($channel)])) {
 			$ircd->part($config['nick'],$channel);
