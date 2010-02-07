@@ -225,12 +225,15 @@
 					$this->conn = mysql_connect($this->db_host.':'.$this->db_port, $this->db_user, $this->db_pass, true);
 					if (!$this->conn) {
 						logit('Not connected : ' . mysql_error());
+						return false;
 //						die('Not connected : ' . mysql_error());
 					}
 					if (!mysql_select_db($this->db_db, $this->conn)) {
 						logit('Can\'t use '.$this->db_db.' : ' . mysql_error());
+						return false;
 //						die ('Can\'t use '.$this->db_db.' : ' . mysql_error());
 					}
+					return true;
 				}
 
 				function escape ($data) {
@@ -249,13 +252,14 @@
 						$sql = 'SELECT HIGH_PRIORITY'.substr($sql,6);
 					
 					mysql_close($this->conn);
-					$this->connect();
+					while( !$this->connect() ) usleep(100);
 					$ret = mysql_query($sql);
 					if ((microtime(1) - $time) > 1)
 						echo 'SQL Long Query time: '.(microtime(1) - $time).' Query: '.$sql."\n";
 					if (mysql_error() or !$ret) {
 						if(mysql_error() == 'Lost connection to MySQL server during query' and $tryagain) {
-							$this->connect();
+							//$this->connect();
+							while( !$this->connect() ) usleep(100);
 							return $this->sql($sql,false);
 						} else
 							logit("MySQL Error: ".mysql_error()."\nSQL: ".$sql);
@@ -480,7 +484,8 @@
 
 			include 'settings.php';
 
-			$mysql->connect();
+			//$mysql->connect();
+			while( !$mysql->connect() ) usleep(100);
 
 			$mysql->init();
 
