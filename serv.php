@@ -329,7 +329,7 @@
 				}
 
 				function logoutaccess ($who) {
-					$user = $mysql->get($mysql->sql('SELECT * FROM `users` WHERE `nick` = '.$mysql->escape($who)));
+					$user = $this->get($this->sql('SELECT * FROM `users` WHERE `nick` = '.$this->escape($who)));
 					$this->sql('UPDATE `users` SET `loggedin` = -1 WHERE `nick` = '.$this->escape($who));
 					event('logout',$who,$user);
 					return true;
