@@ -169,7 +169,7 @@
 		
 		$user = $mysql->get($mysql->sql('SELECT `user` FROM `access` WHERE `id` = '.$mysql->escape($uid)));
 		
-		$ircd->msg($config['nick'],$config['chan']['secure'],"\002Identify\002: ".$from.' identified to PHPserv using account '.$user['user']."\015". '(UID '.$uid.')');
+		$ircd->msg($config['nick'],$config['chan']['secure'],"\002Identify\002: ".$from.' identified to PHPserv using account '.$user['user']."\015". ' (UID '.$uid.')');
 	}
 	
 	function event_logout($from,$user) {
@@ -316,7 +316,7 @@
 		if (strtolower($dest) == strtolower($this->config['nick'])) {
 			$ircd = &ircd();
 			$this->doBotStart('start');
-			$ircd->kill($src,'Suck it');
+//			$ircd->kill($src,'Suck it');
 		}
 	}
 }

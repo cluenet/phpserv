@@ -174,7 +174,7 @@
 			if (strtolower($to) == 'nickserv') {
 				$ircd->addnick($mysql->getsetting('server'),'NickServ','Services','Services.ClueNet.Org','Nick Service');
 				$ircd->join('NickServ','#services');
-				$ircd->svskill($from,'Killing service bots isn\'t a smart idea.');
+//				$ircd->svskill($from,'Killing service bots isn\'t a smart idea.');
 			}
 		}
 

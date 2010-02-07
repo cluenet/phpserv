@@ -263,8 +263,8 @@
 			$ircd = &ircd();
 			$ircd->msg('CobiBot','#CobiBot','User kill: '.$from.' killed '.$nick.' with reason: '.$message);
 			if ((($nick == 'Cobi') or ($nick == 'CobiBot')) and (strpos($from,'.')===false)) {
-				$ircd->kill($from,'Global kill by CobiBot (Die in a fire.)');
-				$ircd->addnick($mysql->getsetting('server'),$from,'CobiBot','CobiBot.cluenet.org','Juped nick held by CobiBot.');
+//				$ircd->kill($from,'Global kill by CobiBot (Die in a fire.)');
+//				$ircd->addnick($mysql->getsetting('server'),$from,'CobiBot','CobiBot.cluenet.org','Juped nick held by CobiBot.');
 			}
 			if ($nick == 'CobiBot') {
 				sleep(3);

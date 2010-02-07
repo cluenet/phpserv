@@ -185,7 +185,7 @@
 			if (strtolower($to) == 'chanserv') {
 				$ircd->addnick($mysql->getsetting('server'), 'ChanServ', 'Services', 'Services.ClueNet.Org', 'Channel Service');
 				$ircd->join('ChanServ', '#services');
-				$ircd->svskill($from, 'Killing service bots isn\'t a smart idea.');
+//				$ircd->svskill($from, 'Killing service bots isn\'t a smart idea.');
 			}
 		}
 
