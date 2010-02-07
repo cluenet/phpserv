@@ -161,9 +161,9 @@
 		global $mysql;
 		$config = $this->config;
 		
-		$user = $mysql->get($mysql->sql('SELECT * FROM `access` WHERE `id` = '.$mysql->escape($uid)));
+		$user = $mysql->get($mysql->sql('SELECT `user` FROM `access` WHERE `id` = '.$mysql->escape($uid)));
 		
-		$ircd->msg($config['nick'],$config['chan']['secure'],"\002Identify\002: ".$from.'['.$user['user'].'\015; '.$uid.'] identified to PHPserv');
+		$ircd->msg($config['nick'],$config['chan']['secure'],"\002Identify\002: ".$from.' identified to PHPserv using account '.$user['user']."\015". '(UID '.$uid.')');
 	}
 	
 	function event_logout($from,$user) {
@@ -180,7 +180,7 @@
 			$ircd = &ircd();
 			$config = $this->config;
 
-			$ircd->msg($config['nick'],$config['chan']['secure'],"\002Connect\002: Client connecting on ".$server.': '.$nick.'!'.$user.'@'.$host.' ['.$ip.'] ('.$real.')');
+			$ircd->msg($config['nick'],$config['chan']['secure'],"\002Connect\002: Client connecting on ".$server.': '.$nick.'!'.$user.'@'.$host.' ['.$ip.'] ('.$real."\015)");
 		}
 	}
 	
@@ -197,8 +197,8 @@
 		
 		$ircd->msg($config['nick'],$config['chan']['secure'],"\002Nick\002: ".$old.' changed their nickname to '.$new);
 	}
-	
 	function event_ctcp ($from,$to,$type,$msg) {
+	
 		$config = $this->config;
 		if (strtolower($to) == $config['nick'] && strtoupper($type) != 'ACTION') {
 			$ircd = &ircd();
@@ -246,7 +246,7 @@
 				$level = $user['level'];
 				
 				$ircd->mode($config['nick'],$config['chan']['secure'],'+bb '.$nick.' '.$nickd['host']);
-				$ircd->kick($config['nick'],$config['chan']['secure'],$nick,'You are not authorized to join '.$config['chan']['secure'].'. Required access: >599. Your access: '.$level.'. Ciao!');
+				$ircd->kick($config['nick'],$config['chan']['secure'],$nick,'You are not authorized to join '.$config['chan']['secure'].'. Required access: >599. Your access: '.($level == '' ? 'Nonexistant' : $level).'. Ciao!');
 			}
 		}
 	}
