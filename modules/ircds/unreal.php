@@ -193,9 +193,10 @@
 		}
 
 		function addnick ($server,$nick,$ident,$host,$name) {
+			static $counter = 0;
 //			$this->raw('SVSKILL ' . $nick . ' :Nick collision by services');
-			$this->quit($nick,'Required nickname held.');
-			$this->raw('NICK '.$nick.' 1 '.time().' '.$ident.' '.$host.' '.$server.' 0 :'.$name);
+//			$this->quit($nick,'Required nickname held.');
+			$this->raw('NICK '.$nick.' 1 '.(time() + ($counter++)).' '.$ident.' '.$host.' '.$server.' 0 :'.$name);
 		}
 
 		function join ($nick,$chan) {
