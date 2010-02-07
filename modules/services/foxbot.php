@@ -66,7 +66,7 @@
 	
 	function chkAccess($nick,$level) {
 		global $mysql;
-		$nickd = $mysql->get($mysql->sql('SELECT * FROM `users` WHERE `nick` = '.$mysql->escape($from)));
+		$nickd = $mysql->get($mysql->sql('SELECT * FROM `users` WHERE `nick` = '.$mysql->escape($nick)));
 		$uid = $nickd['loggedin'];
 		$user = $mysql->get($mysql->sql('SELECT * FROM `access` WHERE `id` = '.$mysql->escape($uid)));
 		if (($user['level'] > $level) || ($user['user'] == 'SnoFox')) {
@@ -224,7 +224,7 @@
 	}
 		
 	function event_kick ($src,$pwntUser,$chan,$reason) {
-		if (strtolower($nick) == strtolower($this->config['nick'])) {
+		if (strtolower($pwntUser) == strtolower($this->config['nick'])) {
 			$ircd = &ircd();
 			$ircd->msg($config['nick'],$config['chan']['secure'],"\003IRC\003: ".$src.' kicked '.$config['nick'].' from '.$chan.'\015 ('.$reason.'\015)');
 			$ircd->msg($config['nick'],$chan,'All you had to do was ask! :(');
@@ -239,6 +239,11 @@
 		if ($channel == $config['chan']['secure']) {
 			if ($this->chkAccess($nick,599) === 0) {
 				$ircd = &ircd();
+				$nickd = $mysql->get($mysql->sql('SELECT loggedin, host FROM `users` WHERE `nick` = '.$mysql->escape($nick)));
+				$uid = $nickd['loggedin'];
+				$user = $mysql->get($mysql->sql('SELECT `level` FROM `access` WHERE `id` = '.$mysql->escape($uid)));
+				$level = $user['level'];
+				
 				$ircd->mode($config['nick'],$config['chan']['secure'],'+bb '.$nick.' '.$nickd['host']);
 				$ircd->kick($config['nick'],$config['chan']['secure'],$nick,'You are not authorized to join '.$config['chan']['secure'].'. Required access: >599. Your access: '.$level.'. Ciao!');
 			}
