@@ -38,7 +38,7 @@
 		}
 
 		function command_anon_info($from, $to, $rest, $extra) {
-			$ircd = &$ircd();
+			$ircd = &ircd();
 
 			$tmp = explode(' ', $rest);
 			$user = ($tmp[0] ? $tmp[0] : $from);
