@@ -137,7 +137,7 @@
 				if (isset($message[1]))
 					$why = $message[1];
 				if ($this->chkAccess($nick,'599'))
-					$this->doPart($chan,(isset($why) ? $why : 'Requested by '.$nick));
+					$this->doPart($$where,(isset($why) ? $why : 'Requested by '.$nick));
 				break;
 			case 'default':
 				return;
@@ -170,7 +170,7 @@
 		$ircd = &ircd();
 		$config = $this->config;
 		
-		$ircd->msg($config['nick'],$config['chan']['secure'],"\002Logout\002: ".$from.' logged out of account '.$user['user'].'(UID '.$user['uid'].')');
+		$ircd->msg($config['nick'],$config['chan']['secure'],"\002Logout\002: ".$from.' logged out of account '.$user['user']);
 	}
 	
 	function event_signon($nick,$user,$host,$real,$ip,$server,$stamp=0) {
