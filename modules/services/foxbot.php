@@ -75,11 +75,11 @@
 		}
 	}
 	
-	function doJoin($channel) {
+	function doJoin($chan) {
 		$ircd = &ircd();
-		$this->set['chan'][strtolower($channel)] = 1;
-		$ircd->msg($this->config['nick'],$this->config['chan']['secure'],'\003IRC\003: '.$this->config['nick'].' has joined '.$channel);
-		$ircd->join($this->config['nick'],$channel);
+		$this->set['chan'][strtolower($chan)] = 1;
+		$ircd->msg($this->config['nick'],$this->config['chan']['secure'],'\003IRC\003: '.$this->config['nick'].' has joined '.$chan);
+		$ircd->join($this->config['nick'],$chan);
 		$this->saveset();
 	}
 
@@ -291,15 +291,15 @@
 			return;
 		}
 		
-		$ircd = ircd();
+		$ircd = &ircd();
 		
 		$this->doJoin($config['nick'],$chan);
 		$ircd->msg($config['nick'],$chan,'Hey '.$chan.', sup? My name is '.$config['nick'].', and I\'m a robot! '.$nick.' invited me to join, so here I am! If you want me to leave, type !part. Ciao!');
 	}
 	
+}
 	function registerm () {
 		$class = new foxbot;
 		register($class, __FILE__, 'FoxBot Module', 'foxbot');
 	}
-}
 ?>
