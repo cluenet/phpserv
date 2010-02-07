@@ -42,7 +42,8 @@
 			global $mysql;
 
 			$tmp = explode(' ', $rest);
-			$user = ($tmp[0] ? $tmp[0] : $from);
+			if($tmp[0]) $user = $tmp[0];
+			else $user = $from;
 
 			if (!$data = $mysql->get($mysql->sql('SELECT `uid` FROM `nickserv` WHERE `nick` = '.$mysql->escape($user))))
 				$ircd->notice($to,$from,'The user $user does not exist.');
