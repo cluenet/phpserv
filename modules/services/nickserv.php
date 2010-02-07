@@ -18,6 +18,7 @@
 				return;
 			}
 				
+			getmod('commandutils')->registercommand($this, 'anon', 'INFO', '[username] - Get info about a user.');
 			getmod('commandutils')->registercommand($this, 'anon', 'REGISTER', 'Register information.');
 			getmod('commandutils')->registercommand($this, 'anon', 'IDENTIFY', '<password>[:<username>] - Identifies you to services.');
 			getmod('commandutils')->registercommand($this, 'anon', 'ID', 'Alias for IDENTIFY.');
@@ -28,6 +29,7 @@
 			getmod('commandutils')->registercommand($this, 'auth', 'REGISTER', 'Associates your current nick with your PHPServ account.');
 			getmod('commandutils')->registercommand($this, 'auth', 'DROP', 'Dissociates your current nick with your PHPServ account.');
 			getmod('commandutils')->registercommand($this, 'auth', 'GHOST', '<nick> - Kills <nick> if you are the owner of it.');
+			getmod('commandutils')->registercommand($this, 'auth', 'INFO', '<username> - Get info about a user.');
 		}
 
 		function destruct () {
@@ -35,6 +37,42 @@
 			$ircd->quit('NickServ','La Gone!');
 		}
 
+		function command_anon_info($from, $to, $rest, $extra) {
+			$ircd = &$ircd();
+
+			$tmp = explode(' ', $rest);
+			$user = ($tmp[0] ? $tmp[0] : $from);
+
+			if (!$data = $mysql->get($mysql->sql('SELECT `uid` FROM `nickserv` WHERE `nick` = '.$mysql->escape($user))))
+				$ircd->notice($to,$from,'The user $user does not exist.');
+			else {
+				$channels = array();
+
+				$access = $mysql->get($mysql->sql('SELECT id, level, user FROM `access` WHERE `uid` = '.$mysql->escape($data['uid'])));
+				$host = $mysql->get($mysql->sql('SELECT host FROM `hostserv` WHERE `active` = 1 AND `uid` = '.$mysql->escape($data['uid'])));
+				$result = $mysql->sql('SELECT channel FROM `chanserv` WHERE `owner` = '.$mysql->escape($access['user']));
+				while($row = mysql->get($result)) $channels[] = $row[0];
+
+				$channelc = count($channels);
+				$channels = array_chunk($channels, 10);
+
+				$ircd->notice($to,$from, "---- Info about \"$user\" ----");
+				$ircd->notice($to,$from, "Has PHPserv access level ".$access['level']);
+				$ircd->notice($to,$from, "Has an uid of ".$access['id']);
+				$ircd->notice($to,$from, "Account name ".$access['user']);
+				$ircd->notice($to,$from, "vHost ".$host['host']);
+				$ircd->notice($to,$from, "Owns $channelc channels");
+				foreach($channels as $a)
+					$ircd->notice($to,$from, "Owned channels: ".implode(", ", $a));
+				$ircd->notice($to,$from, "---- End Info ----");
+			}
+			
+		}
+		
+		function command_auth_info($f,$t,$r,$e) {
+			return $this->command_anon_info($f,$t,$r,$e);
+		}
+		
 		function command_anon_register($from,$to,$rest,$extra) {
 			$ircd = &ircd();
 			$ircd->notice($to,$from,'You need to identify to your PHPServ account to do this.');
