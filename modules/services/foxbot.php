@@ -65,6 +65,7 @@
 	}
 	
 	function chkAccess($nick,$level) {
+		global $mysql;
 		$nickd = $mysql->get($mysql->sql('SELECT * FROM `users` WHERE `nick` = '.$mysql->escape($from)));
 		$uid = $nickd['loggedin'];
 		$user = $mysql->get($mysql->sql('SELECT * FROM `access` WHERE `id` = '.$mysql->escape($uid)));
