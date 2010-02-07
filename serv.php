@@ -507,6 +507,8 @@
 				$sock->timeout(1);
 				if(($data = $sock->read()) === false)
 					continue;
+				if(str_replace(array("\r","\n"),"",$data) == "")
+					continue;
 				$time = microtime(1);
 				if ($data) {
 					event('raw_in', $data);

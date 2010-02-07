@@ -57,11 +57,10 @@
 				$channelc = count($channels);
 				$channels = array_chunk($channels, 10);
 
-				$ircd->notice($to,$from, "---- Info about \"$user\" ----");
-				$ircd->notice($to,$from, "Has PHPserv access level ".$access['level']);
-				$ircd->notice($to,$from, "Has an uid of ".$access['id']);
-				$ircd->notice($to,$from, "Account name ".$access['user']);
-				$ircd->notice($to,$from, "vHost ".$host['host']);
+				$ircd->notice($to,$from, "---- Info about $user ----");
+				$ircd->notice($to,$from, "Account name: ".$access['user'].' (User ID: '.$uid);
+				$ircd->notice($to,$from, "PHPserv access: ".$access['level']);
+				$ircd->notice($to,$from, "vHost: ".$host['host']);
 				$ircd->notice($to,$from, "Owns $channelc channels");
 				foreach($channels as $a)
 					$ircd->notice($to,$from, "Owned channels: ".implode(", ", $a));
