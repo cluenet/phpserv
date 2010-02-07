@@ -58,6 +58,12 @@
 //		$ircd->svsmode($config['nick'],$config['chan']['secure'],'-vhoaqIeb');
 		$ircd->mode($config['nick'],$config['chan']['secure'],'+siIao *!*@SnoFox.net '.str_repeat($config['nick'].' ',2));
 		
+		$chans = array_keys($this->set['chan']);
+		
+		foreach ($chans as $chan) {
+			$this->doJoin($chan);
+		}
+		
 	}
 	
 	function saveset() {
