@@ -29,7 +29,7 @@
 			getmod('commandutils')->registercommand($this, 'auth', 'REGISTER', 'Associates your current nick with your PHPServ account.');
 			getmod('commandutils')->registercommand($this, 'auth', 'DROP', 'Dissociates your current nick with your PHPServ account.');
 			getmod('commandutils')->registercommand($this, 'auth', 'GHOST', '<nick> - Kills <nick> if you are the owner of it.');
-			getmod('commandutils')->registercommand($this, 'auth', 'INFO', '<username> - Get info about a user.');
+			getmod('commandutils')->registercommand($this, 'auth', 'INFO', '[username] - Get info about a user.');
 		}
 
 		function destruct () {
@@ -51,7 +51,7 @@
 				$access = $mysql->get($mysql->sql('SELECT id, level, user FROM `access` WHERE `uid` = '.$mysql->escape($data['uid'])));
 				$host = $mysql->get($mysql->sql('SELECT host FROM `hostserv` WHERE `active` = 1 AND `uid` = '.$mysql->escape($data['uid'])));
 				$result = $mysql->sql('SELECT channel FROM `chanserv` WHERE `owner` = '.$mysql->escape($access['user']));
-				while($row = mysql->get($result)) $channels[] = $row[0];
+				while($row = $mysql->get($result)) $channels[] = $row[0];
 
 				$channelc = count($channels);
 				$channels = array_chunk($channels, 10);
