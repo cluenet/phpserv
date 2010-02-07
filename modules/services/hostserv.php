@@ -119,7 +119,7 @@
 				return 0;
 			}
 			if (!$mysql->get($mysql->sql('SELECT `host` FROM `hostserv` WHERE `uid` = '.$mysql->escape($userd['id']))))
-				$mysql->insert('hostserv',array('uid' => $userd['uid'],'host' => $rest[1],'active' => 1));
+				$mysql->insert('hostserv',array('uid' => $userd['id'],'host' => $rest[1],'active' => 1));
 			else
 				$mysql->sql('UPDATE `hostserv` SET `host` = '.$mysql->escape($rest[1]).', `active` = 1 WHERE `uid` = '.$mysql->escape($userd['id']));
 			$ircd->notice('HostServ',$from,'vHost "'.$rest[1].'" assigned to '.$rest[0].'.');
