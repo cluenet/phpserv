@@ -193,7 +193,7 @@
 		}
 
 		function addnick ($server,$nick,$ident,$host,$name) {
-			$this->raw('SVSKILL ' . $nick . ' :Nick collision by services');
+//			$this->raw('SVSKILL ' . $nick . ' :Nick collision by services');
 			$this->quit($nick,'Required nickname held.');
 			$this->raw('NICK '.$nick.' 1 '.time().' '.$ident.' '.$host.' '.$server.' 0 :'.$name);
 		}
