@@ -18,18 +18,20 @@
 				return;
 			}
 				
-			getmod('commandutils')->registercommand($this, 'anon', 'INFO', '[username] - Get info about a user.');
-			getmod('commandutils')->registercommand($this, 'anon', 'REGISTER', 'Register information.');
-			getmod('commandutils')->registercommand($this, 'anon', 'IDENTIFY', '<password>[:<username>] - Identifies you to services.');
-			getmod('commandutils')->registercommand($this, 'anon', 'ID', 'Alias for IDENTIFY.');
+			$cu = getmod('commandutils');
+			$cu->registercommand($this, 'anon', 'INFO', '[username] - Get info about a user.');
+			$cu->registercommand($this, 'anon', 'REGISTER', 'Register information.');
+			$cu->registercommand($this, 'anon', 'IDENTIFY', '<password>[:<username>] - Identifies you to services.');
+			$cu->registercommand($this, 'anon', 'ID', 'Alias for IDENTIFY.');
 			
-			getmod('commandutils')->registercommand($this, 'auth', 'IDENTIFY', '<password>[:<username>] - Identifies you to services.');
-			getmod('commandutils')->registercommand($this, 'auth', 'ID', 'Alias for IDENTIFY.');
+			$cu->registercommand($this, 'auth', 'IDENTIFY', '<password>[:<username>] - Identifies you to services.');
+			$cu->registercommand($this, 'auth', 'ID', 'Alias for IDENTIFY.');
 			
-			getmod('commandutils')->registercommand($this, 'auth', 'REGISTER', 'Associates your current nick with your PHPServ account.');
-			getmod('commandutils')->registercommand($this, 'auth', 'DROP', 'Dissociates your current nick with your PHPServ account.');
-			getmod('commandutils')->registercommand($this, 'auth', 'GHOST', '<nick> - Kills <nick> if you are the owner of it.');
-			getmod('commandutils')->registercommand($this, 'auth', 'INFO', '[username] - Get info about a user.');
+			$cu->registercommand($this, 'auth', 'REGISTER', 'Associates your current nick with your PHPServ account.');
+			$cu->registercommand($this, 'auth', 'DROP', 'Dissociates your current nick with your PHPServ account.');
+			$cu->registercommand($this, 'auth', 'GHOST', '<nick> - Kills <nick> if you are the owner of it.');
+			$cu->registercommand($this, 'auth', 'INFO', '[username] - Get info about a user.');
+			$cu->registercommand($this, 'auth', 'LOGOUT', 'Logs out of your account');
 		}
 
 		function destruct () {
@@ -93,6 +95,10 @@
 			}
 		}
 		
+		function command_anon_logout ($from,$to,$rest,$extra) {
+			event('msg',$from,'PHPServ','LOGOUT');
+		}
+				
 		function command_auth_id ($from,$to,$rest,$extra) {
 			$this->command_auth_identify($from,$to,$rest,$extra);
 		}
