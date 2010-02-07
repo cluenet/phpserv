@@ -23,7 +23,10 @@
 	}
 	
 	function destruct() {
+		$ircd = &ircd();
+		$this->saveset();
 		
+		$ircd->quit($this->config['nick'],'Ciao!');
 	}
 	
 	function doBotStart($type = 'start') {
