@@ -62,7 +62,8 @@
 				$ircd->notice($to,$from, '---- Info about '. $user.' ----');
 				$ircd->notice($to,$from, 'Account name: '.$access['user'].' (User ID: '.$uid.')');
 				$ircd->notice($to,$from, 'PHPserv access: '.$access['level']);
-				$ircd->notice($to,$from, 'vHost: '.$host['host']);
+				if(!empty($host['host']))
+					$ircd->notice($to,$from, 'vHost: '.$host['host']);
 				$ircd->notice($to,$from, 'Owns '. $channelc.' channels');
 				foreach($channels as $a)
 					$ircd->notice($to,$from, 'Owned channels: '.implode(", ", $a));
