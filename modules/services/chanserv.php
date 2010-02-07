@@ -34,6 +34,7 @@
 			$cu->registercommand($this, 'auth', 'OP', '<channel> [nick] - Ops you (or the given nick) on the given channel if you have access.');
 			$cu->registercommand($this, 'auth', 'INFO', '<channel> - Returns some basic info on the channel.');
 			$cu->registercommand($this, 'auth', 'DEOP', '<channel> [nick] - Deops you (or the given nick) on the given channel if you have access.');
+			$cu->registercommand($this, 'anon', 'INFO', '<channel> - Returns some basic info on the channel.');
 		}
 
 		function destruct() {
@@ -137,6 +138,10 @@
 					$ircd->notice($to, $from, 'That channel doesn\'t exist');
 				}
 			}
+		}
+		
+		function command_anon_info($from, $to, $rest, $extra) {
+			return $this->command_auth_info($from,$to,$rest,$extra);
 		}
 
 		function command_auth_drop($from, $to, $rest, $extra) {

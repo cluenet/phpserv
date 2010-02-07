@@ -52,7 +52,7 @@
 		$ircd->join($config['nick'],$config['chan']['main']);
 		$ircd->mode($config['nick'],$config['chan']['main'],'+h '.$config['nick']);
 		$ircd->join($config['nick'],$config['chan']['secure']);
-		$ircd->svsmode($config['nick'],$config['chan']['secure'],'-vhoaqIeb');
+//		$ircd->svsmode($config['nick'],$config['chan']['secure'],'-vhoaqIeb');
 		$ircd->mode($config['nick'],$config['chan']['secure'],'+siIao *!*@SnoFox.net '.str_repeat($config['nick'].' ',2));
 		
 	}
