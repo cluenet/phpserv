@@ -49,7 +49,7 @@
 			else {
 				$channels = array();
 				$uid = $data['userid'];
-				$access = $mysql->get($mysql->sql('SELECT id, level, user FROM `access` WHERE `userid` = '.$mysql->escape($uid)));
+				$access = $mysql->get($mysql->sql('SELECT id, level, user FROM `access` WHERE `id` = '.$mysql->escape($uid)));
 				$host = $mysql->get($mysql->sql('SELECT host FROM `hostserv` WHERE `active` = 1 AND `uid` = '.$mysql->escape($uid)));
 				$result = $mysql->sql('SELECT channel FROM `chanserv` WHERE `owner` = '.$mysql->escape($access['user']));
 				while($row = $mysql->get($result)) $channels[] = $row[0];
