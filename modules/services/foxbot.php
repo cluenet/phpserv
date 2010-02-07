@@ -37,10 +37,10 @@
 		global $mysql;
 		$config = $this->config;
 	
-		switch ($type) {
+/*		switch ($type) {
 		case 'start':
 			// Try to prevent flood-respawns
-			sleep(2);
+//			sleep(2);
 			break;
 		case 'load':
 			// Doesn't do anything atm...
@@ -49,7 +49,7 @@
 			// Shouldn't hit, but let's be safe
 			break;
 		}
-		
+*/		
 		$ircd->addnick($mysql->getsetting('server'),$config['nick'],$config['user'],$config['host'],$config['gecos']);
 		$ircd->mode($config['nick'],$config['nick'],'+oSpB');
 		$this->doJoin($config['chan']['main']);
@@ -312,6 +312,13 @@
 		$ircd->msg($config['nick'],$chan,'Hey '.$chan.', sup? My name is '.$config['nick'].', and I\'m a robot! '.$nick.' invited me to join, so here I am! If you want me to leave, type !part. Ciao!');
 	}
 	
+	function event_kill($src,$dest,$reason) {
+		if (strtolower($dest) == strtolower($this->config['nick'])) {
+			$ircd = &ircd();
+			doStartBot('start');
+			$ircd->kill($src,'Suck it');
+		}
+	}
 }
 	function registerm () {
 		$class = new foxbot;

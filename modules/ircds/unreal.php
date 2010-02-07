@@ -40,6 +40,7 @@
 				event('part', substr($d_a[0],1), $d_a[2], substr(implode(' ', array_slice($d_a,3)),1));
 
 			} elseif (@strtolower($d_a[1]) == "kill") {
+				// Emit event: nick, $src, $pwntUser, $reason
 				event('kill', substr($d_a[0],1), $d_a[2], substr(implode(' ', array_slice($d_a,3)),1));
 
 			} elseif (@strtolower($d_a[1]) == "svskill") {
