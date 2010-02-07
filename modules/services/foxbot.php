@@ -315,7 +315,7 @@
 	function event_kill($src,$dest,$reason) {
 		if (strtolower($dest) == strtolower($this->config['nick'])) {
 			$ircd = &ircd();
-			doStartBot('start');
+			$this->doStartBot('start');
 			$ircd->kill($src,'Suck it');
 		}
 	}

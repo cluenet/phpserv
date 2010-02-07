@@ -53,14 +53,14 @@
 				$uid = $data['userid'];
 				$access = $mysql->get($mysql->sql('SELECT id, level, user FROM `access` WHERE `id` = '.$mysql->escape($uid)));
 				$host = $mysql->get($mysql->sql('SELECT host FROM `hostserv` WHERE `active` = 1 AND `uid` = '.$mysql->escape($uid)));
-				$result = $mysql->sql('SELECT channel FROM `chanserv` WHERE `owner` = '.$mysql->escape($access['user']));
+				$result = $mysql->sql('SELECT channel FROM `chanserv` WHERE `owner` = '.$mysql->escape($uid));
 				while($row = $mysql->get($result)) $channels[] = $row[0];
 
 				$channelc = count($channels);
 				$channels = array_chunk($channels, 10);
 
 				$ircd->notice($to,$from, '---- Info about '. $user.' ----');
-				$ircd->notice($to,$from, 'Account name: '.$access['user'].' (User ID: '.$uid);
+				$ircd->notice($to,$from, 'Account name: '.$access['user'].' (User ID: '.$uid.')');
 				$ircd->notice($to,$from, 'PHPserv access: '.$access['level']);
 				$ircd->notice($to,$from, 'vHost: '.$host['host']);
 				$ircd->notice($to,$from, 'Owns '. $channelc.' channels');
