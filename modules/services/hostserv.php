@@ -118,10 +118,10 @@
 				$ircd->notice('HostServ',$from,$rest[0].' is not a PHPserv account.');
 				return 0;
 			}
-			if (!$mysql->get($mysql->sql('SELECT `host` FROM `hostserv` WHERE `uid` = '.$mysql->escape($userd['uid']))))
+			if (!$mysql->get($mysql->sql('SELECT `host` FROM `hostserv` WHERE `uid` = '.$mysql->escape($userd['id']))))
 				$mysql->insert('hostserv',array('uid' => $userd['uid'],'host' => $rest[1],'active' => 1));
 			else
-				$mysql->sql('UPDATE `hostserv` SET `host` = '.$mysql->escape($rest[1]).', `active` = 1 WHERE `uid` = '.$mysql->escape($userd['uid']));
+				$mysql->sql('UPDATE `hostserv` SET `host` = '.$mysql->escape($rest[1]).', `active` = 1 WHERE `uid` = '.$mysql->escape($userd['id']));
 			$ircd->notice('HostServ',$from,'vHost "'.$rest[1].'" assigned to '.$rest[0].'.');
 			$ircd->chghost('HostServ',$rest[0],$rest[1]);
 		}
