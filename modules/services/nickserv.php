@@ -48,9 +48,9 @@
 				$ircd->notice($to,$from,"The user $user does not exist.");
 			else {
 				$channels = array();
-
-				$access = $mysql->get($mysql->sql('SELECT id, level, user FROM `access` WHERE `uid` = '.$mysql->escape($data['uid'])));
-				$host = $mysql->get($mysql->sql('SELECT host FROM `hostserv` WHERE `active` = 1 AND `uid` = '.$mysql->escape($data['uid'])));
+				$uid = $data['userid'];
+				$access = $mysql->get($mysql->sql('SELECT id, level, user FROM `access` WHERE `uid` = '.$mysql->escape($uid)));
+				$host = $mysql->get($mysql->sql('SELECT host FROM `hostserv` WHERE `active` = 1 AND `uid` = '.$mysql->escape($uid)));
 				$result = $mysql->sql('SELECT channel FROM `chanserv` WHERE `owner` = '.$mysql->escape($access['user']));
 				while($row = $mysql->get($result)) $channels[] = $row[0];
 
