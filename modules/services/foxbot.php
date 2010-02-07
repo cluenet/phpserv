@@ -299,7 +299,7 @@
 		
 		$ircd = &ircd();
 		
-		$this->doJoin($config['nick'],$chan);
+		$this->doJoin($chan);
 		$ircd->msg($config['nick'],$chan,'Hey '.$chan.', sup? My name is '.$config['nick'].', and I\'m a robot! '.$nick.' invited me to join, so here I am! If you want me to leave, type !part. Ciao!');
 	}
 	
