@@ -44,7 +44,7 @@
 			if($rest[0]) $user = $rest[0];
 			else $user = $from;
 
-			if (!$data = $mysql->get($mysql->sql('SELECT `uid` FROM `nickserv` WHERE `nick` = '.$mysql->escape($user))))
+			if (!$data = $mysql->get($mysql->sql('SELECT `userid` FROM `nickserv` WHERE `nick` = '.$mysql->escape($user))))
 				$ircd->notice($to,$from,"The user $user does not exist.");
 			else {
 				$channels = array();
@@ -187,5 +187,3 @@
 		register($class, __FILE__, 'NickServ Module', 'nickserv');
 	}
 ?>
-
-
