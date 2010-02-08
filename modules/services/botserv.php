@@ -1,5 +1,5 @@
 <?PHP
-	class botcontroller {
+	class botserv {
 		private static $bots;
 		private static $curbot;
 		private static $curbotctr;
@@ -1202,8 +1202,8 @@
 //	class modinit {
                 function registerm () {
 //                        global $modules;
-                        $class = new botcontroller;
-                        register($class, __FILE__, 'BotServ Module', 'botcontroller');
+                        $class = new botserv;
+                        register($class, __FILE__, 'BotServ Module', 'botserv');
 		}
 //	}
 ?>

@@ -194,7 +194,7 @@
 		$ircd = &ircd();
 		$config = $this->config;
 		
-		$ircd->msg($config['nick'],$config['chan']['secure'],"\002Disconnect\002: ".$nick.' left the network');
+		$ircd->msg($config['nick'],$config['chan']['secure'],"\002Disconnect\002: ".$nick.' has left the network ('.$reason."\015)");
 	}
 
 	function event_nick($old,$new) {

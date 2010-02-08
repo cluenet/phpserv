@@ -428,6 +428,7 @@ $mysql->getsetting('server')
 								$ircd->notice('DaVinci',$sourcet,'The line average is: '.$this->lineaverage);
 								break;
 							case 'whoami':
+							case 'quiénsoyyo':
 							case 'quienessonyo':
 								$tmp0[1] = $source;
 							case 'quienes':
