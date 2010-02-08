@@ -199,7 +199,7 @@
 	
 	function event_usermode($from,$to,$modes) {
 		$modes = explode(' ',$modes,2);
-		$param = $modes[1];
+		$param = (isset($modes[1]) ? $modes[1] : '');
 		$modes = $modes[0];
 		
 		if (strpos($modes,'o')) {
@@ -215,7 +215,7 @@
 			}
 		
 			if ($up == '') {
-				$ircd->msg($config['nick'],$config['chan']['secure'],"\002Oper\002: ".	$to.' has just leveled up'.($from == $to ? '!' : ', thanks to '.$from));
+				$ircd->msg($config['nick'],$config['chan']['secure'],"\002Oper\002: ".	$to.' has leveled up'.($from == $to ? '!' : ', thanks to '.$from));
 			} elseif ($from != $to) {
 				$ircd->msg($config['nick'],$config['chan']['secure'],"\002Deoper\002: ".$to.' was powered down by '.$from);
 			} else {
