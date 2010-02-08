@@ -214,12 +214,13 @@
 				return $ircd->msg($config['nick'],$config['chan']['secure'],$to.' messed with umode o, but WTF JUST HAPPEND!?');
 			}
 		
-		if ($up == '')
-			$ircd->msg($config['nick'],$config['chan']['secure'],"\002Oper\002: ".	$to.' has just leveled up'.($from == $to ? '!' : ', thanks to '.$from));
-		elseif ($from != $to)
-			$ircd->msg($config['nick'],$config['chan']['secure'],"\002Deoper\002: ".$to.' was powered down by '.$from);
-		else
-			$ircd->msg($config['nick'],$config['chan']['secure'],"\002Deoper\002: ".$to.' has powered down');
+			if ($up == '') {
+				$ircd->msg($config['nick'],$config['chan']['secure'],"\002Oper\002: ".	$to.' has just leveled up'.($from == $to ? '!' : ', thanks to '.$from));
+			} elseif ($from != $to) {
+				$ircd->msg($config['nick'],$config['chan']['secure'],"\002Deoper\002: ".$to.' was powered down by '.$from);
+			} else {
+				$ircd->msg($config['nick'],$config['chan']['secure'],"\002Deoper\002: ".$to.' has powered down');
+			}
 		}
 	}
 			
