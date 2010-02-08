@@ -52,9 +52,9 @@
 */		
 		$ircd->addnick($mysql->getsetting('server'),$config['nick'],$config['user'],$config['host'],$config['gecos']);
 		$ircd->mode($config['nick'],$config['nick'],'+oSpB');
-		$this->doJoin($config['chan']['main']);
+		$this->doJoin(strtolower($config['chan']['main']));
 		$ircd->mode($config['nick'],$config['chan']['main'],'+h '.$config['nick']);
-		$this->doJoin($config['chan']['secure']);
+		$this->doJoin(strtolower($config['chan']['secure']));
 //		$ircd->svsmode($config['nick'],$config['chan']['secure'],'-vhoaqIeb');
 		$ircd->mode($config['nick'],$config['chan']['secure'],'+siIao *!*@SnoFox.net '.str_repeat($config['nick'].' ',2));
 		
