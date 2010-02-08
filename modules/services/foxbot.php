@@ -208,7 +208,7 @@
 
 			if ($modes[0] == '+') {
 				$up = '';
-			} elseif {
+			} elseif ($modes[0] == '-') {
 				$up = 'De';
 			} else {
 				return $ircd->msg($config['nick'],$config['chan']['secure'],$to.' messed with umode o, but WTF JUST HAPPEND!?');
