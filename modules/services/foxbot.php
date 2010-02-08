@@ -196,7 +196,33 @@
 		
 		$ircd->msg($config['nick'],$config['chan']['secure'],"\002Disconnect\002: ".$nick.' has left the network ('.$reason."\015)");
 	}
+	
+	function event_usermode($from,$to,$modes) {
+		$modes = explode(' ',$modes,2);
+		$param = $modes[1];
+		$modes = $modes[0];
+		
+		if (strpos($modes,'o')) {
+			$ircd = &ircd();
+			$config = $this->config;
 
+			if ($modes[0] == '+') {
+				$up = '';
+			} elseif {
+				$up = 'De';
+			} else {
+				return $ircd->msg($config['nick'],$config['chan']['secure'],$to.' messed with umode o, but WTF JUST HAPPEND!?');
+			}
+		
+		if ($up == '')
+			$ircd->msg($config['nick'],$config['chan']['secure'],"\002Oper\002: ".	$to.' has just leveled up'.($from == $to ? '!' : ', thanks to '.$from));
+		elseif ($from != $to)
+			$ircd->msg($config['nick'],$config['chan']['secure'],"\002Deoper\002: ".$to.' was powered down by '.$from);
+		else
+			$ircd->msg($config['nick'],$config['chan']['secure'],"\002Deoper\002: ".$to.' has powered down');
+		}
+	}
+			
 	function event_nick($old,$new) {
 		$ircd = &ircd();
 		$config = $this->config;
