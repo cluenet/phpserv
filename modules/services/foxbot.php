@@ -126,7 +126,7 @@
 			case '!fjoin':
 				if ($this->chkAccess($nick,'599')) {
 					if ($message[0] != '') {
-						$this->doJoin($message);
+						$this->doJoin(strtolower($message));
 					} else {
 						$ircd->notice($config['nick'],$nick,'Join where?');
 					}

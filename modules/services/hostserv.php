@@ -21,13 +21,12 @@
 			$cu = getmod('commandutils');
 			
 			$cu->registercommand($this, 'auth', 'ON','Activates your assigned vHost.');
-			// Disabled /hs off because it's pointless and abusable. Wrote the code anyway...
-			//$cu->registercommand($this, 'auth', 'OFF','Deactivates your vHost.');
+			$cu->registercommand($this, 'auth', 'OFF','Deactivates your vHost.');
 			$cu->registercommand($this, 'auth', 'REQUEST','<vhost> - Requests a vHost from HostServ.');
 			$cu->registercommand($this, 'auth', 'DEL','Deletes your vHost.');
 
 			$cu->registercommand($this, 'setter', 'ON','Activates your assigned vHost.');
-			//$cu->registercommand($this, 'setter', 'OFF','Deactivates your vHost.');
+			$cu->registercommand($this, 'setter', 'OFF','Deactivates your vHost.');
 			$cu->registercommand($this, 'setter', 'REQUEST','<vhost> - Requests a vHost from HostServ.');
 			$cu->registercommand($this, 'setter', 'SET','<nick> <vhost> - Assigns a vHost on a user.');
 			$cu->registercommand($this, 'setter', 'ACTIVATE','<nick> - Activates a requested vHost.');
