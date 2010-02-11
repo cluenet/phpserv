@@ -158,7 +158,7 @@
 			$config = $this->config;
 			$ircd = &ircd();
 			
-			$ircd->msg($config['nick'],$config['chan']['secure'],"\00307\002HostServ\002\00307: ".$msg);
+			$ircd->msg($config['nick'],$config['chan']['secure'],"\00307\002HostServ\002\003: ".$msg);
 		}
 	}
 	
@@ -290,7 +290,7 @@
 		$ircd = &ircd();
 		$config = $this->config;
 		
-		$ircd->msg($config['nick'],$config['chan']['secure'],"\00312\002Chan Create\002\00312: ".$channel."\015".' created by '.$nick);
+		$ircd->msg($config['nick'],$config['chan']['secure'],"\00312\002Chan Create\002\003: ".$channel."\015".' created by '.$nick);
 	}
 		
 	
@@ -316,7 +316,7 @@
 			case 'default':
 				$msg = 'for unknown reasons.';
 			}
-		$ircd->msg($config['nick'],$config['chan']['secure'],"\00312\002Chan Destroy\002\00312: ".$channel."\015".' destroyed '.$msg);
+		$ircd->msg($config['nick'],$config['chan']['secure'],"\00312\002Chan Destroy\002\003: ".$channel."\015".' destroyed '.$msg);
 		
 		if (isset($this->set['chan'][strtolower($channel)])) {
 			$ircd->part($config['nick'],$channel);
