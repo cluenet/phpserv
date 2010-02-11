@@ -59,6 +59,28 @@
 			}
 			return $send;
 		}
+		
+		function atime ($time) {
+			if (is_numeric($time)) return $time;
+
+			$ret = 0;
+			$tmp = '';
+			for ($i = 0; $i < strlen($time); $i++) {
+				if (is_numeric($time{$i})) {
+					$tmp.= $time{$i};
+				} else {
+					switch ($time{$i}) {
+						case 'd': $tmp *= 86400; break;
+						case 'h': $tmp *= 3600; break;
+						case 'm': $tmp *= 60; break;
+					}
+					$ret += $tmp;
+					$tmp = 0;
+				}
+			}
+			$ret += $tmp;
+			return $ret;
+		}
 
 /*
 		IRC Framework commands:
@@ -97,6 +119,7 @@
 				if ($message{0} != '!') {
 					$ircd->msg('CobiBot','#CobiBot',chr(2).'Private Message to me:'.chr(2).' ('.$from.') '.$message);
 					$ircd->msg('CobiBot','#HelpOps',chr(2).'Private Message to me:'.chr(2).' ('.$from.') '.$message);
+					$ircd->msg('CobiBot','#ClueCouncil',chr(2).'Private Message to me:'.chr(2).' ('.$from.') '.$message);
 				}
 			}
 			if (strtolower($to) == '#cobibot') {
@@ -118,6 +141,24 @@
 								break;
 						}
 						$this->saveset();
+					}
+				}
+			}
+			
+			if (strtolower($to) == '#cluecouncil') {
+				if ($mysql->getaccess($from) > 600) {
+					if ($message{0} == '!') {
+						$data = explode(' ',substr($message,1));
+						switch (strtolower($data[0])) {
+							case 'setbanexpiry':
+								$this->bans[$data[1]]['expiry'] = $this->atime($data[2]);
+								break;
+							case 'showbans':
+								foreach( $this->bans as $k => $v ) {
+									$ircd->msg('CobiBot','#ClueCouncil','Ban '.$k.' ('.$v['mask'].') set by '.$v['setter'].' at '.date('F jS, Y, H:i:s (T)',$v['set']).'" ('.$this->duration(time() - $v['set']).' ago) on '.$v['channel'].' expires '.date('F jS, Y, H:i:s (T)',$v['set'] + $v['expiry']).'" ('.$this->duration($v['set'] + $v['expiry'] - time()).' from now).');
+								}
+								break;
+						}
 					}
 				}
 			}
@@ -318,18 +359,56 @@
 		}
 		
 		function event_chanmode_b ($from,$to,$type,$mask) {
+			global $mysql;
+			$ircd = &ircd();
+			
+			$level = $mysql->getaccess( $from );
+			
+			if( $level >= 999 )
+				$expiry = 7*86400;
+			elseif( $level > 600 )
+				$expiry = 2*86400;
+			else
+				$expiry = 2*3600;
+			
 			if ($type == '+') {
 				$this->bans[] = Array (
 					'setter' => $from,
 					'channel' => $to,
 					'mask' => $mask,
-					'set' => time()
+					'set' => time(),
+					'expiry' => $expiry
 				);
+				$v = end( $this->bans );
+				$k = key( $this->bans );
+				$ircd->msg('CobiBot','#CobiBot','Ban '.$k.' ('.$v['mask'].') set by '.$v['setter'].' at '.date('F jS, Y, H:i:s (T)',$v['set']).'" ('.$this->duration(time() - $v['set']).' ago) on '.$v['channel'].' expires '.date('F jS, Y, H:i:s (T)',$v['set'] + $v['expiry']).'" ('.$this->duration($v['set'] + $v['expiry'] - time()).' from now).');
+				$ircd->msg('CobiBot','#ClueCouncil','Ban '.$k.' ('.$v['mask'].') set by '.$v['setter'].' at '.date('F jS, Y, H:i:s (T)',$v['set']).'" ('.$this->duration(time() - $v['set']).' ago) on '.$v['channel'].' expires '.date('F jS, Y, H:i:s (T)',$v['set'] + $v['expiry']).'" ('.$this->duration($v['set'] + $v['expiry'] - time()).' from now).');
 			} elseif ($type == '-') {
 				foreach ($this->bans as $k => $v) {
 					if ($v['mask'] == $mask) unset($this->bans[$k]);
 				}
 			}
+		}
+		
+		function duration ($s) {
+			$m = floor($s/60);
+			$s %= 60;
+			
+			$h = floor($m/60);
+			$m %= 60;
+
+			$d = floor($h/24);
+			$h %= 24;
+
+			$w = floor($d/7);
+			$d %= 7;
+
+			if ($w > 0) $ret[] = $w.' week'.($w > 1 ? 's' : '');
+			if ($d > 0) $ret[] = $d.' day'.($d > 1 ? 's' : '');
+			if ($h > 0) $ret[] = $h.' hour'.($h > 1 ? 's' : '');
+			if ($m > 0) $ret[] = $m.' minute'.($m > 1 ? 's' : '');
+			if ($s > 0) $ret[] = $s.' second'.($s > 1 ? 's' : '');
+			return implode(', ',$ret);
 		}
 		
 		function event_channel_create ($channel,$nick) {
@@ -400,34 +479,10 @@
 						(strtolower($v['channel']) == '#clueirc')
 						or (strtolower($v['channel']) == '#clueshells')
 					) {
-						switch (strtolower($v['setter'])) {
-							case 'cobi': $expiry = 7*86400; break; // 1 Week
-							case 'crispy': $expiry = 14*86400; break; // 2 Weeks
-							case 'bash':
-							case 'rembrandt':
-							case 'davinci':
-								$expiry = 2*3600; break; // 2 Hours
-/*
-							case 'tonyb':
-							case 'spyro_boy':
-							case 'jared':
-							case 'santium':
-							case 'crazytales':
-							case 'martinp23':
-							case 'wimt':
-							case 'monobi':
-							case 'soxred93':
-							case 'phase':
-							case 'lamia':
-							case 'methecooldude':
-								$expiry = 2*86400; break; // 2 Days
-*/
-							default:
-								$expiry = 4*7*86400; break; // 4 Weeks
-						}
-						if ($v['set'] + $expiry < time()) {
+						if ($v['set'] + $v['expiry'] < time()) {
 							$ircd->mode('CobiBot',$v['channel'],'-b '.$v['mask']);
-							$ircd->msg('CobiBot','#CobiBot','Ban '.$k.' ('.$v['mask'].') set by '.$v['setter'].' at '.$v['set'].' on '.$v['channel'].' has expired and been unset.');
+							$ircd->msg('CobiBot','#CobiBot','Ban '.$k.' ('.$v['mask'].') set by '.$v['setter'].' at '.date('F jS, Y, H:i:s (T)',$v['set']).'" ('.$this->duration(time() - $v['set']).' ago) on '.$v['channel'].' has expired and been unset.');
+							$ircd->msg('CobiBot','#ClueCouncil','Ban '.$k.' ('.$v['mask'].') set by '.$v['setter'].' at '.date('F jS, Y, H:i:s (T)',$v['set']).'" ('.$this->duration(time() - $v['set']).' ago) on '.$v['channel'].' has expired and been unset.');
 							unset($this->bans[$k]);
 						}
 					}
