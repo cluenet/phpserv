@@ -158,6 +158,9 @@
 									$ircd->msg('CobiBot','#ClueCouncil','Ban '.$k.' ('.$v['mask'].') set by '.$v['setter'].' at '.date('F jS, Y, H:i:s (T)',$v['set']).'" ('.$this->duration(time() - $v['set']).' ago) on '.$v['channel'].' expires '.date('F jS, Y, H:i:s (T)',$v['set'] + $v['expiry']).'" ('.$this->duration($v['set'] + $v['expiry'] - time()).' from now).');
 								}
 								break;
+							case 'delban':
+								unset( $this->bans[$data[1]] );
+								break;
 						}
 					}
 				}
