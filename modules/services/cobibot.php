@@ -404,11 +404,10 @@
 							case 'cobi': $expiry = 7*86400; break; // 1 Week
 							case 'crispy': $expiry = 14*86400; break; // 2 Weeks
 							case 'bash':
-							case 'clue':
 							case 'rembrandt':
-							case 'chanserv':
 							case 'davinci':
 								$expiry = 2*3600; break; // 2 Hours
+/*
 							case 'tonyb':
 							case 'spyro_boy':
 							case 'jared':
@@ -422,6 +421,7 @@
 							case 'lamia':
 							case 'methecooldude':
 								$expiry = 2*86400; break; // 2 Days
+*/
 							default:
 								$expiry = 4*7*86400; break; // 4 Weeks
 						}

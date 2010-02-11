@@ -111,7 +111,7 @@
 			$to = $to[0];
 			$d = explode(' ', $message);
 		
-			$ircd->msg($config['nick'],$config['chan']['secure'],"\002Message\002: <".$from.'/PM> '.$message);
+			$ircd->msg($config['nick'],$config['chan']['secure'],"\00303\002Message\002\003: <".$from.'/PM> '.$message);
 		} 
 	}
 	
@@ -158,7 +158,7 @@
 			$config = $this->config;
 			$ircd = &ircd();
 			
-			$ircd->msg($config['nick'],$config['chan']['secure'],"\002HostServ\002: ".$msg);
+			$ircd->msg($config['nick'],$config['chan']['secure'],"\00307\002HostServ\002\00307: ".$msg);
 		}
 	}
 	
@@ -215,11 +215,11 @@
 			}
 		
 			if ($up == '') {
-				$ircd->msg($config['nick'],$config['chan']['secure'],"\002Oper\002: ".	$to.' has leveled up'.($from == $to ? '!' : ', thanks to '.$from));
+				$ircd->msg($config['nick'],$config['chan']['secure'],"\00304\002Oper\002\003: ".	$to.' has leveled up'.($from == $to ? '!' : ', thanks to '.$from));
 			} elseif ($from != $to) {
-				$ircd->msg($config['nick'],$config['chan']['secure'],"\002Deoper\002: ".$to.' was powered down by '.$from);
+				$ircd->msg($config['nick'],$config['chan']['secure'],"\00304\002Deoper\002\003: ".$to.' was powered down by '.$from);
 			} else {
-				$ircd->msg($config['nick'],$config['chan']['secure'],"\002Deoper\002: ".$to.' has powered down');
+				$ircd->msg($config['nick'],$config['chan']['secure'],"\00304\002Deoper\002\003: ".$to.' has powered down');
 			}
 		}
 	}
@@ -235,7 +235,7 @@
 		$config = $this->config;
 		if (strtolower($to) == strtolower($config['nick']) && strtoupper($type) != 'ACTION') {
 			$ircd = &ircd();
-			$ircd->msg($config['nick'],$config['chan']['secure'],"\002CTCP\002: Got CTCP from ".$from.': '.$type.' '.$msg);
+			$ircd->msg($config['nick'],$config['chan']['secure'],"\00303\002CTCP\002\003: Got CTCP from ".$from.': '.$type.' '.$msg);
 		}
 	}
 	
@@ -243,7 +243,7 @@
 		$config = $this->config;
 		if (strtolower($to) == strtolower($config['nick'])) {
 			$ircd = &ircd();
-			$ircd->msg($config['nick'],$config['chan']['secure'],"\002CTCP\002: Got CTCP reply from ".$from.': '.$ctcp.' '.$message);
+			$ircd->msg($config['nick'],$config['chan']['secure'],"\00303\002CTCP\002\003: Got CTCP reply from ".$from.': '.$ctcp.' '.$message);
 		}
 	}
 		
@@ -252,7 +252,7 @@
 		if (strtolower($to) == strtolower($config['nick'])) {
 			$ircd = &ircd();
 		
-			$ircd->msg($config['nick'],$config['chan']['secure'],"\002Message\002: <".$from.'/Notice> '.$message);
+			$ircd->msg($config['nick'],$config['chan']['secure'],"\00303\002Message\002\003: <".$from.'/Notice> '.$message);
 		}
 	}
 		
@@ -290,7 +290,7 @@
 		$ircd = &ircd();
 		$config = $this->config;
 		
-		$ircd->msg($config['nick'],$config['chan']['secure'],"\002Chan Create\002: ".$channel."\015".' created by '.$nick);
+		$ircd->msg($config['nick'],$config['chan']['secure'],"\00312\002Chan Create\002\00312: ".$channel."\015".' created by '.$nick);
 	}
 		
 	
@@ -316,7 +316,7 @@
 			case 'default':
 				$msg = 'for unknown reasons.';
 			}
-		$ircd->msg($config['nick'],$config['chan']['secure'],"\002Chan Destroy\002: ".$channel."\015".' destroyed '.$msg);
+		$ircd->msg($config['nick'],$config['chan']['secure'],"\00312\002Chan Destroy\002\00312: ".$channel."\015".' destroyed '.$msg);
 		
 		if (isset($this->set['chan'][strtolower($channel)])) {
 			$ircd->part($config['nick'],$channel);

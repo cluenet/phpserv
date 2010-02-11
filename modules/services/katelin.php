@@ -432,7 +432,7 @@
 			}
 
 		}
-
+/*
 		function event_join ($nick,$channel) {
 			global $mysql;
 			$ircd = &ircd();
@@ -449,7 +449,7 @@
 				}
 			}
 		}
-
+*/
 		function event_nick ($from,$to) {
 			global $mysql;
 			$ircd = &ircd();
