@@ -54,12 +54,10 @@
 		$ircd->mode($config['nick'],$config['chan']['secure'],'+siIao *!*@SnoFox.net '.str_repeat($config['nick'].' ',2));
 		
 		$chans = array_keys($this->set['chan']);
-		
 		foreach ($chans as $chan) {
 			if (strtolower($chan) == strtolower($config['chan']['main']) || strtolower($chan) == strtolower($config['chan']['secure'])) {
 			// We already joined this channel
-				$ircd->msg($config['nick'],$config['chan']['secure'],"Not joining $chan due to if statement"); //debug
-				return;
+				break;
 			}
 			$ircd->join($config['nick'],$chan);
 			$ircd->msg($config['nick'],$config['chan']['secure'],"\002".'IRC'."\002".': '.$config['nick'].' has rejoined '.$chan);
