@@ -46,7 +46,7 @@
 		$chans = array_keys($this->set['chan']);
 		
 		foreach ($chans as $chan) {
-			if (strtolower($chan) == strtolower($config['chan']['main']) || strtolower($chan) == strtolower($config['chan']['secure']) {
+			if (strtolower($chan) == strtolower($config['chan']['main']) || strtolower($chan) == strtolower($config['chan']['secure'])) {
 			// We already joined this channel
 				return;
 			}
@@ -184,6 +184,7 @@
 			// We're dead. Lets not cause problems.
 			return;
 		}
+		
 		$ircd = &ircd();
 		
 		$ircd->msg($config['nick'],$config['chan']['secure'],"\002Disconnect\002: ".$nick.' has left the network ('.$reason."\015)");
