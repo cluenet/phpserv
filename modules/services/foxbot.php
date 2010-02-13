@@ -20,7 +20,7 @@
 		
 		$this->set = unserialize(file_get_contents('foxbot.db'));
 		
-		$this->doBotStart('load');
+		$this->doBotStart();
 	}
 	
 	function destruct() {
@@ -30,7 +30,7 @@
 		$ircd->quit($this->config['nick'],'Ciao!');
 	}
 	
-	function doBotStart($type = 'start') {
+	function doBotStart() {
 		$ircd = &ircd();
 		global $mysql;
 		$config = $this->config;
@@ -58,6 +58,7 @@
 		foreach ($chans as $chan) {
 			if (strtolower($chan) == strtolower($config['chan']['main']) || strtolower($chan) == strtolower($config['chan']['secure'])) {
 			// We already joined this channel
+				$ircd->msg($config['nick'],$config['chan']['secure'],"Not joining $chan due to if statement"); //debug
 				return;
 			}
 			$ircd->join($config['nick'],$chan);
@@ -350,7 +351,7 @@
 		if (strtolower($dest) == strtolower($this->config['nick'])) {
 			// We died! D:
 			$this->connected = false;
-			$this->doBotStart('start');
+			$this->doBotStart();
 		}
 	}
 }
