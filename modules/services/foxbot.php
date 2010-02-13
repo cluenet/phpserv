@@ -31,41 +31,27 @@
 	}
 	
 	function doBotStart($type = 'start') {
-	// $type definitions:
-	// load = called due to module load
-	// start = (re)start the bot. (Ex, was killed)
 		$ircd = &ircd();
 		global $mysql;
 		$config = $this->config;
 	
-/*		switch ($type) {
-		case 'start':
-			// Try to prevent flood-respawns
-//			sleep(2);
-			break;
-		case 'load':
-			// Doesn't do anything atm...
-			break;
-		case 'default':
-			// Shouldn't hit, but let's be safe
-			break;
-		}
-*/		
 		$ircd->addnick($mysql->getsetting('server'),$config['nick'],$config['user'],$config['host'],$config['gecos']);
 		$this->connected = true;
 		$ircd->mode($config['nick'],$config['nick'],'+oSpB');
 		$this->doJoin(strtolower($config['chan']['main']));
 		$ircd->mode($config['nick'],$config['chan']['main'],'+h '.$config['nick']);
 		$this->doJoin(strtolower($config['chan']['secure']));
-//		$ircd->svsmode($config['nick'],$config['chan']['secure'],'-vhoaqIeb');
 		$ircd->mode($config['nick'],$config['chan']['secure'],'+siIao *!*@SnoFox.net '.str_repeat($config['nick'].' ',2));
 		
 		$chans = array_keys($this->set['chan']);
 		
 		foreach ($chans as $chan) {
+			if (strtolower($chan) == strtolower($config['chan']['main']) || strtolower($chan) == strtolower($config['chan']['secure']) {
+			// We already joined this channel
+				return;
+			}
 			$this->doJoin($chan);
 		}
-		
 	}
 	
 	function saveset() {
