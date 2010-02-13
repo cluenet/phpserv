@@ -4,6 +4,7 @@
 	
 	private $set;
 	private	$config;
+	private $connected;
 	
 	function construct() {
 		$this->config = array (
@@ -51,6 +52,7 @@
 		}
 */		
 		$ircd->addnick($mysql->getsetting('server'),$config['nick'],$config['user'],$config['host'],$config['gecos']);
+		$this->connected = true;
 		$ircd->mode($config['nick'],$config['nick'],'+oSpB');
 		$this->doJoin(strtolower($config['chan']['main']));
 		$ircd->mode($config['nick'],$config['chan']['main'],'+h '.$config['nick']);
@@ -169,14 +171,14 @@
 		
 		$user = $mysql->get($mysql->sql('SELECT `user` FROM `access` WHERE `id` = '.$mysql->escape($uid)));
 		
-		$ircd->msg($config['nick'],$config['chan']['secure'],"\002Identify\002: ".$from.' identified to PHPserv using account '.$user['user']."\015". ' (UID '.$uid.')');
+		$ircd->msg($config['nick'],$config['chan']['secure'],"\00302\002Identify\002\003: ".$from.' identified to PHPserv using account '.$user['user']."\015". ' (UID '.$uid.')');
 	}
 	
 	function event_logout($from,$user) {
 		$ircd = &ircd();
 		$config = $this->config;
 		
-		$ircd->msg($config['nick'],$config['chan']['secure'],"\002Logout\002: ".$from.' logged out of account '.$user['user']);
+		$ircd->msg($config['nick'],$config['chan']['secure'],"\00302\002Logout\002\003: ".$from.' logged out of account '.$user['user']);
 	}
 	
 	function event_signon($nick,$user,$host,$real,$ip,$server,$stamp=0) {
@@ -191,8 +193,12 @@
 	}
 	
 	function event_quit($nick,$reason) {
-		$ircd = &ircd();
 		$config = $this->config;
+		if (strtolower($nick) == strtolower($config['nick'])) {
+			// We're dead. Lets not cause problems.
+			return;
+		}
+		$ircd = &ircd();
 		
 		$ircd->msg($config['nick'],$config['chan']['secure'],"\002Disconnect\002: ".$nick.' has left the network ('.$reason."\015)");
 	}
@@ -231,7 +237,6 @@
 		$ircd->msg($config['nick'],$config['chan']['secure'],"\002Nick\002: ".$old.' changed their nickname to '.$new);
 	}
 	function event_ctcp ($from,$to,$type,$msg) {
-	
 		$config = $this->config;
 		if (strtolower($to) == strtolower($config['nick']) && strtoupper($type) != 'ACTION') {
 			$ircd = &ircd();
@@ -340,10 +345,14 @@
 	}
 	
 	function event_kill($src,$dest,$reason) {
+		if ($this->connected === false) {
+			// We got a kill, but we're not connected. Let's not respawn.
+			return;
+		}
 		if (strtolower($dest) == strtolower($this->config['nick'])) {
-			$ircd = &ircd();
+			// We died! D:
+			$this->connected = false;
 			$this->doBotStart('start');
-//			$ircd->kill($src,'Suck it');
 		}
 	}
 }
