@@ -38,12 +38,12 @@
 		$ircd->addnick($mysql->getsetting('server'),$config['nick'],$config['user'],$config['host'],$config['gecos']);
 		$this->connected = true;
 		$ircd->mode($config['nick'],$config['nick'],'+oSpB');
-		if (!isset($this->set['chan'][strtolower($config['chan']['main'])])
+		if (!isset($this->set['chan'][strtolower($config['chan']['main'])]))
 			$this->doJoin(strtolower($config['chan']['main']));
 		else
 			$ircd->join($config['nick'],$config['chan']['main'])
 		$ircd->mode($config['nick'],$config['chan']['main'],'+h '.$config['nick']);
-		if (!isset($this->set['chan'][strtolower($config['chan']['secure'])])
+		if (!isset($this->set['chan'][strtolower($config['chan']['secure'])]))
 			$this->doJoin(strtolower($config['chan']['secure']));
 		else
 			$ircd->join($config['nick'],$config['chan']['secure'])
