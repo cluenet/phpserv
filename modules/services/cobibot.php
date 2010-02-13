@@ -272,6 +272,8 @@
 		function event_quit ($nick,$message) {
 			global $mysql;
 			$ircd = &ircd();
+			if( strtolower( $nick ) == 'cobibot' )
+				return;
 			$ircd->msg('CobiBot','#CobiBot','User quit: '.$nick.' with reason: '.$message);
 			if ($nick == 'Cobi') {
 				if (fnmatch('*Local kill by*',$message)) {
@@ -311,7 +313,7 @@
 //				$ircd->addnick($mysql->getsetting('server'),$from,'CobiBot','CobiBot.cluenet.org','Juped nick held by CobiBot.');
 			}
 			if ($nick == 'CobiBot') {
-				sleep(3);
+				//sleep(3);
 				$this->construct();
 			}
 		}
