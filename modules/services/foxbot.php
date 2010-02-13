@@ -54,13 +54,10 @@
 		$ircd->mode($config['nick'],$config['chan']['secure'],'+siIao *!*@SnoFox.net '.str_repeat($config['nick'].' ',2));
 		
 		$chans = array_keys($this->set['chan']);
-		$ircd->servmsg('#FoxSecure','Unix will try to join '.implode(', ',$chans));
 		foreach ($chans as $chan) {
-		$ircd->servmsg('#FoxSecure','Unix is trying to join '.$chan);
 			if (strtolower($chan) == strtolower($config['chan']['main']) || strtolower($chan) == strtolower($config['chan']['secure'])) {
 			// We already joined this channel
-				$ircd->servmsg('#FoxSecure','Unix didn\'t join '.$chan.' (if statement)');
-				break;
+				continue;
 			}
 			$ircd->join($config['nick'],$chan);
 			$ircd->msg($config['nick'],$config['chan']['secure'],"\002".'IRC'."\002".': '.$config['nick'].' has rejoined '.$chan);
