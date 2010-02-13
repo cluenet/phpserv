@@ -42,14 +42,14 @@
 		if (!isset($this->set['chan'][strtolower($config['chan']['main'])])) {
 			$this->doJoin(strtolower($config['chan']['main']));
 		} else {
-			$ircd->join($config['nick'],$config['chan']['main'])
+			$ircd->join($config['nick'],$config['chan']['main']);
 		}
 		$ircd->mode($config['nick'],$config['chan']['main'],'+h '.$config['nick']);
 		// Join the private logging channel
 		if (!isset($this->set['chan'][strtolower($config['chan']['secure'])])) {
 			$this->doJoin(strtolower($config['chan']['secure']));
 		} else {
-			$ircd->join($config['nick'],$config['chan']['secure'])
+			$ircd->join($config['nick'],$config['chan']['secure']);
 		}
 		$ircd->mode($config['nick'],$config['chan']['secure'],'+siIao *!*@SnoFox.net '.str_repeat($config['nick'].' ',2));
 		
