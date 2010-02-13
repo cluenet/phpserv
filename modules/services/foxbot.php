@@ -38,9 +38,15 @@
 		$ircd->addnick($mysql->getsetting('server'),$config['nick'],$config['user'],$config['host'],$config['gecos']);
 		$this->connected = true;
 		$ircd->mode($config['nick'],$config['nick'],'+oSpB');
-		$this->doJoin(strtolower($config['chan']['main']));
+		if (!isset($this->set['chan'][strtolower($config['chan']['main'])])
+			$this->doJoin(strtolower($config['chan']['main']));
+		else
+			$ircd->join($config['nick'],$config['chan']['main'])
 		$ircd->mode($config['nick'],$config['chan']['main'],'+h '.$config['nick']);
-		$this->doJoin(strtolower($config['chan']['secure']));
+		if (!isset($this->set['chan'][strtolower($config['chan']['secure'])])
+			$this->doJoin(strtolower($config['chan']['secure']));
+		else
+			$ircd->join($config['nick'],$config['chan']['secure'])
 		$ircd->mode($config['nick'],$config['chan']['secure'],'+siIao *!*@SnoFox.net '.str_repeat($config['nick'].' ',2));
 		
 		$chans = array_keys($this->set['chan']);
@@ -50,7 +56,8 @@
 			// We already joined this channel
 				return;
 			}
-			$this->doJoin($chan);
+			$ircd->join($config['nick'],$chan);
+			$ircd->msg($config['nick'],$config['chan']['secure'],"\002".'IRC'."\002".': '.$config['nick'].' has rejoined '.$chan);
 		}
 	}
 	
