@@ -268,7 +268,7 @@
 			if (strtolower($chan) == $secure || strtolower($chan) == $main) {
 				$ircd->join($me,$chan);
 				$ircd->mode($me,$chan,($chan == $main ? '+h '.$me : '+ao '.$me.' '.$me));
-				if (strpos($src,'.') === false) { $ircd->msg($src,$me,'Kicking a U:lined bot won\'t get you anywhere...'); }
+				if (strpos($src,'.') == 0) { $ircd->msg($me,$src,'Kicking a U:lined bot won\'t get you anywhere...'); }
 				return;
 			}
 			$ircd->msg($me,$secure,"\002IRC\002: ".$src.' kicked '.$me.' from '.$chan."\015".' ('.$reason."\015)");
