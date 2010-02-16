@@ -265,7 +265,7 @@
 			$secure = strtolower($config['chan']['secure']);
 			$main = strtolower($config['chan']['main']);
 			$me = $config['nick'];
-			if (strtolower($chan) == $secure || strtolower($chan) == $main)) {
+			if (strtolower($chan) == $secure || strtolower($chan) == $main) {
 				$ircd->join($me,$chan);
 				$ircd->mode($me,$chan,($chan == $main ? '+h '.$me : '+ao '.$me.' '.$me));
 				if (strpos($src,'.') === false) { $ircd->msg($src,$me,'Kicking a U:lined bot won\'t get you anywhere...'); }
