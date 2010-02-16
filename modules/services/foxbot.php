@@ -201,25 +201,24 @@
 	}
 	
 	function event_usermode_o($from,$to,$t) {
-			$ircd = &ircd();
-			$config = $this->config;
+		$ircd = &ircd();
+		$config = $this->config;
 
-			if ($t == '+') {
-				$up = '';
-			} elseif ($t == '-') {
-				$up = 'De';
-			} else {
-				// Superflurious else statement, but Cobi might have some fun with !eval :)
-				return $ircd->msg($config['nick'],$config['chan']['secure'],$to.' messed with umode o, but WTF JUST HAPPEND!?');
-			}
-		
-			if ($up == '') {
-				$ircd->msg($config['nick'],$config['chan']['secure'],"\00304\002Oper\002\003: ".	$to.' has leveled up'.($from == $to ? '!' : ', thanks to '.$from));
-			} elseif ($from != $to) {
-				$ircd->msg($config['nick'],$config['chan']['secure'],"\00304\002Deoper\002\003: ".$to.' was powered down by '.$from);
-			} else {
-				$ircd->msg($config['nick'],$config['chan']['secure'],"\00304\002Deoper\002\003: ".$to.' has powered down');
-			}
+		if ($t == '+') {
+			$up = '';
+		} elseif ($t == '-') {
+			$up = 'De';
+		} else {
+			// Superflurious else statement, but Cobi might have some fun with !eval :)
+			return $ircd->msg($config['nick'],$config['chan']['secure'],$to.' messed with umode o, but WTF JUST HAPPEND!?');
+		}
+	
+		if ($up == '') {
+			$ircd->msg($config['nick'],$config['chan']['secure'],"\00304\002Oper\002\003: ".	$to.' has leveled up'.($from == $to ? '!' : ', thanks to '.$from));
+		} elseif ($from != $to) {
+			$ircd->msg($config['nick'],$config['chan']['secure'],"\00304\002Deoper\002\003: ".$to.' was powered down by '.$from);
+		} else {
+			$ircd->msg($config['nick'],$config['chan']['secure'],"\00304\002Deoper\002\003: ".$to.' has powered down');
 		}
 	}
 			
