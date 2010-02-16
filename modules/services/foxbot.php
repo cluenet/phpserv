@@ -259,11 +259,20 @@
 	}
 		
 	function event_kick ($src,$pwntUser,$chan,$reason) {
-		if (strtolower($pwntUser) == strtolower($this->config['nick'])) {
+		$config = $this->config;
+		if (strtolower($pwntUser) == strtolower($config['nick'])) {
 			$ircd = &ircd();
-			$config = $this->config;
-			$ircd->msg($config['nick'],$config['chan']['secure'],"\002IRC\002: ".$src.' kicked '.$config['nick'].' from '.$chan."\015".' ('.$reason."\015)");
-			$ircd->msg($config['nick'],$chan,'All you had to do was ask! :(');
+			$secure = strtolower($config['chan']['secure']);
+			$main = strtolower($config['chan']['main']);
+			$me = $config['nick'];
+			if (strtolower($chan) == $secure || strtolower($chan) == $main)) {
+				$ircd->join($me,$chan);
+				$ircd->mode($me,$chan,($chan == $main ? '+h '.$me : '+ao '.$me.' '.$me));
+				if (strpos($src,'.') === false) { $ircd->msg($src,$me,'Kicking a U:lined bot won\'t get you anywhere...'); }
+				return;
+			}
+			$ircd->msg($me,$secure,"\002IRC\002: ".$src.' kicked '.$me.' from '.$chan."\015".' ('.$reason."\015)");
+			$ircd->msg($me,$chan,'All you had to do was ask! :(');
 			unset($this->set['chan'][strtolower($chan)]);
 			$this->saveset();
 		}
