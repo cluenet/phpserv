@@ -200,20 +200,16 @@
 		$ircd->msg($config['nick'],$config['chan']['secure'],"\002Disconnect\002: ".$nick.' has left the network ('.$reason."\015)");
 	}
 	
-	function event_usermode($from,$to,$modes) {
-		$modes = explode(' ',$modes,2);
-		$param = (isset($modes[1]) ? $modes[1] : '');
-		$modes = $modes[0];
-		
-		if (strpos($modes,'o')) {
+	function event_usermode_o($from,$to,$t) {
 			$ircd = &ircd();
 			$config = $this->config;
 
-			if ($modes[0] == '+') {
+			if ($t == '+') {
 				$up = '';
-			} elseif ($modes[0] == '-') {
+			} elseif ($t == '-') {
 				$up = 'De';
 			} else {
+				// Superflurious else statement, but Cobi might have some fun with !eval :)
 				return $ircd->msg($config['nick'],$config['chan']['secure'],$to.' messed with umode o, but WTF JUST HAPPEND!?');
 			}
 		
@@ -347,7 +343,7 @@
 		$ircd = &ircd();
 		
 		$this->doJoin($chan);
-		$ircd->msg($config['nick'],$chan,'Hey '.$chan.', sup? My name is '.$config['nick'].', and I\'m a robot! '.$nick.' invited me to join, so here I am! If you want me to leave, type !part. Ciao!');
+		$ircd->msg($config['nick'],$chan,'Hey '.$chan.', sup? Thanks for inviting me'.(rand(1,100) == 50 ? ' to the party, ' : ', ').$nick.'. If you want me to leave, type !part. Ciao!');
 	}
 	
 	function event_kill($src,$dest,$reason) {
