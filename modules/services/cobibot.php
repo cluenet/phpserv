@@ -367,9 +367,10 @@
 			global $mysql;
 			$ircd = &ircd();
 			
-			if (
+			if (!(
 				(strtolower($to) == '#clueirc')
 				or (strtolower($to) == '#clueshells')
+				or (strtolower($to) == '#foxsecure')
 			)
 				return;
 			
@@ -379,6 +380,8 @@
 				$expiry = 7*86400;
 			elseif( $level > 600 )
 				$expiry = 2*86400;
+			elseif( strtolower( $from ) == 'unix' )
+				$expiry = 300;
 			else
 				$expiry = 2*3600;
 			
@@ -492,6 +495,7 @@
 					if (
 						(strtolower($v['channel']) == '#clueirc')
 						or (strtolower($v['channel']) == '#clueshells')
+						or (strtolower($v['channel']) == '#foxsecure')
 					) {
 						if ($v['set'] + $v['expiry'] < time()) {
 							$ircd->mode('CobiBot',$v['channel'],'-b '.$v['mask']);
