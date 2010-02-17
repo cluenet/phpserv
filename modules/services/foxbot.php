@@ -286,7 +286,7 @@
 				$level = $user['level'];
 				
 				$ircd->svsmode($config['nick'],$config['chan']['secure'],'-e');
-				$ircd->mode($config['nick'],$config['chan']['secure'],'+bb '.$nick.' '.$nickd['host']);
+				$ircd->mode($config['nick'],$config['chan']['secure'],'+bb '.$nick.'!*@* *!*@'.$nickd['host']);
 				$ircd->kick($config['nick'],$config['chan']['secure'],$nick,'You are not authorized to join '.$config['chan']['secure'].'. Required access: >599. Your access: '.($level == '' ? 'Nonexistant' : $level).'. Ciao!');
 			}
 		}
