@@ -371,7 +371,7 @@
 				(strtolower($to) == '#clueirc')
 				or (strtolower($to) == '#clueshells')
 				or (strtolower($to) == '#foxsecure')
-			)
+			))
 				return;
 			
 			$level = $mysql->getaccess( $from );
