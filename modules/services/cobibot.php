@@ -367,6 +367,12 @@
 			global $mysql;
 			$ircd = &ircd();
 			
+			if (
+				(strtolower($to) == '#clueirc')
+				or (strtolower($to) == '#clueshells')
+			)
+				return;
+			
 			$level = $mysql->getaccess( $from );
 			
 			if( $level >= 999 )
@@ -396,6 +402,9 @@
 		}
 		
 		function duration ($s) {
+			if( $s == 0 )
+				return '0 seconds';
+			
 			$m = floor($s/60);
 			$s %= 60;
 			
