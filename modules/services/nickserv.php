@@ -23,6 +23,7 @@
 			$cu->registercommand($this, 'anon', 'REGISTER', 'Register information.');
 			$cu->registercommand($this, 'anon', 'IDENTIFY', '<password>[:<username>] - Identifies you to services.');
 			$cu->registercommand($this, 'anon', 'ID', 'Alias for IDENTIFY.');
+			$cu->registercommand($this, 'anon', 'LOGOUT', 'Logs out of your account');
 			
 			$cu->registercommand($this, 'auth', 'IDENTIFY', '<password>[:<username>] - Identifies you to services.');
 			$cu->registercommand($this, 'auth', 'ID', 'Alias for IDENTIFY.');
@@ -79,7 +80,7 @@
 		function command_anon_register($from,$to,$rest,$extra) {
 			$ircd = &ircd();
 			$ircd->notice($to,$from,'You need to identify to your PHPServ account to do this.');
-			$ircd->notice($to,$from,'To create a PHPServ account, please type "/MSG PHPSERV HELP".');
+			$ircd->notice($to,$from,'To create a PHPServ account, please type "/MSG PHPServ HELP".');
 		}
 		
 		function command_anon_id ($from,$to,$rest,$extra) {
@@ -96,26 +97,30 @@
 			}
 		}
 		
-		function command_anon_logout ($from,$to,$rest,$extra) {
-			event('msg',$from,'PHPServ','LOGOUT');
+		function command_anon_logout( $from, $to, $rest, $extra ) {
+			event( 'msg', $from, 'PHPServ', 'LOGOUT' );
 		}
-				
-		function command_auth_id ($from,$to,$rest,$extra) {
-			$this->command_auth_identify($from,$to,$rest,$extra);
+
+		function command_auth_logout( $from, $to, $rest, $extra ) {
+			event( 'msg', $from, 'PHPServ', 'LOGOUT' );
+		}
+						
+		function command_auth_id( $from, $to, $rest, $extra) {
+			$this->command_auth_identify( $from, $to, $rest, $extra);
 		}
 		
-		function command_auth_identify ($from,$to,$rest,$extra) {
+		function command_auth_identify( $from, $to, $rest, $extra) {
 			$ircd = &ircd();
 			
-			$ircd->notice($to,$from,'You are already identified!');
+			$ircd->notice( $to, $from, 'You are already identified!' );
 		}
 		
-		function command_auth_register ($from,$to,$rest,$extra) {
+		function command_auth_register ( $from, $to, $rest, $extra ) {
 			global $mysql;
 			$ircd = &ircd();
-			
-			if ($mysql->get($mysql->sql('SELECT * FROM `nickserv` WHERE `nick` = '.$mysql->escape($from))))
-				$ircd->notice($to,$from,'Your nick is already owned by someone else.');
+			$data = $mysql->get( $mysql->sql( 'SELECT * FROM `nickserv` WHERE `nick` = ' . $mysql->escape( $from ) ) );
+			if ( $data )
+				$ircd->notice( $to, $from, '"'.$from.'" is already registered!' );
 			else {
 				$data = array
 				(
@@ -123,33 +128,57 @@
 					'userid'	=> $extra['uid'],
 					'nick'		=> $from
 				);
-				$mysql->insert('nickserv',$data);
-				$ircd->notice($to,$from,'"'.$from.'" is now linked to your PHPServ Account.');
+				$mysql->insert( 'nickserv', $data );
+				$ircd->notice( $to, $from, '"' . $from . '" is now linked to your PHPServ account.' );
 			}
 		}
 		
-		function command_auth_ghost ($from,$to,$rest,$extra) {
+		function command_oper_override( $from, $to, $rest, $extra ) {
+			global $mysql;
+			$ircd = &ircd();
+			// XXX: We need a better way to do override. Perhaps a value in $extra that ignores permission checks? - SnoFox
+			if( strtolower( $rest[0] ) == 'drop' ) {
+			// XXX: My crappy MySQL work here needs work. :p  - SnoFox
+				$targetData = $mysql->get( $mysql->sql( 'SELECT * FROM `nickserv` WHERE `nick` = ' . $mysql->escape( $rest[1] ) ) );
+				if( $targetData === false ) {
+					$ircd->notice( $to, $from, 'The nick "' . $rest[1] . '" is not registered.' );
+				} else {
+					$targetId = $targetData['userid'];
+					$targetAccount = $mysql->get( $mysql->sql( 'SELECT `user` FROM `access` WHERE `id` = ' . $mysql->escape( $targetId ) ) );
+					$targetAccount = $targetAccount['user'];
+					logit( '[NickServ] ' . $from . '(' . $extra['nickd']['user'] . ') forced dropped nick ' . $rest[1] . ' from account '.$targetAccount );
+					$mysql->sql( 'DELETE FROM `nickserv` WHERE `nick` = ' . $mysql->escape( $rest[1] ) );
+					$ircd->notice( $to, $from, 'The nick "' . $rest[1] . '" has been forced dropped.' );
+				}
+			} else {
+				$ircd->notice( $to , $from , 'Invalid override command "' . $rest[0] . '".' );
+			}
+		}
+		
+		function command_auth_ghost ( $from, $to, $rest, $extra ) {
 			global $mysql;
 			$ircd = &ircd();
 			
-			$data = $mysql->get($mysql->sql('SELECT * FROM `nickserv` WHERE `nick` = '.$mysql->escape($rest[0])));
-			if ($extra['uid'] == $data['userid']) {
-				$ircd->svskill($rest[0],'Connection reset by Ghost. This user has been ghostified by '.$from);
-				$ircd->notice($to,$from,'Ghost busted. :D');
+			$data = $mysql->get( $mysql->sql( 'SELECT * FROM `nickserv` WHERE `nick` = '.$mysql->escape( $rest[0] ) ) );
+			if ( $extra['uid'] == $data['userid'] ) {
+				$ircd->svskill( $rest[0], 'Connection reset by Ghost. This user has been ghostified by ' . $from );
+				$ircd->notice( $to, $from, 'Ghost busted. :D' );
 			} else
-				$ircd->notice($to,$from,'You don\'t own that nick!');
+				$ircd->notice( $to, $from, 'You don\'t own that nick!' );
 		}
 		
-		function command_auth_drop ($from,$to,$rest,$extra) {
+		function command_auth_drop ( $from, $to, $rest, $extra ) {
 			global $mysql;
 			$ircd = &ircd();			
 			
-			$data = $mysql->get($mysql->sql('SELECT * FROM `nickserv` WHERE `nick` = '.$mysql->escape($from)));
+			$data = $mysql->get( $mysql->sql( 'SELECT * FROM `nickserv` WHERE `nick` = ' . $mysql->escape( $from ) ) );
 			if ($extra['uid'] == $data['userid']) {
-				$mysql->sql('DELETE FROM `nickserv` WHERE `nick` = '.$mysql->escape($from));
-				$ircd->notice($to,$from,'Nick '.$from.' dropped.');
+				$accout = $mysql->get( $mysql->sql( 'SELECT `user` FROM `access` WHERE `id` = ' . $mysql->escape( $data['userid'] ) ) );
+				logit('[NickServ] ' . $from . ' dropped their nick (from account ' . $account['user'] . ')' );
+				$mysql->sql( 'DELETE FROM `nickserv` WHERE `nick` = '.$mysql->escape( $from ) );
+				$ircd->notice( $to, $from, 'Nick "'.$from.'" dropped.' );
 			} else
-				$ircd->notice($to,$from,'You don\'t own that nick!');
+				$ircd->notice( $to, $from, 'You don\'t own that nick!' );
 		}
 		
 		function event_msg ($from,$to,$message) {
@@ -172,8 +201,7 @@
 			$ircd = &ircd();
 			
 			if (strtolower($to) == 'nickserv') {
-				$ircd->addnick($mysql->getsetting('server'),'NickServ','Services','Services.ClueNet.Org','Nick Service');
-				$ircd->join('NickServ','#services');
+				$this->event_eos();
 //				$ircd->svskill($from,'Killing service bots isn\'t a smart idea.');
 			}
 		}
