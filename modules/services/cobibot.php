@@ -475,7 +475,7 @@
 			$ircd->join('CobiBot','#HelpOps');
 
 			$ircd->svsmode('CobiBot','#CobiBot','-vhoaqIeb');
-			$ircd->mode('CobiBot','#CobiBot','-kfLljpcQKVCu');
+			$ircd->mode('CobiBot','#CobiBot','-kfLljpcQKVCu place holder params no errors');
 			$ircd->mode('CobiBot','#CobiBot','-zNSMTG+smntir');
 			$ircd->mode('CobiBot','#CobiBot','+ROI Cobi!*@*');
 

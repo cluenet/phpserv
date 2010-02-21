@@ -200,13 +200,13 @@
 		$ircd->msg($config['nick'],$config['chan']['secure'],"\002Disconnect\002: ".$nick.' has left the network ('.$reason."\015)");
 	}
 	
-	function event_usermode_o($from,$to,$t) {
+	function event_usermode_o($from,$to,$adding) {
 		$ircd = &ircd();
 		$config = $this->config;
 
-		if ($t == '+') {
+		if ($adding == '+') {
 			$up = '';
-		} elseif ($t == '-') {
+		} elseif ($adding == '-') {
 			$up = 'De';
 		} else {
 			// Superflurious else statement, but Cobi might have some fun with !eval :)
@@ -214,7 +214,8 @@
 		}
 	
 		if ($up == '') {
-			$ircd->msg($config['nick'],$config['chan']['secure'],"\00304\002Oper\002\003: ".	$to.' has leveled up'.($from == $to ? '!' : ', thanks to '.$from));
+			$ircd->msg( $config[ 'nick' ], $config[ 'chan' ][ 'secure' ],
+				chr(2).chr(3).'04Oper'.chr(2).chr(3).' '.$to.' has leveled up' . ( $from == $to ? '!' : ', thanks to ' . $from ) );
 		} elseif ($from != $to) {
 			$ircd->msg($config['nick'],$config['chan']['secure'],"\00304\002Deoper\002\003: ".$to.' was powered down by '.$from);
 		} else {

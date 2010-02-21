@@ -79,6 +79,7 @@
 							case 'L': // Limit redirect
 							case 'l': // Limit
 							case 'j': // Join throttle
+							// XXX: Needs to look for modes without params. E.g. malformed modelines - SnoFox
 								event('chanmode_'.$modes{$j}, $from, $to, $t, $d_a[$i]);
 								$i++;
 								break;
@@ -105,6 +106,7 @@
 				event('invite', substr($d_a[0],1), $d_a[2], substr($d_a[3],1));
 
 			} elseif (@strtolower($d_a[1]) == "privmsg") {
+				// XXX: Needs to look for spaces before the beginning of a PRIVMSG
 				if (($d_a[3]{1} == chr(1)) and (substr(implode(' ', array_slice($d_a,3)),-1,1) == chr(1))) {
 					$reply = substr(substr(implode(' ', array_slice($d_a,3)),1),1,-1);
 					$reply = explode(' ',$reply,2);

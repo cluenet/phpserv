@@ -48,6 +48,8 @@
 
 			if (!isset($rest[0])) {
 				$ircd->notice($to, $from, 'You need to supply a channel name.');
+			} else if( !$ircd->isValidChan( $rest[0] ) ) {
+				$ircd->notice($to, $from, 'Invalid channel name.');
 			} else {
 				if ($mysql->get($mysql->sql('SELECT * FROM `chanserv` WHERE `channel` = ' . $mysql->escape($rest[0])))) {
 					$ircd->notice($to, $from, 'That channel is already owned by someone else.');
@@ -63,7 +65,7 @@
 			}
 		}
 
-		// TODO: Better ACL.
+		// TODO: Better ACL. Will resemble Anope's LEVELS
 		function is_allowed($uid, $channel, $perm) {
 			global $mysql;
 			if ($mysql->get($mysql->sql('SELECT * FROM `chanserv` WHERE `channel`  = ' . $mysql->escape($channel)

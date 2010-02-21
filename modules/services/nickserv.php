@@ -33,6 +33,8 @@
 			$cu->registercommand($this, 'auth', 'GHOST', '<nick> - Kills <nick> if you are the owner of it.');
 			$cu->registercommand($this, 'auth', 'INFO', '[username] - Get info about a user.');
 			$cu->registercommand($this, 'auth', 'LOGOUT', 'Logs out of your account');
+			
+			$cu->registercommand($this, 'oper', 'OVERRIDE', 'Discards all privilege checks and does what you want.');
 		}
 
 		function destruct () {
@@ -192,7 +194,11 @@
 				$nickd = $mysql->get($mysql->sql('SELECT * FROM `users` WHERE `nick` = '.$mysql->escape($from)));
 				$uid = $nickd['loggedin'];
 				
-				getmod('commandutils')->parsecommand($this, $uid == -1 ? 'anon' : 'auth', $from, $to, $message, array('uid' => $uid,'nickd' => $nickd));
+				if( $uid == -1 ) 
+					$level = 'anon';
+				
+				// Run an SQL query to get the UID's level; elseif and else to set the oper/user level, test command.
+				getmod('commandutils')->parsecommand($this, $level, $from, $to, $message, array('uid' => $uid,'nickd' => $nickd));
 			}
 		}
 
