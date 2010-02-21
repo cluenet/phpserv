@@ -50,5 +50,30 @@
 		public static function underline( $data ) {
 			return IRC::UNDERLINE . $data . IRC::UNDERLINE;
 		}
+		
+		public static function atime( $time ) {
+			if( is_numeric( $time ) )
+				return $time;
+
+			$ret = 0;
+			$timePart = '';
+			
+			for( $i = 0 ; $i < strlen( $time ) ; $i++ )
+				if( is_numeric( $time[ $i] ) )
+					$timePart .= $time[ $i ];
+				else {
+					switch( $time[ $i ] ) {
+						case 'd': $timePart *= 86400; break;
+						case 'h': $timePart *= 3600; break;
+						case 'm': $timePart *= 60; break;
+					}
+					$ret += $timePart;
+					$tmp = 0;
+				}
+			
+			$ret += $timePart;
+			
+			return $ret;
+		}
 	}
 ?>
