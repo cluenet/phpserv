@@ -28,14 +28,14 @@
 			return null;
 		}
 		
-		protected static function __construct( $id, $name, $modes, $topic ) {
+		protected function __construct( $id, $name, $modes, $topic ) {
 			$this->id = $id;
 			$this->name = $name;
 			$this->modes = $modes;
 			$this->topic = $topic;
 		}
 		
-		protected static function __set( $name, $value ) {
+		protected function __set( $name, $value ) {
 			switch( $name ) {
 				case 'id':
 				case 'name':
@@ -51,7 +51,7 @@
 			
 		}
 		
-		protected static function __get( $name ) {
+		protected function __get( $name ) {
 			switch( $name ) {
 				case 'id':
 					return $this->id;
@@ -70,7 +70,11 @@
 					break;
 			}
 		}
-			
+
+		function getUsers() {
+			return ChannelUsers::newFromChannel( $this );
+		}
+					
 		protected function update( $name, $value ) {
 			MySQL::sql( 'UPDATE `access` SET `' . $name . '` = ' . MySQL::escape( $value ) . ' WHERE `id` = ' . MySQL::escape( $this->id ) );
 			$this->$name = $value;
