@@ -10,7 +10,7 @@
 		}
 		
 		public static function newFromName( $nick ) {
-			return self::newFrom( 'nick', $user );
+			return self::newFrom( 'name', $user );
 		}
 		
 		protected static function newFrom( $field, $value ) {
