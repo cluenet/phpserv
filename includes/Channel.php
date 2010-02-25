@@ -9,8 +9,8 @@
 			return self::newFrom( 'id', $id );
 		}
 		
-		public static function newFromName( $nick ) {
-			return self::newFrom( 'name', $user );
+		public static function newFromName( $name ) {
+			return self::newFrom( 'name', $name );
 		}
 		
 		protected static function newFrom( $field, $value ) {
