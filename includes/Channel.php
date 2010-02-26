@@ -35,7 +35,7 @@
 			$this->topic = $topic;
 		}
 		
-		protected function __set( $name, $value ) {
+		public function __set( $name, $value ) {
 			switch( $name ) {
 				case 'id':
 				case 'name':
@@ -51,7 +51,7 @@
 			
 		}
 		
-		protected function __get( $name ) {
+		public function __get( $name ) {
 			switch( $name ) {
 				case 'id':
 					return $this->id;
@@ -71,12 +71,12 @@
 			}
 		}
 
-		function getUsers() {
-			return ChannelUsers::newFromChannel( $this );
+		protected function getUsers() {
+			return ChannelUsers::newFromId( $this->id );
 		}
 					
 		protected function update( $name, $value ) {
-			MySQL::sql( 'UPDATE `access` SET `' . $name . '` = ' . MySQL::escape( $value ) . ' WHERE `id` = ' . MySQL::escape( $this->id ) );
+			MySQL::sql( 'UPDATE `channels` SET `' . $name . '` = ' . MySQL::escape( $value ) . ' WHERE `id` = ' . MySQL::escape( $this->id ) );
 			$this->$name = $value;
 		}
 ?>
