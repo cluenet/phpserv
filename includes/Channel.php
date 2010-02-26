@@ -55,24 +55,19 @@
 			switch( $name ) {
 				case 'id':
 					return $this->id;
-					break;
 				case 'name':
 					return $this->name;
-					break;
 				case 'modes':
 					return $this->modes;
-					break;
 				case 'topic':
 					return $this->topic;
-					break;
 				default:
 					return null;
-					break;
 			}
 		}
 
 		protected function getUsers() {
-			return ChannelUsers::newFromId( $this->id );
+			return ChannelUsers::newFromChannel( $this );
 		}
 					
 		protected function update( $name, $value ) {
