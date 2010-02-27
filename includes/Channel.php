@@ -21,7 +21,7 @@
 					$chanData[ 'chanid' ],
 					$chanData[ 'name' ],
 					$chanData[ 'topic' ],
-					$chanData[ 'modes' ],
+					$chanData[ 'modes' ]
 				);
 			}
 			
@@ -74,4 +74,5 @@
 			MySQL::sql( 'UPDATE `channels` SET `' . $name . '` = ' . MySQL::escape( $value ) . ' WHERE `id` = ' . MySQL::escape( $this->id ) );
 			$this->$name = $value;
 		}
+	}
 ?>

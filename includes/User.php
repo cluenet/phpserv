@@ -74,16 +74,14 @@
 				case 'realName':
 				case 'modes':
 				case 'snomask':
-				case 'operFlags':
 				case 'servicesWhois':
 				case 'virtualHost':
 					$this->update( $name, $value );
 					break;
 				case 'account':
-				// XXX: Update accounts with a new object? Or should we pull a new object ourself? --SnoFox
-					MySQL::sql( 'UPDATE `access SET `loggedin` = ' . MySQL::escape( $value[ 'loggedin' ] ) );
-					$this->account = $value
-					break
+					MySQL::sql( 'UPDATE `access` SET `loggedin` = ' . MySQL::escape( $value->id ) );
+					$this->account = $value;
+					break;
 				default:
 					throw new Exception( 'Unknown property: ' . $name );
 			}
@@ -107,8 +105,7 @@
 				case 'account':
 					return $this->$name;
 				default:
-					// XXX: Should we return null or throw an exception? --SnoFox
-					return null;
+					throw new Exception( 'No such property: ' . $name );
 			}
 		}
 		

@@ -17,9 +17,9 @@
 			
 			if( $servData ) {
 				return new self(
-					$servData[ 'servid' ];
-					$servData[ 'name' ];
-					$servData[ 'description' ];
+					$servData[ 'servid' ],
+					$servData[ 'name' ],
+					$servData[ 'description' ]
 				);
 			}
 			return null;
@@ -44,11 +44,11 @@
 			}
 		}
 		
-		public function create( $servName, $servDesc ) {
+		public static function create( $servName, $servDesc ) {
 			MySQL::insert( 'servers', array( 'name' => $servName, 'description' => $servDesc ) );
 		}
 		
-		public function remove( $servId ) {
+		public static function remove( $servId ) {
 			MySQL::sql( 'DELETE FROM `servers` WHERE `servid` = ' . $servId );
 		}
 	}
