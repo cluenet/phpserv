@@ -48,5 +48,4 @@ Legend:
 [ ] Get rid of runkit dependency.
 [ ] `-Upgrade to PHP 5.3.1.
 [?] Global config file
-[?] |-Modules loaded ((At launch and after connect to IRC) or (via command on IRC))
 [ ] `-Pseudo-clients' nicknames
