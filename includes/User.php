@@ -62,11 +62,59 @@
 		}
 		
 		public function __set( $name, $value ) {
-			
+			switch( $name ) {
+				case 'id':
+				case 'ip':
+				case 'server':
+					throw new Exception( 'Cannot set ' . $name . 'property.' );
+					break;
+				case 'nick':
+				case 'user':
+				case 'host':
+				case 'realName':
+				case 'modes':
+				case 'snomask':
+				case 'operFlags':
+				case 'servicesWhois':
+				case 'virtualHost':
+					$this->update( $name, $value );
+					break;
+				case 'account':
+				// XXX: Update accounts with a new object? Or should we pull a new object ourself? --SnoFox
+					MySQL::sql( 'UPDATE `access SET `loggedin` = ' . MySQL::escape( $value[ 'loggedin' ] ) );
+					$this->account = $value
+					break
+				default:
+					throw new Exception( 'Unknown property: ' . $name );
+			}
 		}
 		
 		public function __get( $name ) {
-			
+			switch( $name ) {
+				case 'id':
+				case 'nick':
+				case 'user':
+				case 'host':
+				case 'realName':
+				//case 'gecos': -- I think this should be used instead of real name (preference; less typing) --SnoFox
+				case 'modes':
+				case 'snomask':
+				case 'operFlags':
+				case 'servicesWhois':
+				case 'ip':
+				case 'vhost':
+				case 'server':
+				case 'account':
+					return $this->$name;
+				default:
+					// XXX: Should we return null or throw an exception? --SnoFox
+					return null;
+			}
+		}
+		
+		protected function update( $name, $value ) {
+			MySQL::sql( 'UPDATE `access` SET `' . $name . '` = ' . MySQL::escape( $value ) . ' WHERE `id` = ' . MySQL::escape( $this->id ) );
+			$this->$name = $value;
 		}
 	}
 ?>
