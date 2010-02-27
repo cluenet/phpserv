@@ -28,6 +28,7 @@ Legend:
 [ ] |-ChanServ: access list
 [ ] |-ChanServ: auto-+[qaohv]-on-ID/join
 [ ] |-BotServ: Admin /bs botlist - outputs bot info, bot's owner, channel
+[ ] |-BotServ: (Admin-only?) /bs info - outputs bot 
 [ ] |-ChanServ: entrymsg/news on join
 [ ] `-ChanServ: Topic lock
 [ ] Get rid of runkit dependency.
