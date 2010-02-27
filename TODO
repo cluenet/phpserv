@@ -11,7 +11,8 @@ Legend:
 [ ] AccountProperties class
 [ ] Rewrite IRC protocol module
 [-]  `-More network state awareness
-[?]     `-What nicks PHPserv has introduced
+[ ]    |-User awayness (good for MemoServ notices on un-/away)
+[?]    `-What nicks PHPserv has introduced (less likely to accidentally collide)
 [ ] Port PHPserv 1.0-stable modules
 [ ] |-PHPserv
 [ ] |-BotServ
@@ -28,9 +29,21 @@ Legend:
 [ ] |-ChanServ: access list
 [ ] |-ChanServ: auto-+[qaohv]-on-ID/join
 [ ] |-BotServ: Admin /bs botlist - outputs bot info, bot's owner, channel
-[ ] |-BotServ: (Admin-only?) /bs info - outputs bot 
+[ ] |-BotServ: (Admin-only?) /bs info - outputs bot info, owner, channel, commands list (or just what events are hooked)
 [ ] |-ChanServ: entrymsg/news on join
 [ ] |-ChanServ: Fine-tuned flood settings (like Unreal's +f but better. More like X3's Spamserv)
+[ ] |-OperServ
+[?] | |-Trapchans
+[?] | |-Defcon
+[ ] | `-Clones
+[ ] |-MemoServ
+[ ] | |-Read/unread status
+[ ] | |-Cancel unread
+[ ] | |-Memo reciept on/off
+[ ] | |-Notice on:
+    |  |-Identify to account
+    |  |-Un-/away
+    |  `-Hourly
 [ ] `-ChanServ: Topic lock
 [ ] Get rid of runkit dependency.
 [ ] `-Upgrade to PHP 5.3.1.
