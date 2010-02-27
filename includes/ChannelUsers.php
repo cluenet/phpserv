@@ -27,15 +27,17 @@
 
 		public function add( $userObj, $modes = '' ) {
 			MySQL::insert( 'user_chan', array( 'chanid' => $this->chanObj->id, 'userid' => $userObj[ 'id' ], 'modes' => $modes );
-			$userList[] = array( 'user' => $userObj, 'modes' => $modes );
+			$this->userList[] = array( 'user' => $userObj, 'modes' => $modes );
 		}
 
 		public function remove( $userObj ) {
+		// Note: If you iterate through this oddly without recreating the object, PHP errors will arise.
+		// So please, just use foreach ... --SnoFox
 			MySQL::sql( 'DELETE FROM `user_chan` WHERE `chanid` = ' . MySQL::escape( $this->chanObj->id ) .
 				' AND `userid` = ' . MySQL::escape( $userObj[ 'id' ] ) );
-			foreach( $user as $this->userList ) {
-				if ( $user[ 'id' ] == $userObj[ 'id' ] ) {
-					// XXX: Delete stuff here
+			foreach( array_keys($this->userList) as $user ) {
+				if ( $this->userList[$user]['user'][ 'id' ] == $userObj[ 'id' ] ) {
+					unset($this->userList[$user]);
 					break;
 				}
 			}	
@@ -44,9 +46,9 @@
 		public function update( $userid, $modes ) {
 			MySQL::sql( 'UPDATE `user_chan` SET `modes` = ' . $modes . ' WHERE `chanid` = ' . MySQL::escape( $this->ChanObj->id ) .
 				' AND `userid` = ' . MySQL::escape( $userid ) );
-			foreach( $user as $this->userList ) {
-				if ( $user[ 'id' ] == $userObj[ 'id' ] ) {
-					// XXX: Update stuff here
+			foreach( array_keys($this->userList) as $user ) {
+				if ( $user[$user]['user'][ 'id' ] == $userObj[ 'id' ] ) {
+					$this->userList[$user]['modes'] = $modes;
 					break;
 				}
 			}	
