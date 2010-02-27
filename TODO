@@ -30,6 +30,7 @@ Legend:
 [ ] |-BotServ: Admin /bs botlist - outputs bot info, bot's owner, channel
 [ ] |-BotServ: (Admin-only?) /bs info - outputs bot 
 [ ] |-ChanServ: entrymsg/news on join
+[ ] |-ChanServ: Fine-tuned flood settings (like Unreal's +f but better. More like X3's Spamserv)
 [ ] `-ChanServ: Topic lock
 [ ] Get rid of runkit dependency.
 [ ] `-Upgrade to PHP 5.3.1.
