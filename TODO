@@ -30,3 +30,5 @@ Legend:
 [ ] |-BotServ: Admin /bs botlist - outputs bot info, bot's owner, channel
 [ ] |-ChanServ: entrymsg/news on join
 [ ] `-ChanServ: Topic lock
+[ ] Get rid of runkit dependency.
+[ ] `-Upgrade to PHP 5.3.1.
