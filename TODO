@@ -1,0 +1,32 @@
+TODO file
+PHPserv 2.0 todo list
+
+Legend:
+[+] = Done in SVN head
+[-] = In progress/untested
+[?] = Unknown if we will do this
+[ ] = Not started
+------------------
+[ ] AccountNicks class
+[ ] AccountProperties class
+[ ] Rewrite IRC protocol module
+[-]  `-More network state awareness
+[?]     `-What nicks PHPserv has introduced
+[ ] Port PHPserv 1.0-stable modules
+[ ] |-PHPserv
+[ ] |-BotServ
+[ ] |-NickServ
+[ ] |-ChanServ
+[ ] |-HostServ
+[ ] |-FoxBot
+[ ] |-CobiBot
+[ ] |-DaVinci
+[ ] |-WKB
+[ ] `-Katelin
+[ ] Expand on featureset
+[ ] |-NickServ: nick protection
+[ ] |-ChanServ: access list
+[ ] |-ChanServ: auto-+[qaohv]-on-ID/join
+[ ] |-BotServ: Admin /bs botlist - outputs bot info, bot's owner, channel
+[ ] |-ChanServ: entrymsg/news on join
+[ ] `-ChanServ: Topic lock
