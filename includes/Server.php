@@ -1,5 +1,5 @@
 <?PHP
-	class Servers {
+	class Server {
 		protected $id; // Server ID
 		protected $name; // Server's hostname
 		protected $gecos; // Server's description
