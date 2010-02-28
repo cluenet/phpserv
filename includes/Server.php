@@ -48,8 +48,8 @@
 			MySQL::insert( 'servers', array( 'name' => $servName, 'description' => $servDesc ) );
 		}
 		
-		public static function remove( $servId ) {
-			MySQL::sql( 'DELETE FROM `servers` WHERE `servid` = ' . $servId );
+		public static function remove( $server ) {
+			MySQL::sql( 'DELETE FROM `servers` WHERE `servid` = ' . $server->id );
 		}
 	}
 	
