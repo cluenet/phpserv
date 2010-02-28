@@ -14,7 +14,7 @@
 			
 			$sql = 'SELECT `id` FROM `access_properties` WHERE';
 			
-			$sql .= ' AND `uid` = ' . MySQL::escape( $this->account->id );
+			$sql .= ' `uid` = ' . MySQL::escape( $this->account->id );
 			
 			if( $key !== null )
 				$sql .= ' AND `key` = ' . MySQL::escape( $key );
