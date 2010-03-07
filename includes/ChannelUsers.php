@@ -24,7 +24,7 @@
 			$this->chanObj = $chanObj;
 		}
 		
-		protected function __get( $name ) {
+		public function __get( $name ) {
 			switch( $name ) {
 				case 'asArray':
 					return $this->userList;
