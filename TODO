@@ -29,7 +29,8 @@ Legend:
 [ ] |-Auth/UserServ: aliases commands to the correct pseudo-client to make the UI less confusing to newbies
 [ ] |-FoxBot expansion by SnoFox
       |-Defender-like flood alerts to the config channel (X joins to $chan in Y seconds)
-      |-Nick!user@host memos for users who haven't reg'd with PHPserv
+      |-Oper helping (!names <where>, !info <where> (topic, modes, prefix modes)) (Maybe this should be in ChanServ instead?)
+      |-Nick!user@host memos for users who haven't reg'd with PHPserv (as opposed to MemoServ for registered users)
       |-Karma
       `-Misc commands (xor, rules)
 [ ] |-NickServ: nick protection
@@ -39,6 +40,7 @@ Legend:
 [ ] |-BotServ: (Admin-only?) /bs info - outputs bot info, owner, channel, commands list (or just what events are hooked)
 [ ] |-ChanServ: entrymsg/news on join
 [ ] |-ChanServ: Fine-tuned flood settings (like Unreal's +f but better. More like X3's Spamserv)
+[ ] |-ChanServ: Mode lock
 [ ] |-OperServ
 [?] | |-Trapchans
 [?] | |-Defcon
