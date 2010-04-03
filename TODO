@@ -11,9 +11,9 @@ Legend:
 [+] AccountProperties class
 [ ] Rewrite IRC protocol module
 [-]  `-More network state awareness
-[ ]    |-User awayness (good for MemoServ notices on un-/away)
+[?]    |-User awayness (good for MemoServ notices on un-/away)
 [?]    |-Detection of netbursts
-[?]    `-What nicks PHPserv has introduced (less likely to accidentally collide)
+[ ]    `-What nicks PHPserv has introduced (less likely to accidentally collide)
 [ ] Port PHPserv 1.0-stable modules
 [ ] |-PHPserv
 [ ] |-BotServ
